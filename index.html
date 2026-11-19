@@ -220,8 +220,9 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       </div>
       <div class="meet-actions">
         <button type="button" class="find" id="findBtn">Find halfway</button>
-        <span class="send" id="sendWrap" hidden>Text a spot: <button type="button" class="linkish" id="send0">Alec’s</button> · <button type="button" class="linkish" id="send1">Morgan’s</button></span>
+        <span class="send" id="sendWrap" hidden>Send a spot: <button type="button" class="linkish" id="send0">Alec’s</button> · <button type="button" class="linkish" id="send1">Morgan’s</button></span>
       </div>
+      <p class="hint" id="spotHelp" hidden>Got a spot link? Tap it, or paste the whole text into either box.</p>
       <p class="hint" id="meetMsg" hidden></p>
       <datalist id="spotList"></datalist>
     </div>
@@ -306,7 +307,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     setup: $('setup'), setupForm: $('setupForm'), setupUrl: $('setupUrl'), setupMsg: $('setupMsg'),
     meet: $('meet'), meet0: $('meet0'), meet1: $('meet1'), meetName0: $('meetName0'), meetName1: $('meetName1'),
     here0: $('here0'), here1: $('here1'), send0: $('send0'), send1: $('send1'), sendWrap: $('sendWrap'),
-    findBtn: $('findBtn'), meetMsg: $('meetMsg'), spotList: $('spotList'), tDrive: $('tDrive')
+    findBtn: $('findBtn'), meetMsg: $('meetMsg'), spotList: $('spotList'), tDrive: $('tDrive'), spotHelp: $('spotHelp')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
   var MEET_DEFAULTS = CFG.MEET_DEFAULTS || [];
@@ -762,6 +763,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       els['send' + i].textContent = PEOPLE[i] + '’s';
     });
     els.sendWrap.hidden = !hosted;
+    els.spotHelp.hidden = !hosted;
     renderSpotList();
   }
   function recentSpots() {
@@ -861,7 +863,9 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var url = location.href.split('#')[0] + '#spot=' + encodeURIComponent(PEOPLE[i] + '|' + v);
     var other = PEOPLE[1 - i];
     if (navigator.share) {
-      navigator.share({ title: 'Date Night', text: PEOPLE[i] + '’s starting spot for tonight', url: url }).catch(function () {});
+      navigator.share({ title: 'Date Night', text: PEOPLE[i] + '’s spot for Date Night', url: url }).then(function () {
+        meetMsg('Sent. ' + other + ' taps the link, or pastes the whole text into either box.');
+      }, function () {});
       return;
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -874,32 +878,63 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     }
     meetMsg('Text this link to ' + other + ': ' + url);
   }
-  function readSpotFromHash() {
-    var m = /^#spot=(.+)$/.exec(location.hash || '');
-    if (!m) return;
-    try { history.replaceState(null, '', location.href.split('#')[0]); } catch (e) {}
+  // A spot link found in the page's own address or anywhere in pasted text.
+  // Returns { i, row } for one of the two people, { error } for a bad link, or null if there's none.
+  function parseSpot(text) {
+    var m = /#spot=([^\s]+)/.exec(text || '');
+    if (!m) return null;
+    var cutOff = { error: 'That spot link looks cut off. Ask for it again.' };
     var raw;
-    try { raw = decodeURIComponent(m[1]); } catch (e) { return; }
+    try { raw = decodeURIComponent(m[1]); } catch (e) { return cutOff; }
     var bar = raw.indexOf('|');
-    if (bar < 1) return;
+    if (bar < 1) return cutOff;
     var name = raw.slice(0, bar);
-    var value = raw.slice(bar + 1).trim();
+    var value = raw.slice(bar + 1).trim().replace(/[.,;:!?)\]'"”’]+$/, '');
+    if (!value) return cutOff;
     var i = PEOPLE.map(function (p) { return p.toLowerCase(); }).indexOf(name.toLowerCase());
-    if (i < 0 || !value) return;
+    if (i < 0) return { error: 'That spot link is for ' + name + ', not ' + PEOPLE[0] + ' or ' + PEOPLE[1] + '.' };
     var c = parseCoords(value);
-    setRow(i, c ? { text: PEOPLE[i] + '’s spot', coords: c } : { text: value, coords: null });
+    return { i: i, row: c ? { text: PEOPLE[i] + '’s spot', coords: c } : { text: value, coords: null } };
+  }
+  function showHalfwayPanel() {
+    if (state.start === 'halfway') return;
     state.start = 'halfway';
     store.set('start', 'halfway');
     renderChips();
     renderMeet();
-    meetMsg('Got ' + PEOPLE[i] + '’s spot.');
-    if (rowValue(1 - i)) findHalfway();
+  }
+  function takeSpot(spot) {
+    showHalfwayPanel();
+    setRow(spot.i, spot.row);
+    meetMsg('Got ' + PEOPLE[spot.i] + '’s spot.');
+    if (rowValue(1 - spot.i)) findHalfway();
     refresh();
+  }
+  function readSpotFromHash() {
+    if (!/^#spot=/.test(location.hash || '')) return;
+    var spot = parseSpot(location.hash);
+    try { history.replaceState(null, '', location.href.split('#')[0]); } catch (e) {}
+    if (!spot) return;
+    if (spot.error) {
+      showHalfwayPanel();
+      meetMsg(spot.error, true);
+      return;
+    }
+    takeSpot(spot);
   }
 
   [0, 1].forEach(function (i) {
     var input = els['meet' + i];
     input.addEventListener('input', function () {
+      var spot = parseSpot(input.value);
+      if (spot) {
+        // A pasted spot link: put this box back the way it was, then load the spot into the right box.
+        input.value = state.meet[i].text;
+        if (spot.error) { meetMsg(spot.error, true); return; }
+        input.blur();
+        takeSpot(spot);
+        return;
+      }
       state.meet[i] = { text: input.value, coords: null };
       store.set('meet' + i, JSON.stringify(state.meet[i]));
       input.classList.remove('has-coords');
