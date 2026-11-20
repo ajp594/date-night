@@ -24,6 +24,7 @@
   /* One phone-width column: a theater-marquee reel up top, the ticket it prints below, the roster last. */
   --night: #160a10;
   --velvet: #2a1520;
+  --velvet-2: #3a1d2a;
   --ivory: #f7ecdc;
   --dusk: #bd9ea8;
   --bulb: #f5bf55;
@@ -154,6 +155,16 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .custom-row input { flex: 1; min-width: 0; padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(247, 236, 220, 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 .custom-row input::placeholder { color: var(--dusk); }
 .custom-row input:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+/* Suggestions while typing */
+.field { position: relative; min-width: 0; }
+.field input { width: 100%; }
+.custom-row .field { flex: 1; }
+.suggest { position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0; padding: 4px; border-radius: 12px; background: var(--velvet-2); box-shadow: inset 0 0 0 1px var(--rule), 0 16px 30px -12px #000; }
+.suggest[hidden] { display: none; }
+.suggest button { display: grid; gap: 1px; width: 100%; padding: 9px 10px; border: 0; border-radius: 8px; background: none; color: var(--ivory); text-align: left; font: 600 0.92rem var(--body); cursor: pointer; }
+.suggest button span { font-size: 0.8rem; font-weight: 400; color: var(--dusk); }
+.suggest button:hover, .suggest button.is-active { background: rgba(245, 191, 85, 0.14); }
+.suggest .credit { padding: 4px 10px 2px; font-size: 0.7rem; color: var(--dusk); }
 .meet .who { font-size: 0.82rem; }
 .meet .hint { margin: 0; }
 .ticket-drive { margin: 0; font-size: 0.9rem; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -214,27 +225,26 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     <div class="meet" id="meet" hidden>
       <div class="meet-row">
         <label for="meet0" id="meetName0">Alec</label>
-        <input id="meet0" list="placeList" autocomplete="off" enterkeyhint="next" placeholder="Town, address or place">
+        <input id="meet0" autocomplete="off" enterkeyhint="next" placeholder="Town, address or place">
         <button type="button" class="mini" id="here0">Here</button>
       </div>
       <div class="meet-row">
         <label for="meet1" id="meetName1">Morgan</label>
-        <input id="meet1" list="placeList" autocomplete="off" enterkeyhint="go" placeholder="Town, address or place">
+        <input id="meet1" autocomplete="off" enterkeyhint="go" placeholder="Town, address or place">
         <button type="button" class="mini" id="here1">Here</button>
       </div>
       <div class="meet-actions">
-        <button type="button" class="find" id="findBtn">Find halfway</button>
+        <button type="button" class="find" id="findBtn">Find Halfway</button>
         <button type="button" class="linkish" id="textBtn" hidden>Text Morgan where I’m starting</button>
       </div>
       <p class="hint" id="textHelp" hidden></p>
       <p class="hint" id="meetMsg" hidden></p>
       <p class="hint who" id="whoLine" hidden></p>
-      <datalist id="placeList"></datalist>
     </div>
     <div class="meet" id="custom" hidden>
       <div class="custom-row">
-        <input id="customInput" list="placeList" autocomplete="off" enterkeyhint="go" placeholder="Town, neighborhood or address" aria-label="Where you’re headed">
-        <button type="button" class="find" id="customBtn">Use it</button>
+        <input id="customInput" autocomplete="off" enterkeyhint="go" placeholder="Town, neighborhood or address" aria-label="Where you’re headed">
+        <button type="button" class="find" id="customBtn">Use It</button>
       </div>
       <p class="hint" id="customMsg" hidden></p>
     </div>
@@ -319,7 +329,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     setup: $('setup'), setupForm: $('setupForm'), setupUrl: $('setupUrl'), setupMsg: $('setupMsg'),
     meet: $('meet'), meet0: $('meet0'), meet1: $('meet1'), meetName0: $('meetName0'), meetName1: $('meetName1'),
     here0: $('here0'), here1: $('here1'), textBtn: $('textBtn'), textHelp: $('textHelp'), whoLine: $('whoLine'),
-    findBtn: $('findBtn'), meetMsg: $('meetMsg'), placeList: $('placeList'), tDrive: $('tDrive'),
+    findBtn: $('findBtn'), meetMsg: $('meetMsg'), tDrive: $('tDrive'),
     custom: $('custom'), customInput: $('customInput'), customBtn: $('customBtn'), customMsg: $('customMsg')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
@@ -450,13 +460,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   }
   function renderChips() {
     els.starts.innerHTML = '';
-    els.starts.appendChild(chip('start', 'gps', 'My location', state.start === 'gps', onStart));
+    els.starts.appendChild(chip('start', 'gps', 'My Location', state.start === 'gps', onStart));
     els.starts.appendChild(chip('start', 'halfway', 'Halfway', state.start === 'halfway', onStart));
-    els.starts.appendChild(chip('start', 'custom', 'Somewhere else', state.start === 'custom', onStart));
-    STARTS.forEach(function (s) { els.starts.appendChild(chip('start', s.name, s.name, state.start === s.name, onStart)); });
+    els.starts.appendChild(chip('start', 'custom', 'Somewhere Else', state.start === 'custom', onStart));
     els.radii.innerHTML = '';
     RADII.forEach(function (r) {
-      els.radii.appendChild(chip('radius', String(r), r === 0 ? 'Any distance' : r + ' mi', state.radius === r, onRadius));
+      els.radii.appendChild(chip('radius', String(r), r === 0 ? 'Any Distance' : r + ' mi', state.radius === r, onRadius));
     });
   }
   function onStart(value) {
@@ -486,7 +495,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   // ---------- Location ----------
   function requestGps() {
     if (state.gps || state.gpsPending) return;
-    if (!navigator.geolocation) { gpsFailed("This browser can't share your location here. Pick a starting point instead.", false); return; }
+    if (!navigator.geolocation) { gpsFailed('This browser can’t share your location here, so type a place under Somewhere Else.', false); return; }
     state.gpsPending = true;
     setHint('Finding you…');
     navigator.geolocation.getCurrentPosition(function (pos) {
@@ -498,15 +507,17 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       state.gpsPending = false;
       var denied = err && err.code === 1;
       gpsFailed(denied
-        ? 'Location is blocked for this page, so it’s starting from ' + (STARTS[0] ? STARTS[0].name : 'a preset') + '. Allow location in Chrome’s site settings to use it.'
-        : 'Couldn’t get your location, so it’s starting from ' + (STARTS[0] ? STARTS[0].name : 'a preset') + '. Tap My location to try again.', denied);
+        ? 'Location is blocked for this page, so type a place under Somewhere Else. To use My Location, allow location for this site in your browser settings.'
+        : 'Couldn’t get your location, so type a place under Somewhere Else, or tap My Location to try again.', denied);
     }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 });
   }
   function gpsFailed(message, remember) {
-    if (state.start === 'gps' && STARTS.length) {
-      state.start = STARTS[0].name;
+    if (state.start === 'gps') {
+      state.start = 'custom';
       if (remember) store.set('start', state.start);
       renderChips();
+      renderMeet();
+      renderCustom();
     }
     setHint(message, true);
     refresh();
@@ -540,15 +551,15 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var b = els.spin;
     if (state.loadError) {
       b.disabled = false;
-      b.textContent = 'Try again';
+      b.textContent = 'Try Again';
     } else if (!state.loaded || state.spinning) {
       b.disabled = true;
     } else if (state.spun && state.vetoesLeft <= 0) {
       b.disabled = true;
-      b.textContent = 'No vetoes left';
+      b.textContent = 'No Vetoes Left';
     } else {
       b.disabled = waitingForGps() || !state.range.length;
-      b.textContent = state.spun ? 'Veto and spin again' : 'Spin';
+      b.textContent = state.spun ? 'Veto and Spin Again' : 'Spin';
     }
     var v = '';
     if (VETOES > 0) {
@@ -610,7 +621,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       if (l.ok && l.total > l.count) text += ' Google sent only ' + l.count + ' of the ' + l.total + ' places on “' + l.title + '”. Save new places to a second list and add it at the bottom of this page.';
     });
     var missing = res.places.filter(function (p) { return typeof p.lat !== 'number'; }).length;
-    if (missing) text += ' ' + missing + (missing === 1 ? ' has no location and only comes up' : ' have no location and only come up') + ' with Any distance.';
+    if (missing) text += ' ' + missing + (missing === 1 ? ' has no location and only comes up' : ' have no location and only come up') + ' with Any Distance.';
     s.classList.add(allLive ? 'is-live' : 'is-stale');
     els.statusText.textContent = text;
   }
@@ -803,7 +814,6 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.textHelp.hidden = !hosted || me === null;
     els.textHelp.textContent = 'When ' + other + ' texts you a starting point, tap the link. Pasting the whole text into a box works too.';
     renderWho();
-    renderPlaceList();
   }
   function renderWho() {
     var line = els.whoLine;
@@ -827,29 +837,27 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       line.appendChild(button('Switch', function () { setMe(1 - state.me); }));
     }
   }
+  // Places you've used before, newest first: { t: text, c: { lat, lng } or null, p: short name }.
   function recentPlaces() {
     try {
       var r = JSON.parse(store.get('recent') || '[]');
-      return Array.isArray(r) ? r : [];
+      if (!Array.isArray(r)) return [];
+      return r.map(function (x) { return typeof x === 'string' ? { t: x, c: null } : x; })
+        .filter(function (x) { return x && typeof x.t === 'string'; });
     } catch (e) { return []; }
   }
-  function rememberPlace(text) {
-    if (!text || parseCoords(text) || presetByName(text)) return;
-    var r = recentPlaces().filter(function (x) { return x.toLowerCase() !== text.toLowerCase(); });
-    r.unshift(text);
-    store.set('recent', JSON.stringify(r.slice(0, 10)));
+  // The same place written two ways, like “Wicker Park” and “Wicker Park, Chicago, Illinois”.
+  function samePlace(nameA, a, nameB, b) {
+    function first(n) { return String(n).split(',')[0].trim().toLowerCase(); }
+    return !!(a && b) && first(nameA) === first(nameB) && miles(a, b) < 1;
   }
-  function renderPlaceList() {
-    var seen = {};
-    els.placeList.innerHTML = '';
-    STARTS.map(function (s) { return s.name; }).concat(recentPlaces()).forEach(function (n) {
-      var k = n.toLowerCase();
-      if (seen[k]) return;
-      seen[k] = true;
-      var o = document.createElement('option');
-      o.value = n;
-      els.placeList.appendChild(o);
+  function rememberPlace(text, coords, place) {
+    if (!text || parseCoords(text) || presetByName(text) || /^My location$|’s location$/.test(text)) return;
+    var r = recentPlaces().filter(function (x) {
+      return x.t.toLowerCase() !== text.toLowerCase() && !samePlace(x.t, x.c, text, coords);
     });
+    r.unshift({ t: text, c: coords || null, p: place || null });
+    store.set('recent', JSON.stringify(r.slice(0, 10)));
   }
   function getFix(ok, fail) {
     if (!navigator.geolocation) { fail('This browser can’t share its location here. Type a town or address instead.'); return; }
@@ -871,15 +879,14 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.findBtn.disabled = true;
     els.findBtn.textContent = 'Finding…';
     meetMsg('');
-    var done = function () { els.findBtn.disabled = false; els.findBtn.textContent = 'Find halfway'; };
+    var done = function () { els.findBtn.disabled = false; els.findBtn.textContent = 'Find Halfway'; };
     callServer('findHalfway', { a: a, b: b }).then(function (res) {
       if (token !== halfwayToken) return;
       done();
       if (!res || !res.ok) { meetMsg((res && res.error) || 'Couldn’t find halfway.', true); return; }
       state.halfway = res;
       store.set('halfway', JSON.stringify({ key: meetKey(), res: res }));
-      [0, 1].forEach(function (i) { if (!state.meet[i].coords) rememberPlace(state.meet[i].text.trim()); });
-      renderPlaceList();
+      [0, 1].forEach(function (i) { rememberPlace(state.meet[i].text.trim(), state.meet[i].coords); });
       showHalfwayMsg();
       refresh();
     }, function (err) {
@@ -1055,7 +1062,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   els.findBtn.addEventListener('click', function () { findHalfway(); });
   window.addEventListener('hashchange', readStartFromHash);
 
-  // ---------- Somewhere else ----------
+  // ---------- Somewhere Else ----------
   // One typed place as the center. It uses the halfway lookup the script already has:
   // a place is halfway between itself and itself, so the script needs no new code.
   state.custom = null;
@@ -1087,7 +1094,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.customBtn.disabled = true;
     els.customBtn.textContent = 'Finding…';
     customMsg('');
-    var done = function () { els.customBtn.disabled = false; els.customBtn.textContent = 'Use it'; };
+    var done = function () { els.customBtn.disabled = false; els.customBtn.textContent = 'Use It'; };
     callServer('findHalfway', { a: q, b: q }).then(function (res) {
       if (token !== customToken) return;
       done();
@@ -1095,8 +1102,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       var pt = res.a || res.point;
       state.custom = { text: q, point: { lat: pt.lat, lng: pt.lng }, label: res.label || shortLabel(pt.label) || q };
       store.set('custom', JSON.stringify(state.custom));
-      rememberPlace(q);
-      renderPlaceList();
+      rememberPlace(q, state.custom.point, state.custom.label);
       customMsg('Using ' + state.custom.label + '.');
       els.customInput.blur();
       refresh();
@@ -1113,12 +1119,204 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     useCustom();
   });
   els.customInput.addEventListener('input', function () {
-    // A new place takes effect when you tap Use it; until then nothing gets picked from the old one.
+    // A new place takes effect when you tap Use It; until then nothing gets picked from the old one.
     if (state.custom && state.custom.point && els.customInput.value.trim() !== state.custom.text) {
       state.custom = { text: els.customInput.value, point: null, label: '' };
       customMsg('');
       refresh();
     }
+  });
+
+  // ---------- Suggestions while typing ----------
+  // Live place suggestions from OpenStreetMap's free Photon search, plus your saved and
+  // recent places. Picking one fills in its exact location, so nothing else has to be looked up.
+  var SUGGEST_URL = 'https://photon.komoot.io/api/';
+  function biasPoint() {
+    if (!STARTS.length) return { lat: 41.85, lng: -87.95 };
+    var lat = 0;
+    var lng = 0;
+    STARTS.forEach(function (s) { lat += s.lat; lng += s.lng; });
+    return { lat: lat / STARTS.length, lng: lng / STARTS.length };
+  }
+  // Your recent places first, then the saved ones (Lockport, Bartlett, Downtown).
+  function localMatches(q) {
+    var needle = q.toLowerCase();
+    var recent = recentPlaces().filter(function (r) {
+      return !needle || r.t.toLowerCase().indexOf(needle) >= 0;
+    }).slice(0, needle ? 2 : 4).map(function (r) {
+      return { main: r.t, sub: 'Used before', text: r.t, place: r.p || r.t, coords: r.c };
+    });
+    var saved = STARTS.filter(function (s) {
+      return !needle || s.name.toLowerCase().indexOf(needle) === 0;
+    }).map(function (s) {
+      return { main: s.name, sub: 'Saved place', text: s.name, place: s.name, coords: { lat: s.lat, lng: s.lng } };
+    });
+    return recent.concat(saved).slice(0, needle ? 3 : 7);
+  }
+  function fetchSuggestions(q) {
+    var b = biasPoint();
+    var url = SUGGEST_URL + '?q=' + encodeURIComponent(q) + '&limit=12&lang=en&lat=' + b.lat.toFixed(3) + '&lon=' + b.lng.toFixed(3);
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (data) {
+      var out = [];
+      (data.features || []).forEach(function (f) {
+        var p = f.properties || {};
+        var c = f.geometry && f.geometry.coordinates;
+        if (!c || (p.countrycode && p.countrycode.toUpperCase() !== 'US')) return;
+        var street = [p.housenumber, p.street].filter(Boolean).join(' ');
+        var main = p.name || street;
+        if (!main) return;
+        var place = p.city || p.town || p.village || p.district || '';
+        if (place === main) place = '';
+        // The dropdown's second line tells look-alikes apart; the box gets the short version.
+        var sub = [];
+        if (street && p.name && street !== p.name) sub.push(street);
+        if (place) sub.push(place); else if (p.county) sub.push(p.county);
+        if (p.state) sub.push(p.state);
+        var text = [main];
+        if (street && p.name && street !== p.name) text.push(street);
+        if (place) text.push(place);
+        if (p.state) text.push(p.state);
+        out.push({
+          main: main, sub: sub.join(', '), text: text.join(', '),
+          place: place ? main + ', ' + place : main,
+          coords: { lat: c[1], lng: c[0] }, osm: true
+        });
+      });
+      return out;
+    });
+  }
+  function mergeSuggestions(local, remote) {
+    var seen = {};
+    remote = remote.filter(function (it) {
+      return !local.some(function (l) { return samePlace(l.main, l.coords, it.main, it.coords); });
+    });
+    return local.concat(remote).filter(function (it) {
+      var k = (it.main + '|' + it.sub).toLowerCase();
+      var t = 'text:' + it.text.toLowerCase();
+      if (seen[k] || seen[t]) return false;
+      seen[k] = true;
+      seen[t] = true;
+      return true;
+    }).slice(0, 7);
+  }
+  var suggestClosers = [];
+  function attachSuggest(input, onPick) {
+    var wrap = document.createElement('div');
+    wrap.className = 'field';
+    input.parentNode.insertBefore(wrap, input);
+    wrap.appendChild(input);
+    var box = document.createElement('div');
+    box.className = 'suggest';
+    box.id = input.id + 'Suggest';
+    box.hidden = true;
+    box.setAttribute('role', 'listbox');
+    wrap.appendChild(box);
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-controls', box.id);
+    input.setAttribute('aria-expanded', 'false');
+    var items = [];
+    var active = -1;
+    var timer = null;
+    var token = 0;
+    function close() {
+      box.hidden = true;
+      active = -1;
+      input.setAttribute('aria-expanded', 'false');
+      input.removeAttribute('aria-activedescendant');
+    }
+    suggestClosers.push(close);
+    function show(list) {
+      suggestClosers.forEach(function (c) { if (c !== close) c(); });
+      items = list;
+      box.innerHTML = '';
+      if (!list.length) { close(); return; }
+      list.forEach(function (it, k) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.id = box.id + '-' + k;
+        b.setAttribute('role', 'option');
+        b.appendChild(document.createTextNode(it.main));
+        if (it.sub) {
+          var sub = document.createElement('span');
+          sub.textContent = it.sub;
+          b.appendChild(sub);
+        }
+        b.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        b.addEventListener('click', function () { choose(it); });
+        box.appendChild(b);
+      });
+      if (list.some(function (it) { return it.osm; })) {
+        var credit = document.createElement('div');
+        credit.className = 'credit';
+        credit.textContent = 'Suggestions © OpenStreetMap contributors';
+        box.appendChild(credit);
+      }
+      active = -1;
+      box.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+    function highlight(k) {
+      var buttons = box.querySelectorAll('button');
+      active = (k + buttons.length) % buttons.length;
+      for (var j = 0; j < buttons.length; j++) buttons[j].classList.toggle('is-active', j === active);
+      input.setAttribute('aria-activedescendant', buttons[active].id);
+    }
+    function choose(it) {
+      clearTimeout(timer);
+      token++;
+      close();
+      input.blur();
+      onPick(it);
+    }
+    input.addEventListener('focus', function () { show(localMatches(input.value.trim())); });
+    input.addEventListener('blur', function () { setTimeout(close, 150); });
+    input.addEventListener('input', function () {
+      var q = input.value.trim();
+      clearTimeout(timer);
+      if (document.activeElement !== input) return;
+      var mine = ++token;
+      show(localMatches(q));
+      if (q.length < 2 || /#[^=\s]+=/.test(q)) return;
+      timer = setTimeout(function () {
+        fetchSuggestions(q).then(function (remote) {
+          if (mine !== token || document.activeElement !== input) return;
+          show(mergeSuggestions(localMatches(q), remote));
+        }, function () {});
+      }, 220);
+    });
+    input.addEventListener('keydown', function (ev) {
+      if (box.hidden || !items.length) return;
+      if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        highlight(active + (ev.key === 'ArrowDown' ? 1 : -1));
+      } else if (ev.key === 'Enter' && active >= 0) {
+        ev.preventDefault();
+        ev.stopImmediatePropagation();
+        choose(items[active]);
+      } else if (ev.key === 'Escape') {
+        close();
+      }
+    }, true);
+  }
+  [0, 1].forEach(function (i) {
+    attachSuggest(els['meet' + i], function (it) {
+      setRow(i, { text: it.text, coords: it.coords || null });
+      meetMsg('');
+      if (rowValue(1 - i)) findHalfway();
+    });
+  });
+  attachSuggest(els.customInput, function (it) {
+    els.customInput.value = it.text;
+    if (!it.coords) { useCustom(); return; }
+    state.custom = { text: it.text, point: it.coords, label: it.place || it.main };
+    store.set('custom', JSON.stringify(state.custom));
+    rememberPlace(it.text, it.coords, state.custom.label);
+    customMsg('Using ' + state.custom.label + '.');
+    refresh();
   });
 
   // ---------- Spinning ----------
@@ -1218,6 +1416,13 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     refresh();
   }
 
+  var oldPreset = presetByName(state.start);
+  if (oldPreset) {
+    state.custom = { text: oldPreset.name, point: { lat: oldPreset.lat, lng: oldPreset.lng }, label: oldPreset.name };
+    store.set('custom', JSON.stringify(state.custom));
+    state.start = 'custom';
+    store.set('start', 'custom');
+  }
   renderChips();
   renderMeet();
   renderCustom();
