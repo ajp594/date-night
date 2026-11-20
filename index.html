@@ -934,7 +934,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var url = location.href.split('#')[0] + '#' + encodeURIComponent(PEOPLE[me]) + '=' +
       encodeURIComponent(v).replace(/%2C/gi, ',');
     var other = PEOPLE[1 - me];
-    var text = 'Here’s where I’m starting from tonight';
+    var text = 'Here’s where I’m starting from tonight!';
     if (navigator.share) {
       navigator.share({ title: 'Date Night', text: text, url: url }).then(function () {
         meetMsg('Sent. ' + other + ' just taps the link.');
