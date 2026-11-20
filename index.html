@@ -220,9 +220,9 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       </div>
       <div class="meet-actions">
         <button type="button" class="find" id="findBtn">Find halfway</button>
-        <span class="send" id="sendWrap" hidden>Send a spot: <button type="button" class="linkish" id="send0">Alec’s</button> · <button type="button" class="linkish" id="send1">Morgan’s</button></span>
+        <span class="send" id="sendWrap" hidden>Send starting point: <button type="button" class="linkish" id="send0">Alec’s</button> · <button type="button" class="linkish" id="send1">Morgan’s</button></span>
       </div>
-      <p class="hint" id="spotHelp" hidden>Got a spot link? Tap it, or paste the whole text into either box.</p>
+      <p class="hint" id="spotHelp" hidden>Got someone’s starting point? Tap their link, or paste the whole text into either box.</p>
       <p class="hint" id="meetMsg" hidden></p>
       <datalist id="spotList"></datalist>
     </div>
@@ -761,6 +761,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       els['meet' + i].classList.toggle('has-coords', !!state.meet[i].coords);
       els['here' + i].setAttribute('aria-label', 'Use this phone’s location for ' + PEOPLE[i]);
       els['send' + i].textContent = PEOPLE[i] + '’s';
+      els['send' + i].setAttribute('aria-label', 'Send ' + PEOPLE[i] + '’s starting point');
     });
     els.sendWrap.hidden = !hosted;
     els.spotHelp.hidden = !hosted;
@@ -859,11 +860,11 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   // Texting a spot: a link to this page that fills in that person's box on the other phone.
   function sendRow(i) {
     var v = rowValue(i);
-    if (!v) { meetMsg('Fill in ' + PEOPLE[i] + '’s spot first, or tap Here.', true); return; }
+    if (!v) { meetMsg('Fill in ' + PEOPLE[i] + '’s starting point first, or tap Here.', true); return; }
     var url = location.href.split('#')[0] + '#spot=' + encodeURIComponent(PEOPLE[i] + '|' + v);
     var other = PEOPLE[1 - i];
     if (navigator.share) {
-      navigator.share({ title: 'Date Night', text: PEOPLE[i] + '’s spot for Date Night', url: url }).then(function () {
+      navigator.share({ title: 'Date Night', text: PEOPLE[i] + '’s starting point for Date Night', url: url }).then(function () {
         meetMsg('Sent. ' + other + ' taps the link, or pastes the whole text into either box.');
       }, function () {});
       return;
@@ -883,7 +884,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   function parseSpot(text) {
     var m = /#spot=([^\s]+)/.exec(text || '');
     if (!m) return null;
-    var cutOff = { error: 'That spot link looks cut off. Ask for it again.' };
+    var cutOff = { error: 'That link looks cut off. Ask for it again.' };
     var raw;
     try { raw = decodeURIComponent(m[1]); } catch (e) { return cutOff; }
     var bar = raw.indexOf('|');
@@ -892,9 +893,9 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var value = raw.slice(bar + 1).trim().replace(/[.,;:!?)\]'"”’]+$/, '');
     if (!value) return cutOff;
     var i = PEOPLE.map(function (p) { return p.toLowerCase(); }).indexOf(name.toLowerCase());
-    if (i < 0) return { error: 'That spot link is for ' + name + ', not ' + PEOPLE[0] + ' or ' + PEOPLE[1] + '.' };
+    if (i < 0) return { error: 'That link is for ' + name + ', not ' + PEOPLE[0] + ' or ' + PEOPLE[1] + '.' };
     var c = parseCoords(value);
-    return { i: i, row: c ? { text: PEOPLE[i] + '’s spot', coords: c } : { text: value, coords: null } };
+    return { i: i, row: c ? { text: PEOPLE[i] + '’s location', coords: c } : { text: value, coords: null } };
   }
   function showHalfwayPanel() {
     if (state.start === 'halfway') return;
@@ -906,7 +907,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   function takeSpot(spot) {
     showHalfwayPanel();
     setRow(spot.i, spot.row);
-    meetMsg('Got ' + PEOPLE[spot.i] + '’s spot.');
+    meetMsg('Got ' + PEOPLE[spot.i] + '’s starting point.');
     if (rowValue(1 - spot.i)) findHalfway();
     refresh();
   }
