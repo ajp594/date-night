@@ -380,7 +380,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   }
   // Locations the script looked up with Google stay on the phone for 30 days at most
   // (Google's rule), then get looked up again. at = when it was looked up.
-  function fresh(at) { return !at || Date.now() - at < 30 * 864e5; }
+  function within(at, ms) { var d = Date.now() - at; return d >= 0 && d < ms; }
+  function fresh(at) { return !at || within(at, 30 * 864e5); }
 
   var state = {
     places: [], lists: [], loaded: false, loadError: false, needsSetup: false,
@@ -474,13 +475,15 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   function onStart(value) {
     state.start = value;
     store.set('start', value);
-    if (value === 'gps') requestGps(); else setHint('');
+    if (value === 'gps') requestGps(!within(state.gpsAt || 0, FRESH_FIX)); else setHint('');
     renderMeet();
     renderCustom();
     if (value === 'custom' && !(state.custom && state.custom.point)) els.customInput.focus();
     if (value === 'halfway') {
+      refreshMyLocation();
       if (!state.halfway && rowValue(0) && rowValue(1)) findHalfway();
-      else showHalfwayMsg();
+      else if (state.halfway) showHalfwayMsg();
+      else if (staleNote) meetMsg(staleNote, true);
     }
     refresh();
   }
@@ -496,14 +499,17 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   }
 
   // ---------- Location ----------
-  function requestGps() {
-    if (state.gps || state.gpsPending) return;
+  var FRESH_FIX = 120000;   // a location older than 2 minutes gets looked up again
+  function requestGps(force) {
+    if (state.gpsPending || (state.gps && !force)) return;
+    if (force) { state.gps = null; refresh(); }
     if (!navigator.geolocation) { gpsFailed('This browser can’t share your location here, so type a place under Somewhere Else.', false); return; }
     state.gpsPending = true;
     setHint('Finding you…');
     navigator.geolocation.getCurrentPosition(function (pos) {
       state.gpsPending = false;
       state.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      state.gpsAt = Date.now();
       setHint('');
       refresh();
     }, function (err) {
@@ -512,7 +518,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       gpsFailed(denied
         ? 'Location is blocked for this page, so type a place under Somewhere Else. To use My Location, allow location for this site in your browser settings.'
         : 'Couldn’t get your location, so type a place under Somewhere Else, or tap My Location to try again.', denied);
-    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 });
+    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 });
   }
   function gpsFailed(message, remember) {
     if (state.start === 'gps') {
@@ -758,12 +764,34 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var m = /^\s*(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/.exec(s || '');
     return m ? { lat: Number(m[1]), lng: Number(m[2]) } : null;
   }
+  // "My location" from Here is where this phone was when Here was tapped (gps, fixAt);
+  // it gets looked up again before it's used. A location texted from the other phone
+  // ("Morgan’s location") is where they were when they sent it (sentAt), so it's
+  // cleared after 12 hours.
+  var SENT_HOURS = 12;
+  var staleNote = '';
+  function isMyLocation(r) { return !!(r && r.coords && (r.gps || r.text === 'My location')); }
+  function sentTooOld(r) {
+    return !!(r && r.coords && /’s location$/.test(r.text) && !(r.sentAt && within(r.sentAt, SENT_HOURS * 3600000)));
+  }
+  function staleSentNote(i) {
+    return PEOPLE[i] + '’s texted location was more than ' + SENT_HOURS + ' hours old, so it’s cleared. Have ' +
+      PEOPLE[i] + ' send a new one, or type where ' + PEOPLE[i] + ' is starting.';
+  }
   function loadRow(i) {
     try {
       var r = JSON.parse(store.get('meet' + i) || 'null');
       if (r && typeof r.text === 'string') {
+        if (sentTooOld(r)) {
+          staleNote = staleSentNote(i);
+          store.set('meet' + i, JSON.stringify({ text: '', coords: null }));
+          return { text: '', coords: null };
+        }
         var ok = fresh(r.at);
-        return { text: r.text, coords: ok ? r.coords || null : null, at: ok ? r.at || null : null };
+        return {
+          text: r.text, coords: ok ? r.coords || null : null, at: ok ? r.at || null : null,
+          gps: isMyLocation(r), fixAt: r.fixAt || 0, sentAt: r.sentAt || 0
+        };
       }
     } catch (e) {}
     return { text: MEET_DEFAULTS[i] || '', coords: null };
@@ -793,10 +821,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.meetMsg.textContent = text || '';
     els.meetMsg.classList.toggle('is-warn', !!warn);
   }
+  var MEET_PLACEHOLDER = els.meet0.placeholder;
   function setRow(i, row) {
     state.meet[i] = row;
     store.set('meet' + i, JSON.stringify(row));
     els['meet' + i].value = row.text;
+    els['meet' + i].placeholder = MEET_PLACEHOLDER;
     els['meet' + i].classList.toggle('has-coords', !!row.coords);
     if (state.halfway) {
       state.halfway = null;
@@ -871,6 +901,45 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     r.unshift(entry);
     store.set('recent', JSON.stringify(r.slice(0, 10)));
   }
+  // Looks up where this phone is now for any "My location" box whose location is more than
+  // 2 minutes old: when the app opens, when Halfway is picked, and when the app comes back
+  // on screen. Until then the box is empty, so it never shows an old spot as "My location".
+  function refreshMyLocation() {
+    [0, 1].forEach(function (i) {
+      var r = state.meet[i];
+      if (!isMyLocation(r) || (r.fixAt && within(r.fixAt, FRESH_FIX))) return;
+      var input = els['meet' + i];
+      var keptHalfway = state.halfway;
+      var keptKey = meetKey();
+      state.meet[i] = { text: '', coords: null, finding: true };
+      state.halfway = null;
+      input.value = '';
+      input.placeholder = 'Finding your location…';
+      input.classList.remove('has-coords');
+      refresh();
+      getFix(function (c) {
+        if (!state.meet[i].finding) return;   // something else was typed or picked meanwhile
+        // Hardly moved: keep the same spot so the halfway already worked out still counts.
+        var row = { text: 'My location', coords: miles(r.coords, c) < 0.25 ? r.coords : c, gps: true, fixAt: Date.now() };
+        setRow(i, row);
+        input.classList.add('has-coords');
+        if (keptHalfway && meetKey() === keptKey) {
+          state.halfway = keptHalfway;
+          showHalfwayMsg();
+          refresh();
+        } else if (state.start === 'halfway' && rowValue(1 - i)) {
+          findHalfway();
+        } else {
+          refresh();
+        }
+      }, function () {
+        if (!state.meet[i].finding) return;
+        setRow(i, { text: '', coords: null });
+        meetMsg('Couldn’t get your current location, so your box is empty. Tap Here to try again, or type where you’re starting.', true);
+        refresh();
+      });
+    });
+  }
   function getFix(ok, fail) {
     if (!navigator.geolocation) { fail('This browser can’t share its location here. Type a town or address instead.'); return; }
     navigator.geolocation.getCurrentPosition(function (pos) {
@@ -879,11 +948,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       fail(err && err.code === 1
         ? 'Location is blocked for this page. Type a town or address instead.'
         : 'Couldn’t get this phone’s location. Type a town or address instead.');
-    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 });
   }
 
   var halfwayToken = 0;
   function findHalfway() {
+    if (state.meet[0].finding || state.meet[1].finding) { meetMsg('Finding your location…'); return; }
     var a = rowValue(0);
     var b = rowValue(1);
     if (!a || !b) { meetMsg('Fill in where ' + PEOPLE[0] + ' and ' + PEOPLE[1] + ' are starting.', true); return; }
@@ -895,6 +965,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     callServer('findHalfway', { a: a, b: b }).then(function (res) {
       if (token !== halfwayToken) return;
       done();
+      if (state.meet[0].finding || state.meet[1].finding) return;   // a location is being updated; it'll ask again
       if (!res || !res.ok) { meetMsg((res && res.error) || 'Couldn’t find halfway.', true); return; }
       state.halfway = res;
       store.set('halfway', JSON.stringify({ key: meetKey(), res: res, at: Date.now() }));
@@ -941,12 +1012,13 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   function textMyStart() {
     var me = state.me;
     if (me === null) return;
+    if (state.meet[me].finding) { meetMsg('Still finding your location. Try again in a second.'); return; }
     var v = rowValue(me);
     if (!v) { meetMsg('Fill in where you’re starting first, or tap Here.', true); return; }
     var url = location.href.split('#')[0] + '#' + encodeURIComponent(PEOPLE[me]) + '=' +
       encodeURIComponent(v).replace(/%2C/gi, ',');
     var other = PEOPLE[1 - me];
-    var text = 'Here’s where I’m starting from tonight!';
+    var text = 'Here’s where I’m starting from tonight.';
     if (navigator.share) {
       navigator.share({ title: 'Date Night', text: text, url: url }).then(function () {
         meetMsg('Sent. ' + other + ' just taps the link.');
@@ -992,7 +1064,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (i < 0) return { error: 'That link is for ' + name + ', not ' + PEOPLE[0] + ' or ' + PEOPLE[1] + '.' };
     if (!value) return CUT_OFF;
     var c = parseCoords(value);
-    return { i: i, row: c ? { text: PEOPLE[i] + '’s location', coords: c } : { text: value, coords: null } };
+    return { i: i, row: c ? { text: PEOPLE[i] + '’s location', coords: c, sentAt: Date.now() } : { text: value, coords: null } };
   }
   function showHalfwayPanel() {
     if (state.start === 'halfway') return;
@@ -1014,18 +1086,20 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (rowValue(1 - st.i)) findHalfway();
     refresh();
   }
+  // True if the page was opened from a texted link (handled or not).
   function readStartFromHash() {
     var h = location.hash || '';
-    if (!/^#[^=]+=/.test(h)) return;
+    if (!/^#[^=]+=/.test(h)) return false;
     var st = parseStart(h);
     try { history.replaceState(null, '', location.href.split('#')[0]); } catch (e) {}
-    if (!st) return;
+    if (!st) return false;
     if (st.error) {
       showHalfwayPanel();
       meetMsg(st.error, true);
-      return;
+      return true;
     }
     takeStart(st);
+    return true;
   }
 
   [0, 1].forEach(function (i) {
@@ -1042,6 +1116,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       }
       state.meet[i] = { text: input.value, coords: null };
       store.set('meet' + i, JSON.stringify(state.meet[i]));
+      input.placeholder = MEET_PLACEHOLDER;
       input.classList.remove('has-coords');
       meetMsg('');
       if (state.halfway) { state.halfway = null; refresh(); }
@@ -1054,16 +1129,17 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els['here' + i].addEventListener('click', function () {
       var btn = els['here' + i];
       btn.disabled = true;
-      meetMsg('Finding this phone…');
+      meetMsg('Finding your location…');
       getFix(function (c) {
         btn.disabled = false;
         if (state.me === null) {
           state.me = i;
           store.set('me', String(i));
         }
-        setRow(i, { text: 'My location', coords: c });
+        setRow(i, { text: 'My location', coords: c, gps: true, fixAt: Date.now() });
         renderMeet();
         meetMsg('');
+        if (state.start === 'halfway' && rowValue(1 - i)) findHalfway();
       }, function (msg) {
         btn.disabled = false;
         meetMsg(msg, true);
@@ -1071,8 +1147,24 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     });
   });
   els.textBtn.addEventListener('click', textMyStart);
+  // Coming back to the app after a while: update "My location" and drop old texted ones.
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState !== 'visible') return;
+    [0, 1].forEach(function (i) {
+      if (sentTooOld(state.meet[i])) {
+        setRow(i, { text: '', coords: null });
+        meetMsg(staleSentNote(i), true);
+        refresh();
+      }
+    });
+    if (state.start === 'halfway') refreshMyLocation();
+    if (state.start === 'gps' && state.gps && !within(state.gpsAt || 0, FRESH_FIX)) requestGps(true);
+  });
   els.findBtn.addEventListener('click', function () { findHalfway(); });
-  window.addEventListener('hashchange', readStartFromHash);
+  window.addEventListener('hashchange', function () {
+    refreshMyLocation();
+    readStartFromHash();
+  });
 
   // ---------- Somewhere Else ----------
   // One typed place as the center. It uses the halfway lookup the script already has:
@@ -1510,12 +1602,14 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   renderChips();
   renderMeet();
   renderCustom();
-  readStartFromHash();
+  if (state.start === 'halfway' || /^#[^=]+=/.test(location.hash || '')) refreshMyLocation();
+  var fromLink = readStartFromHash();
   if (state.start === 'gps') requestGps();
   if (state.start === 'custom' && customExpired) useCustom();
-  if (state.start === 'halfway') {
+  if (state.start === 'halfway' && !fromLink) {
     if (state.halfway) showHalfwayMsg();
     else if (rowValue(0) && rowValue(1)) findHalfway();
+    else if (staleNote) meetMsg(staleNote, true);
   }
   load();
 })();
