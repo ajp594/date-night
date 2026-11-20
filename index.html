@@ -245,7 +245,6 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     <div class="meet" id="custom" hidden>
       <div class="custom-row">
         <input id="customInput" autocomplete="off" enterkeyhint="go" placeholder="Town, neighborhood or address" aria-label="Where you’re headed">
-        <button type="button" class="find" id="customBtn">Use It</button>
       </div>
       <p class="hint" id="customMsg" hidden></p>
     </div>
@@ -331,7 +330,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     meet: $('meet'), meet0: $('meet0'), meet1: $('meet1'), meetName0: $('meetName0'), meetName1: $('meetName1'),
     here0: $('here0'), here1: $('here1'), textBtn: $('textBtn'), textHelp: $('textHelp'), whoLine: $('whoLine'),
     findBtn: $('findBtn'), meetMsg: $('meetMsg'), tDrive: $('tDrive'),
-    custom: $('custom'), customInput: $('customInput'), customBtn: $('customBtn'), customMsg: $('customMsg')
+    custom: $('custom'), customInput: $('customInput'), customMsg: $('customMsg')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
   var MEET_DEFAULTS = CFG.MEET_DEFAULTS || [];
@@ -1103,7 +1102,11 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (state.custom && document.activeElement !== els.customInput) els.customInput.value = state.custom.text;
     if (state.start === 'custom' && state.custom && state.custom.point) customMsg('Using ' + state.custom.label + '.');
   }
+  // A typed place gets looked up when you press Go or tap away from the box.
+  // Picking from the dropdown needs no lookup.
   var customToken = 0;
+  var customPending = '';
+  var lastPlace = state.custom && state.custom.point ? state.custom : null;   // put back if the box is left empty
   function useCustom() {
     var q = els.customInput.value.trim();
     if (!q) { customMsg('Type a town, neighborhood or address.', true); return; }
@@ -1112,17 +1115,18 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       els.customInput.blur();
       return;
     }
+    if (q === customPending) return;
     var token = ++customToken;
-    els.customBtn.disabled = true;
-    els.customBtn.textContent = 'Finding…';
-    customMsg('');
-    var done = function () { els.customBtn.disabled = false; els.customBtn.textContent = 'Use It'; };
+    customPending = q;
+    customMsg('Looking up ' + q + '…');
+    var done = function () { customPending = ''; };
     callServer('findHalfway', { a: q, b: q }).then(function (res) {
       if (token !== customToken) return;
       done();
       if (!res || !res.ok) { customMsg((res && res.error) || 'Couldn’t find that place.', true); return; }
       var pt = res.a || res.point;
       state.custom = { text: q, point: { lat: pt.lat, lng: pt.lng }, label: res.label || shortLabel(pt.label) || q, at: Date.now() };
+      lastPlace = state.custom;
       store.set('custom', JSON.stringify(state.custom));
       rememberPlace(q, state.custom.point, state.custom.label, state.custom);
       customMsg('Using ' + state.custom.label + '.');
@@ -1134,19 +1138,35 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       customMsg('Couldn’t look that up: ' + errText(err) + '.', true);
     });
   }
-  els.customBtn.addEventListener('click', useCustom);
   els.customInput.addEventListener('keydown', function (ev) {
     if (ev.key !== 'Enter') return;
     ev.preventDefault();
     useCustom();
   });
   els.customInput.addEventListener('input', function () {
-    // A new place takes effect when you tap Use It; until then nothing gets picked from the old one.
+    // Typing a new place stops the lookup of anything typed before it.
+    if (customPending) { customToken++; customPending = ''; customMsg(''); }
+    // Nothing gets picked from the old place while a new one is being typed.
     if (state.custom && state.custom.point && els.customInput.value.trim() !== state.custom.text) {
+      lastPlace = state.custom;
       state.custom = { text: els.customInput.value, point: null, label: '' };
       customMsg('');
       refresh();
     }
+  });
+  els.customInput.addEventListener('blur', function () {
+    // The wait lets a tap on Halfway or My Location switch away without looking anything up.
+    setTimeout(function () {
+      if (state.start !== 'custom' || document.activeElement === els.customInput) return;
+      var q = els.customInput.value.trim();
+      if (q) { useCustom(); return; }
+      if (lastPlace && !(state.custom && state.custom.point)) {
+        state.custom = lastPlace;
+        els.customInput.value = lastPlace.text;
+        customMsg('Using ' + lastPlace.label + '.');
+        refresh();
+      }
+    }, 250);
   });
 
   // ---------- Suggestions while typing ----------
@@ -1372,8 +1392,11 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   });
   attachSuggest(els.customInput, function (it) {
     els.customInput.value = it.text;
+    customToken++;
+    customPending = '';
     if (!it.coords) { useCustom(); return; }
     state.custom = { text: it.text, point: it.coords, label: it.place || it.main, at: it.at || null };
+    lastPlace = state.custom;
     store.set('custom', JSON.stringify(state.custom));
     rememberPlace(it.text, it.coords, state.custom.label, state.custom);
     customMsg('Using ' + state.custom.label + '.');
