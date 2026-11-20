@@ -149,8 +149,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .find { appearance: none; padding: 11px 16px; border: 0; border-radius: 10px; background: var(--ivory); color: #1d0b12; font: 700 0.95rem var(--body); cursor: pointer; }
 .find:disabled { opacity: 0.5; cursor: wait; }
 .find:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
-.send { font-size: 0.86rem; color: var(--dusk); }
-.send[hidden] { display: none; }
+.meet-row .mini[hidden] { display: inline-block; visibility: hidden; }
+.custom-row { display: flex; gap: 8px; }
+.custom-row input { flex: 1; min-width: 0; padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(247, 236, 220, 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
+.custom-row input::placeholder { color: var(--dusk); }
+.custom-row input:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.meet .who { font-size: 0.82rem; }
 .meet .hint { margin: 0; }
 .ticket-drive { margin: 0; font-size: 0.9rem; font-weight: 600; font-variant-numeric: tabular-nums; }
 .ticket-drive[hidden] { display: none; }
@@ -210,21 +214,29 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     <div class="meet" id="meet" hidden>
       <div class="meet-row">
         <label for="meet0" id="meetName0">Alec</label>
-        <input id="meet0" list="spotList" autocomplete="off" enterkeyhint="next" placeholder="Town, address or place">
+        <input id="meet0" list="placeList" autocomplete="off" enterkeyhint="next" placeholder="Town, address or place">
         <button type="button" class="mini" id="here0">Here</button>
       </div>
       <div class="meet-row">
         <label for="meet1" id="meetName1">Morgan</label>
-        <input id="meet1" list="spotList" autocomplete="off" enterkeyhint="go" placeholder="Town, address or place">
+        <input id="meet1" list="placeList" autocomplete="off" enterkeyhint="go" placeholder="Town, address or place">
         <button type="button" class="mini" id="here1">Here</button>
       </div>
       <div class="meet-actions">
         <button type="button" class="find" id="findBtn">Find halfway</button>
-        <span class="send" id="sendWrap" hidden>Send starting point: <button type="button" class="linkish" id="send0">Alec’s</button> · <button type="button" class="linkish" id="send1">Morgan’s</button></span>
+        <button type="button" class="linkish" id="textBtn" hidden>Text Morgan where I’m starting</button>
       </div>
-      <p class="hint" id="spotHelp" hidden>Got someone’s starting point? Tap their link, or paste the whole text into either box.</p>
+      <p class="hint" id="textHelp" hidden></p>
       <p class="hint" id="meetMsg" hidden></p>
-      <datalist id="spotList"></datalist>
+      <p class="hint who" id="whoLine" hidden></p>
+      <datalist id="placeList"></datalist>
+    </div>
+    <div class="meet" id="custom" hidden>
+      <div class="custom-row">
+        <input id="customInput" list="placeList" autocomplete="off" enterkeyhint="go" placeholder="Town, neighborhood or address" aria-label="Where you’re headed">
+        <button type="button" class="find" id="customBtn">Use it</button>
+      </div>
+      <p class="hint" id="customMsg" hidden></p>
     </div>
   </fieldset>
 
@@ -237,7 +249,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     <div class="bulbs" aria-hidden="true"></div>
     <div class="reel">
       <div>
-        <div class="reel-label">Tonight’s spot</div>
+        <div class="reel-label">Tonight we’re going to</div>
         <div class="reel-name is-idle" id="reelName">Loading…</div>
       </div>
     </div>
@@ -265,7 +277,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   </article>
 
   <details class="roster" id="roster">
-    <summary id="rosterSummary">Spots in range</summary>
+    <summary id="rosterSummary">Places in range</summary>
     <ol id="rosterList"></ol>
   </details>
 
@@ -306,8 +318,9 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     listRows: $('listRows'), capNote: $('capNote'), addForm: $('addForm'), addUrl: $('addUrl'), addBtn: $('addBtn'), addMsg: $('addMsg'),
     setup: $('setup'), setupForm: $('setupForm'), setupUrl: $('setupUrl'), setupMsg: $('setupMsg'),
     meet: $('meet'), meet0: $('meet0'), meet1: $('meet1'), meetName0: $('meetName0'), meetName1: $('meetName1'),
-    here0: $('here0'), here1: $('here1'), send0: $('send0'), send1: $('send1'), sendWrap: $('sendWrap'),
-    findBtn: $('findBtn'), meetMsg: $('meetMsg'), spotList: $('spotList'), tDrive: $('tDrive'), spotHelp: $('spotHelp')
+    here0: $('here0'), here1: $('here1'), textBtn: $('textBtn'), textHelp: $('textHelp'), whoLine: $('whoLine'),
+    findBtn: $('findBtn'), meetMsg: $('meetMsg'), placeList: $('placeList'), tDrive: $('tDrive'),
+    custom: $('custom'), customInput: $('customInput'), customBtn: $('customBtn'), customMsg: $('customMsg')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
   var MEET_DEFAULTS = CFG.MEET_DEFAULTS || [];
@@ -364,7 +377,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     range: [], pick: null, vetoesLeft: VETOES, spun: false, spinning: false
   };
   if (RADII.indexOf(state.radius) < 0) state.radius = RADII[0];
-  if (state.start !== 'gps' && state.start !== 'halfway' && !presetByName(state.start)) state.start = 'gps';
+  if (state.start !== 'gps' && state.start !== 'halfway' && state.start !== 'custom' && !presetByName(state.start)) state.start = 'gps';
 
   // ---------- Geometry ----------
   function miles(a, b) {
@@ -377,9 +390,15 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   function origin() {
     if (state.start === 'gps') return state.gps;
     if (state.start === 'halfway') return state.halfway && state.halfway.point;
+    if (state.start === 'custom') return state.custom && state.custom.point;
     return presetByName(state.start);
   }
-  function originLabel() { return state.start === 'gps' ? 'you' : state.start === 'halfway' ? 'halfway' : state.start; }
+  function originLabel() {
+    if (state.start === 'gps') return 'you';
+    if (state.start === 'halfway') return 'halfway';
+    if (state.start === 'custom') return (state.custom && state.custom.label) || 'there';
+    return state.start;
+  }
   function fmtMiles(d) { return (d < 10 ? d.toFixed(1) : String(Math.round(d))) + ' mi'; }
 
   function computeRange() {
@@ -433,6 +452,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.starts.innerHTML = '';
     els.starts.appendChild(chip('start', 'gps', 'My location', state.start === 'gps', onStart));
     els.starts.appendChild(chip('start', 'halfway', 'Halfway', state.start === 'halfway', onStart));
+    els.starts.appendChild(chip('start', 'custom', 'Somewhere else', state.start === 'custom', onStart));
     STARTS.forEach(function (s) { els.starts.appendChild(chip('start', s.name, s.name, state.start === s.name, onStart)); });
     els.radii.innerHTML = '';
     RADII.forEach(function (r) {
@@ -444,6 +464,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     store.set('start', value);
     if (value === 'gps') requestGps(); else setHint('');
     renderMeet();
+    renderCustom();
+    if (value === 'custom' && !(state.custom && state.custom.point)) els.customInput.focus();
     if (value === 'halfway') {
       if (!state.halfway && rowValue(0) && rowValue(1)) findHalfway();
       else showHalfwayMsg();
@@ -499,7 +521,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   }
   function waitingForGps() {
     if (state.radius === 0) return false;
-    return (state.start === 'gps' && !state.gps) || (state.start === 'halfway' && !state.halfway);
+    return (state.start === 'gps' && !state.gps) || (state.start === 'halfway' && !state.halfway) ||
+      (state.start === 'custom' && !(state.custom && state.custom.point));
   }
 
   function renderIdleReel() {
@@ -508,7 +531,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (state.loadError) el.textContent = 'Couldn’t load';
     else if (state.needsSetup) el.textContent = 'Almost ready';
     else if (!state.loaded) el.textContent = 'Loading…';
-    else if (waitingForGps()) el.textContent = state.start === 'halfway' ? 'Find halfway first' : 'Finding you…';
+    else if (waitingForGps()) el.textContent = state.start === 'halfway' ? 'Find halfway first'
+      : state.start === 'custom' ? 'Type where you’re headed' : 'Finding you…';
     else if (!state.range.length) el.textContent = 'Nothing that close';
     else el.textContent = 'Spin to find out';
   }
@@ -538,9 +562,10 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   function renderRoster() {
     var n = state.range.length;
     var where = state.radius === 0 ? 'on your list' : 'within ' + state.radius + ' mi of ' + originLabel();
-    els.rosterSummary.textContent = !state.loaded ? 'Spots in range'
-      : waitingForGps() ? (state.start === 'halfway' ? 'Waiting for the halfway point' : 'Waiting for your location')
-      : n + (n === 1 ? ' spot ' : ' spots ') + where;
+    els.rosterSummary.textContent = !state.loaded ? 'Places in range'
+      : waitingForGps() ? (state.start === 'halfway' ? 'Waiting for the halfway point'
+        : state.start === 'custom' ? 'Waiting for a place' : 'Waiting for your location')
+      : n + (n === 1 ? ' place ' : ' places ') + where;
     if (!els.roster.open) { els.rosterList.setAttribute('data-stale', '1'); return; }
     var frag = document.createDocumentFragment();
     state.range.forEach(function (e) {
@@ -578,11 +603,11 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var lists = res.lists || [];
     var allLive = lists.every(function (l) { return l.live; });
     var where = lists.length === 1 ? '“' + lists[0].title + '”' : lists.length + ' lists';
-    var text = res.places.length + ' spots on ' + where + (allLive ? ', pulled just now.' : '.');
+    var text = res.places.length + ' places on ' + where + (allLive ? ', pulled just now.' : '.');
     lists.forEach(function (l) {
       if (l.ok && !l.live) text += ' “' + l.title + '” is the copy from ' + fmtWhen(l.fetchedAt) + ' because the live pull failed (' + l.error + ').';
       if (!l.ok) text += ' One list didn’t load (' + l.error + ').';
-      if (l.ok && l.total > l.count) text += ' Google sent only ' + l.count + ' of the ' + l.total + ' places on “' + l.title + '”. Save new spots to a second list and add it at the bottom of this page.';
+      if (l.ok && l.total > l.count) text += ' Google sent only ' + l.count + ' of the ' + l.total + ' places on “' + l.title + '”. Save new places to a second list and add it at the bottom of this page.';
     });
     var missing = res.places.filter(function (p) { return typeof p.lat !== 'number'; }).length;
     if (missing) text += ' ' + missing + (missing === 1 ? ' has no location and only comes up' : ' have no location and only come up') + ' with Any distance.';
@@ -708,7 +733,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       if (RADII.indexOf(state.radius) < 0) {
         state.radius = RADII.indexOf(c.DEFAULT_RADIUS) >= 0 ? c.DEFAULT_RADIUS : RADII[0];
       }
-      if (state.start !== 'gps' && state.start !== 'halfway' && !presetByName(state.start)) state.start = STARTS.length ? STARTS[0].name : 'gps';
+      if (state.start !== 'gps' && state.start !== 'halfway' && state.start !== 'custom' && !presetByName(state.start)) state.start = STARTS.length ? STARTS[0].name : 'gps';
       renderChips();
     }
   }
@@ -737,6 +762,14 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var savedHalfway = JSON.parse(store.get('halfway') || 'null');
     if (savedHalfway && savedHalfway.key === meetKey()) state.halfway = savedHalfway.res;
   } catch (e) {}
+  // Whose phone this is (0 or 1), so texting can say "I" and name the other person.
+  // Picked once, or worked out the first time someone taps Here or opens a texted link.
+  state.me = store.get('me') === '0' ? 0 : store.get('me') === '1' ? 1 : null;
+  function setMe(i) {
+    state.me = i;
+    store.set('me', String(i));
+    renderMeet();
+  }
 
   function meetMsg(text, warn) {
     els.meetMsg.hidden = !text;
@@ -755,40 +788,67 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   }
   function renderMeet() {
     els.meet.hidden = state.start !== 'halfway';
+    var me = state.me;
     [0, 1].forEach(function (i) {
       els['meetName' + i].textContent = PEOPLE[i];
       els['meet' + i].value = state.meet[i].text;
       els['meet' + i].classList.toggle('has-coords', !!state.meet[i].coords);
+      // Once we know whose phone this is, Here only goes on that person's box.
+      els['here' + i].hidden = hosted && me !== null && i !== me;
       els['here' + i].setAttribute('aria-label', 'Use this phone’s location for ' + PEOPLE[i]);
-      els['send' + i].textContent = PEOPLE[i] + '’s';
-      els['send' + i].setAttribute('aria-label', 'Send ' + PEOPLE[i] + '’s starting point');
     });
-    els.sendWrap.hidden = !hosted;
-    els.spotHelp.hidden = !hosted;
-    renderSpotList();
+    var other = me === null ? '' : PEOPLE[1 - me];
+    els.textBtn.hidden = !hosted || me === null;
+    els.textBtn.textContent = 'Text ' + other + ' where I’m starting';
+    els.textHelp.hidden = !hosted || me === null;
+    els.textHelp.textContent = 'When ' + other + ' texts you a starting point, tap the link. Pasting the whole text into a box works too.';
+    renderWho();
+    renderPlaceList();
   }
-  function recentSpots() {
+  function renderWho() {
+    var line = els.whoLine;
+    line.hidden = !hosted;
+    line.innerHTML = '';
+    function button(label, onClick) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'linkish';
+      b.textContent = label;
+      b.addEventListener('click', onClick);
+      return b;
+    }
+    if (state.me === null) {
+      line.appendChild(document.createTextNode('Whose phone is this? '));
+      line.appendChild(button(PEOPLE[0] + '’s', function () { setMe(0); }));
+      line.appendChild(document.createTextNode(' · '));
+      line.appendChild(button(PEOPLE[1] + '’s', function () { setMe(1); }));
+    } else {
+      line.appendChild(document.createTextNode('This is ' + PEOPLE[state.me] + '’s phone. '));
+      line.appendChild(button('Switch', function () { setMe(1 - state.me); }));
+    }
+  }
+  function recentPlaces() {
     try {
       var r = JSON.parse(store.get('recent') || '[]');
       return Array.isArray(r) ? r : [];
     } catch (e) { return []; }
   }
-  function rememberSpot(text) {
+  function rememberPlace(text) {
     if (!text || parseCoords(text) || presetByName(text)) return;
-    var r = recentSpots().filter(function (x) { return x.toLowerCase() !== text.toLowerCase(); });
+    var r = recentPlaces().filter(function (x) { return x.toLowerCase() !== text.toLowerCase(); });
     r.unshift(text);
     store.set('recent', JSON.stringify(r.slice(0, 10)));
   }
-  function renderSpotList() {
+  function renderPlaceList() {
     var seen = {};
-    els.spotList.innerHTML = '';
-    STARTS.map(function (s) { return s.name; }).concat(recentSpots()).forEach(function (n) {
+    els.placeList.innerHTML = '';
+    STARTS.map(function (s) { return s.name; }).concat(recentPlaces()).forEach(function (n) {
       var k = n.toLowerCase();
       if (seen[k]) return;
       seen[k] = true;
       var o = document.createElement('option');
       o.value = n;
-      els.spotList.appendChild(o);
+      els.placeList.appendChild(o);
     });
   }
   function getFix(ok, fail) {
@@ -818,8 +878,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       if (!res || !res.ok) { meetMsg((res && res.error) || 'Couldn’t find halfway.', true); return; }
       state.halfway = res;
       store.set('halfway', JSON.stringify({ key: meetKey(), res: res }));
-      [0, 1].forEach(function (i) { if (!state.meet[i].coords) rememberSpot(state.meet[i].text.trim()); });
-      renderSpotList();
+      [0, 1].forEach(function (i) { if (!state.meet[i].coords) rememberPlace(state.meet[i].text.trim()); });
+      renderPlaceList();
       showHalfwayMsg();
       refresh();
     }, function (err) {
@@ -857,21 +917,26 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     });
   }
 
-  // Texting a spot: a link to this page that fills in that person's box on the other phone.
-  function sendRow(i) {
-    var v = rowValue(i);
-    if (!v) { meetMsg('Fill in ' + PEOPLE[i] + '’s starting point first, or tap Here.', true); return; }
-    var url = location.href.split('#')[0] + '#spot=' + encodeURIComponent(PEOPLE[i] + '|' + v);
-    var other = PEOPLE[1 - i];
+  // Texting where you're starting: a link to this page (…#Alec=Lockport) that fills in
+  // your box on the other phone.
+  function textMyStart() {
+    var me = state.me;
+    if (me === null) return;
+    var v = rowValue(me);
+    if (!v) { meetMsg('Fill in where you’re starting first, or tap Here.', true); return; }
+    var url = location.href.split('#')[0] + '#' + encodeURIComponent(PEOPLE[me]) + '=' +
+      encodeURIComponent(v).replace(/%2C/gi, ',');
+    var other = PEOPLE[1 - me];
+    var text = 'Here’s where I’m starting from tonight.';
     if (navigator.share) {
-      navigator.share({ title: 'Date Night', text: PEOPLE[i] + '’s starting point for Date Night', url: url }).then(function () {
-        meetMsg('Sent. ' + other + ' taps the link, or pastes the whole text into either box.');
+      navigator.share({ title: 'Date Night', text: text, url: url }).then(function () {
+        meetMsg('Sent. ' + other + ' just taps the link.');
       }, function () {});
       return;
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(function () {
-        meetMsg('Link copied. Text it to ' + other + '.');
+      navigator.clipboard.writeText(text + ' ' + url).then(function () {
+        meetMsg('Copied. Text it to ' + other + '.');
       }, function () {
         meetMsg('Text this link to ' + other + ': ' + url);
       });
@@ -879,21 +944,34 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     }
     meetMsg('Text this link to ' + other + ': ' + url);
   }
-  // A spot link found in the page's own address or anywhere in pasted text.
-  // Returns { i, row } for one of the two people, { error } for a bad link, or null if there's none.
-  function parseSpot(text) {
-    var m = /#spot=([^\s]+)/.exec(text || '');
-    if (!m) return null;
-    var cutOff = { error: 'That link looks cut off. Ask for it again.' };
-    var raw;
-    try { raw = decodeURIComponent(m[1]); } catch (e) { return cutOff; }
-    var bar = raw.indexOf('|');
-    if (bar < 1) return cutOff;
-    var name = raw.slice(0, bar);
-    var value = raw.slice(bar + 1).trim().replace(/[.,;:!?)\]'"”’]+$/, '');
-    if (!value) return cutOff;
+
+  // A starting-point link in the page's own address or anywhere in pasted text.
+  // Returns { i, row } for one of the two of you, { error } for a bad link, or null if there's none.
+  var CUT_OFF = { error: 'That link looks cut off. Ask for it again.' };
+  function parseStart(text) {
+    var s = text || '';
+    var name;
+    var value;
+    var older = /#spot=([^\s]*)/.exec(s);   // links texted before the wording change
+    if (older) {
+      var raw;
+      try { raw = decodeURIComponent(older[1]); } catch (e) { return CUT_OFF; }
+      var bar = raw.indexOf('|');
+      if (bar < 1) return CUT_OFF;
+      name = raw.slice(0, bar);
+      value = raw.slice(bar + 1);
+    } else {
+      var m = /#([^=\s#&]+)=([^\s#]*)/.exec(s);
+      if (!m) return null;
+      try {
+        name = decodeURIComponent(m[1]);
+        value = decodeURIComponent(m[2]);
+      } catch (e) { return CUT_OFF; }
+    }
+    value = value.trim().replace(/[.,;:!?)\]'"”’]+$/, '');
     var i = PEOPLE.map(function (p) { return p.toLowerCase(); }).indexOf(name.toLowerCase());
     if (i < 0) return { error: 'That link is for ' + name + ', not ' + PEOPLE[0] + ' or ' + PEOPLE[1] + '.' };
+    if (!value) return CUT_OFF;
     var c = parseCoords(value);
     return { i: i, row: c ? { text: PEOPLE[i] + '’s location', coords: c } : { text: value, coords: null } };
   }
@@ -903,37 +981,44 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     store.set('start', 'halfway');
     renderChips();
     renderMeet();
+    renderCustom();
   }
-  function takeSpot(spot) {
+  function takeStart(st) {
     showHalfwayPanel();
-    setRow(spot.i, spot.row);
-    meetMsg('Got ' + PEOPLE[spot.i] + '’s starting point.');
-    if (rowValue(1 - spot.i)) findHalfway();
+    if (state.me === null) {
+      state.me = 1 - st.i;
+      store.set('me', String(state.me));
+    }
+    setRow(st.i, st.row);
+    renderMeet();
+    meetMsg('Got ' + PEOPLE[st.i] + '’s starting point.');
+    if (rowValue(1 - st.i)) findHalfway();
     refresh();
   }
-  function readSpotFromHash() {
-    if (!/^#spot=/.test(location.hash || '')) return;
-    var spot = parseSpot(location.hash);
+  function readStartFromHash() {
+    var h = location.hash || '';
+    if (!/^#[^=]+=/.test(h)) return;
+    var st = parseStart(h);
     try { history.replaceState(null, '', location.href.split('#')[0]); } catch (e) {}
-    if (!spot) return;
-    if (spot.error) {
+    if (!st) return;
+    if (st.error) {
       showHalfwayPanel();
-      meetMsg(spot.error, true);
+      meetMsg(st.error, true);
       return;
     }
-    takeSpot(spot);
+    takeStart(st);
   }
 
   [0, 1].forEach(function (i) {
     var input = els['meet' + i];
     input.addEventListener('input', function () {
-      var spot = parseSpot(input.value);
-      if (spot) {
-        // A pasted spot link: put this box back the way it was, then load the spot into the right box.
+      var st = parseStart(input.value);
+      if (st) {
+        // A pasted link: put this box back the way it was, then fill in the right box.
         input.value = state.meet[i].text;
-        if (spot.error) { meetMsg(spot.error, true); return; }
+        if (st.error) { meetMsg(st.error, true); return; }
         input.blur();
-        takeSpot(spot);
+        takeStart(st);
         return;
       }
       state.meet[i] = { text: input.value, coords: null };
@@ -953,17 +1038,88 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       meetMsg('Finding this phone…');
       getFix(function (c) {
         btn.disabled = false;
+        if (state.me === null) {
+          state.me = i;
+          store.set('me', String(i));
+        }
         setRow(i, { text: 'My location', coords: c });
+        renderMeet();
         meetMsg('');
       }, function (msg) {
         btn.disabled = false;
         meetMsg(msg, true);
       });
     });
-    els['send' + i].addEventListener('click', function () { sendRow(i); });
   });
+  els.textBtn.addEventListener('click', textMyStart);
   els.findBtn.addEventListener('click', function () { findHalfway(); });
-  window.addEventListener('hashchange', readSpotFromHash);
+  window.addEventListener('hashchange', readStartFromHash);
+
+  // ---------- Somewhere else ----------
+  // One typed place as the center. It uses the halfway lookup the script already has:
+  // a place is halfway between itself and itself, so the script needs no new code.
+  state.custom = null;
+  try {
+    var savedCustom = JSON.parse(store.get('custom') || 'null');
+    if (savedCustom && savedCustom.text && savedCustom.point) state.custom = savedCustom;
+  } catch (e) {}
+  function customMsg(text, warn) {
+    els.customMsg.hidden = !text;
+    els.customMsg.textContent = text || '';
+    els.customMsg.classList.toggle('is-warn', !!warn);
+  }
+  function shortLabel(addr) {
+    var parts = String(addr || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+    if (parts.length && /^(USA|United States)$/i.test(parts[parts.length - 1])) parts.pop();
+    if (parts.length > 1 && /^[A-Z]{2}( \d{5})?$/.test(parts[parts.length - 1])) parts.pop();
+    return parts.slice(0, 2).join(', ');
+  }
+  function renderCustom() {
+    els.custom.hidden = state.start !== 'custom';
+    if (state.custom && document.activeElement !== els.customInput) els.customInput.value = state.custom.text;
+    if (state.start === 'custom' && state.custom && state.custom.point) customMsg('Using ' + state.custom.label + '.');
+  }
+  var customToken = 0;
+  function useCustom() {
+    var q = els.customInput.value.trim();
+    if (!q) { customMsg('Type a town, neighborhood or address.', true); return; }
+    var token = ++customToken;
+    els.customBtn.disabled = true;
+    els.customBtn.textContent = 'Finding…';
+    customMsg('');
+    var done = function () { els.customBtn.disabled = false; els.customBtn.textContent = 'Use it'; };
+    callServer('findHalfway', { a: q, b: q }).then(function (res) {
+      if (token !== customToken) return;
+      done();
+      if (!res || !res.ok) { customMsg((res && res.error) || 'Couldn’t find that place.', true); return; }
+      var pt = res.a || res.point;
+      state.custom = { text: q, point: { lat: pt.lat, lng: pt.lng }, label: res.label || shortLabel(pt.label) || q };
+      store.set('custom', JSON.stringify(state.custom));
+      rememberPlace(q);
+      renderPlaceList();
+      customMsg('Using ' + state.custom.label + '.');
+      els.customInput.blur();
+      refresh();
+    }, function (err) {
+      if (token !== customToken) return;
+      done();
+      customMsg('Couldn’t look that up: ' + errText(err) + '.', true);
+    });
+  }
+  els.customBtn.addEventListener('click', useCustom);
+  els.customInput.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter') return;
+    ev.preventDefault();
+    useCustom();
+  });
+  els.customInput.addEventListener('input', function () {
+    // A new place takes effect when you tap Use it; until then nothing gets picked from the old one.
+    if (state.custom && state.custom.point && els.customInput.value.trim() !== state.custom.text) {
+      state.custom = { text: els.customInput.value, point: null, label: '' };
+      customMsg('');
+      refresh();
+    }
+  });
 
   // ---------- Spinning ----------
   function showName(name, landed) {
@@ -1064,7 +1220,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 
   renderChips();
   renderMeet();
-  readSpotFromHash();
+  renderCustom();
+  readStartFromHash();
   if (state.start === 'gps') requestGps();
   if (state.start === 'halfway') {
     if (state.halfway) showHalfwayMsg();
