@@ -340,13 +340,18 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 /* What sounds good: source, mood, tags, hours */
-.pills { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
-.pill { appearance: none; display: inline-grid; gap: 2px; max-width: 100%; padding: 8px 14px 9px; border: 1px solid var(--rule); border-radius: 14px; background: var(--velvet); color: var(--ivory); font: 600 0.92rem/1.2 var(--body); text-align: left; cursor: pointer; }
-.pill .k { font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dusk); }
-.pill .v { overflow-wrap: anywhere; }
-.pill.is-set { border-color: rgba(var(--bulb-rgb), 0.7); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.5); }
-.pill:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+/* Mood, tags and hours: one row each, like a settings list. */
+.pills { margin-top: 12px; display: grid; border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 0 1px var(--rule); }
+.pill { appearance: none; display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; padding: 15px 14px; border: 0; background: rgba(var(--ivory-rgb), 0.03); color: var(--ivory); font: 600 0.95rem/1.25 var(--body); text-align: left; cursor: pointer; }
+.pills .pill:not([hidden]) ~ .pill:not([hidden]) { border-top: 1px solid var(--rule); }
+.pill .k { flex: none; }
+.pill .v { min-width: 0; color: var(--dusk); font-weight: 500; text-align: right; overflow-wrap: anywhere; }
+.pill .v::after { content: "\00a0›"; color: var(--dusk); font-weight: 600; }
+.pill.is-set .v { color: var(--bulb); font-weight: 700; }
+.pill:focus-visible { outline: 2px solid var(--bulb); outline-offset: -2px; }
 .pill[hidden], .chips[hidden] { display: none; }
+#sources { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#sources .chip span { display: block; text-align: center; }
 .mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .mood { appearance: none; display: grid; justify-items: center; align-content: start; gap: 5px; padding: 12px 6px 10px; border: 1px solid var(--rule); border-radius: 14px; background: rgba(var(--ivory-rgb), 0.04); color: var(--ivory); font: 600 0.8rem/1.15 var(--body); cursor: pointer; }
 .mood .e { font-size: 1.6rem; line-height: 1; }
@@ -411,6 +416,39 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .tn-own { display: flex; gap: 8px; }
 .tn-own[hidden] { display: none; }
 .tn-own input { flex: 1; min-width: 0; padding: 9px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
+/* Two screens: plan the night, then play. */
+.screen { display: grid; gap: 18px; }
+.screen[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .screen.enter { animation: screen-in 0.26s ease-out; }
+  .screen.enter.from-left { animation-name: screen-in-left; }
+}
+@keyframes screen-in { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
+@keyframes screen-in-left { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+fieldset.step { padding: 16px 16px 18px; border-radius: 18px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); }
+fieldset.step > legend { float: left; width: 100%; margin-bottom: 12px; }
+fieldset.step > legend + * { clear: both; }
+.step-n { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 9px; border-radius: 50%; background: rgba(var(--bulb-rgb), 0.2); color: var(--bulb); font-size: 0.7rem; letter-spacing: 0; vertical-align: 1px; }
+fieldset.step .chips + .chips { margin-top: 10px; }
+.units .chip span { padding: 6px 12px; font-size: 0.82rem; }
+.go-bar { position: sticky; bottom: 0; z-index: 5; margin: 0 -16px; padding: 26px 16px calc(12px + env(safe-area-inset-bottom)); display: grid; gap: 8px; background: linear-gradient(to bottom, transparent 0, var(--night) 22px); }
+.go-note[hidden] { display: none; }
+.on-play .title { font-size: clamp(1.45rem, 6.4vw, 1.75rem); }
+@media (prefers-reduced-motion: no-preference) { .title { transition: font-size 0.2s ease; } }
+.go-note { margin: 0; text-align: center; font-size: 0.85rem; color: var(--dusk); }
+.go-buttons { display: grid; grid-template-columns: 1.35fr 1fr; gap: 10px; }
+.go-btn { appearance: none; border: 0; border-radius: 14px; padding: 17px 10px 15px; background: var(--velvet-2); color: var(--ivory); font: 900 1.3rem/1 var(--display); letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); }
+.go-btn.primary { background: var(--bulb); color: var(--on-bulb); box-shadow: 0 12px 30px -14px rgba(var(--bulb-rgb), 0.8); }
+.go-btn:active { transform: translateY(1px) scale(0.99); }
+.go-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; transform: none; }
+.go-btn:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
+.go-bar .linkish { justify-self: center; }
+.go-bar .linkish[hidden] { display: none; }
+.play-bar { display: flex; align-items: center; gap: 12px; }
+.back { appearance: none; flex: none; padding: 9px 15px 9px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--velvet); color: var(--ivory); font: 600 0.92rem var(--body); cursor: pointer; }
+.back:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.play-sum { margin: 0; flex: 1; min-width: 0; font-size: 0.84rem; line-height: 1.35; color: var(--dusk); }
+.set-lists .lists { padding-top: 0; border-top: 0; }
 </style>
 </head>
 <body>
@@ -427,6 +465,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     </div>
   </header>
 
+  <div class="screen" id="planScreen">
   <section class="live-card" id="liveCard" hidden>
     <h2 class="card-title">Play together, live</h2>
     <p class="hint">Connect both phones with the same passcode. Then you see the same spins, swipe together, and keep your ratings and date history. The first phone to connect picks the passcode.</p>
@@ -460,8 +499,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     </form>
   </section>
 
-  <fieldset>
-    <legend>Starting from</legend>
+  <fieldset class="step">
+    <legend><span class="step-n" aria-hidden="true">1</span>Starting from</legend>
     <div class="chips" id="starts"></div>
     <p class="hint" id="gpsHint" hidden></p>
     <div class="meet" id="meet" hidden>
@@ -500,15 +539,15 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     </div>
   </fieldset>
 
-  <fieldset>
-    <legend>Within</legend>
+  <fieldset class="step">
+    <legend><span class="step-n" aria-hidden="true">2</span>How far</legend>
     <div class="chips units" id="units"></div>
     <div class="chips" id="radii"></div>
     <div class="chips options" id="options"></div>
   </fieldset>
 
-  <fieldset>
-    <legend>What sounds good</legend>
+  <fieldset class="step">
+    <legend><span class="step-n" aria-hidden="true">3</span>What sounds good</legend>
     <div class="chips" id="sources" hidden></div>
     <div class="pills">
       <button type="button" class="pill" id="moodBtn" aria-haspopup="dialog"></button>
@@ -517,6 +556,30 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     </div>
     <p class="hint" id="filterHint" hidden></p>
   </fieldset>
+
+  <details class="roster" id="roster">
+    <summary id="rosterSummary">Places in range</summary>
+    <ol id="rosterList"></ol>
+  </details>
+
+  <div class="go-bar" id="goBar">
+    <p class="go-note" id="goNote" role="status"></p>
+    <div class="go-buttons">
+      <button type="button" class="go-btn primary" id="goSpin" disabled>Spin</button>
+      <button type="button" class="go-btn" id="goSwipe" disabled>Swipe</button>
+    </div>
+    <button type="button" class="linkish" id="goFresh" hidden>Start a new spin instead</button>
+  </div>
+
+  <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
+  <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
+  </div>
+
+  <div class="screen" id="playScreen" hidden>
+  <div class="play-bar">
+    <button type="button" class="back" id="backBtn">‹ Change</button>
+    <p class="play-sum" id="playSum"></p>
+  </div>
 
   <div class="modes" role="tablist" aria-label="How to pick">
     <button type="button" role="tab" id="modeSpin" aria-selected="true" aria-controls="spinView">Spin</button>
@@ -577,28 +640,11 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       <button type="button" class="linkish" id="dealMore" hidden>Deal more cards instead</button>
     </div>
   </section>
+  </div>
 
-  <details class="roster" id="roster">
-    <summary id="rosterSummary">Places in range</summary>
-    <ol id="rosterList"></ol>
-  </details>
 
-  <section class="lists" aria-labelledby="listsHead">
-    <h2 class="section-label" id="listsHead">Lists</h2>
-    <ul class="list-rows" id="listRows"></ul>
-    <p class="hint is-warn" id="capNote" hidden></p>
-    <form class="add" id="addForm" novalidate>
-      <label for="addUrl">Add another list</label>
-      <div class="add-row">
-        <input id="addUrl" name="addUrl" type="url" inputmode="url" autocomplete="off" placeholder="Paste a list’s share link">
-        <button id="addBtn" type="submit">Add</button>
-      </div>
-      <p class="hint" id="addMsg" hidden></p>
-    </form>
-  </section>
 
-  <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
-  <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
+
 </main>
 
 <div class="party" id="party" role="dialog" aria-modal="true" aria-labelledby="partyName" hidden>
@@ -641,6 +687,21 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     <div class="set-group"><h3>Skip places we went to in the last</h3><div class="chips" id="setSkip"></div><p class="hint" id="setSkipNote" hidden></p></div>
     <div class="set-group"><h3>Live mode</h3><p class="hint" id="setLive"></p><div><button type="button" class="linkish" id="setLiveBtn"></button></div></div>
     <div class="set-group"><h3>Google info</h3><p class="hint" id="setGoogle"></p></div>
+    <div class="set-group set-lists">
+  <section class="lists" aria-labelledby="listsHead">
+    <h3 id="listsHead">Your Google Maps lists</h3>
+    <ul class="list-rows" id="listRows"></ul>
+    <p class="hint is-warn" id="capNote" hidden></p>
+    <form class="add" id="addForm" novalidate>
+      <label for="addUrl">Add another list</label>
+      <div class="add-row">
+        <input id="addUrl" name="addUrl" type="url" inputmode="url" autocomplete="off" placeholder="Paste a list’s share link">
+        <button id="addBtn" type="submit">Add</button>
+      </div>
+      <p class="hint" id="addMsg" hidden></p>
+    </form>
+  </section>
+    </div>
   </div>
 </dialog>
 
@@ -748,7 +809,9 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     gmHere: $('gmHere'), gmMsg: $('gmMsg'), groupSheet: $('groupSheet'), groupIntro: $('groupIntro'), groupForm: $('groupForm'),
     groupName: $('groupName'), groupCode: $('groupCode'), groupGo: $('groupGo'), groupMsg: $('groupMsg'), groupIn: $('groupIn'),
     groupCodeShow: $('groupCodeShow'), groupShare: $('groupShare'), groupShareMsg: $('groupShareMsg'), groupPeople: $('groupPeople'),
-    groupLeave: $('groupLeave')
+    groupLeave: $('groupLeave'),
+    planScreen: $('planScreen'), playScreen: $('playScreen'), goNote: $('goNote'), goSpin: $('goSpin'), goSwipe: $('goSwipe'),
+    goFresh: $('goFresh'), backBtn: $('backBtn'), playSum: $('playSum')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
   var MEET_DEFAULTS = CFG.MEET_DEFAULTS || [];
@@ -1049,6 +1112,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     renderSpin();
     renderRoster();
     if (!state.spun && !state.spinning) renderIdleReel();
+    renderPlaySum();
   }
   function waitingForGps() {
     if (currentLimit() === 0 && state.src !== 'google') return false;
@@ -1089,6 +1153,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     }
     renderVetoes(r);
     els.reset.hidden = state.spinning || (roomOn() ? !(roomState() && roomState().round) : !state.spun);
+    renderGo();
   }
   function vetoesLeft(r, n) { return r && r.vetoes && typeof r.vetoes[n] === 'number' ? r.vetoes[n] : VETOES_EACH; }
   // Google picks need a place to search around; list picks need something in range.
@@ -1129,16 +1194,20 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     }
     box.setAttribute('aria-label', state.vetoesLeft + ' of ' + VETOES + ' vetoes left');
   }
-  function renderRoster() {
+  function rangeText() {
     var n = state.range.length;
     var where = currentLimit() === 0 ? 'on your list' : 'within ' + limitText() + ' of ' + originLabel();
     var checks = state.src === 'list' && (state.moods.length || state.open != null) ? '. The mood and hours get checked when you spin' : '';
+    return n + (n === 1 ? ' place ' : ' places ') + where + checks;
+  }
+  function renderRoster() {
+    var n = state.range.length;
     els.roster.hidden = state.src === 'google';
     els.rosterSummary.textContent = !state.loaded ? 'Places in range'
       : waitingForGps() ? (state.start === 'halfway' ? 'Waiting for the halfway point'
         : state.start === 'middle' ? 'Waiting on everyone’s starting point'
         : state.start === 'custom' ? 'Waiting for a place' : 'Waiting for your location')
-      : n + (n === 1 ? ' place ' : ' places ') + where + checks;
+      : rangeText();
     if (!els.roster.open) { els.rosterList.setAttribute('data-stale', '1'); return; }
     var frag = document.createDocumentFragment();
     state.range.forEach(function (e) {
@@ -2427,6 +2496,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       live.roundSeen = r.id;
       if (!firstLook && r.by !== meName() && r.mode !== state.mode) setMode(r.mode);
     }
+    followRound(r);
     renderGroupBits();
     refresh();
     renderLiveRound();
@@ -2722,6 +2792,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.swipeEmpty.appendChild(document.createTextNode(text));
   }
   function renderSwipe() {
+    renderGo();
     if (state.mode !== 'swipe') return;
     var r = liveRound('swipe');
     els.deck.hidden = true;
@@ -2730,9 +2801,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.dealBtn.removeAttribute('data-more');
     els.dealBtn.removeAttribute('data-best');
     els.dealMore.hidden = true;
+    els.dealBtn.removeAttribute('data-setup');
     if (!roomOn()) {
       swipeEmpty('Swipe together', 'Connect both phones (Play together, live) or start a Group Date to swipe. Everyone swipes on their own phone, and the first place you all like wins.');
-      els.dealBtn.hidden = true;
+      els.dealBtn.textContent = 'Connect Both Phones';
+      els.dealBtn.disabled = false;
+      els.dealBtn.setAttribute('data-setup', '1');
       swipeMsg('');
       if (!live.code) { live.forceCard = true; renderLiveCard(); }
       return;
@@ -2912,6 +2986,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   els.swYes.addEventListener('click', function () { swipeTop(true); });
   els.swNo.addEventListener('click', function () { swipeTop(false); });
   els.dealBtn.addEventListener('click', function () {
+    if (els.dealBtn.getAttribute('data-setup') === '1') { showLiveCard(); return; }
     if (els.dealBtn.getAttribute('data-best') === '1') {
       els.dealBtn.disabled = true;
       liveCall('best').then(function (res) {
@@ -2973,10 +3048,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   var TABS = [['fav', 'Favorites'], ['hist', 'History'], ['been', 'Been There'], ['hidden', 'Hidden']];
   function openPlaces() {
     if (!live.on) {
-      live.forceCard = true;
-      renderLiveCard();
-      liveMsg('Connect both phones to keep favorites, ratings and your date history.');
-      els.liveCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showLiveCard('Connect both phones to keep favorites, ratings and your date history.');
       return;
     }
     renderPlaces();
@@ -3271,6 +3343,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.filterHint.hidden = !note;
     els.filterHint.textContent = note;
     els.googleFoot.hidden = !GOOGLE_ON;
+    renderPlaySum();
   }
   function onSource(v) {
     state.src = v;
@@ -3928,6 +4001,154 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     }, function () {});
     if (!els.groupName.value) els.groupName.focus();
     return true;
+  }
+
+  // ---------- Two screens: Plan (where, how far, what sounds good), then Play ----------
+  state.screen = 'plan';
+  state.pushedPlay = false;
+  function showScreen(name, opts) {
+    opts = opts || {};
+    if (state.screen === name) return;
+    var toPlay = name === 'play';
+    state.screen = name;
+    els.planScreen.hidden = toPlay;
+    els.playScreen.hidden = !toPlay;
+    document.documentElement.classList.toggle('on-play', toPlay);
+    var el = toPlay ? els.playScreen : els.planScreen;
+    el.classList.remove('enter', 'from-left');
+    void el.offsetWidth;   // restart the slide-in
+    el.classList.add('enter');
+    if (!toPlay) el.classList.add('from-left');
+    if (toPlay && opts.push !== false) {
+      try { history.pushState({ dnr: 'play' }, ''); state.pushedPlay = true; } catch (e) {}
+    }
+    if (!toPlay) state.pushedPlay = false;
+    window.scrollTo(0, 0);
+    renderPlaySum();
+    renderGo();
+  }
+  // The phone's back gesture goes from Play back to Plan instead of leaving the app.
+  window.addEventListener('popstate', function () {
+    if (history.state && history.state.dnr === 'play') showScreen('play', { push: false });
+    else if (state.screen === 'play') showScreen('plan', { push: false });
+  });
+  els.backBtn.addEventListener('click', function () {
+    if (state.pushedPlay) history.back(); else showScreen('plan');
+  });
+  function currentPick() {
+    if (!roomOn()) return state.pick ? { locked: false } : null;
+    var r = liveRound('spin');
+    return r && r.pick ? r : null;
+  }
+  function renderGo() {
+    if (!els.goSpin) return;
+    var cp = currentPick();
+    var rw = liveRound('swipe');
+    if (state.loadError) {
+      els.goSpin.textContent = 'Try Again';
+      els.goSpin.disabled = false;
+    } else {
+      els.goSpin.textContent = cp ? (cp.locked ? 'See the Date' : 'See the Pick') : 'Spin';
+      els.goSpin.disabled = !cp && (!state.loaded || state.spinning || !canSpin());
+    }
+    els.goFresh.hidden = !cp || state.spinning || !state.loaded;
+    els.goSwipe.textContent = rw ? (rw.match ? 'See the Match' : 'Keep Swiping') : 'Swipe';
+    els.goSwipe.disabled = !state.loaded;
+    var n = state.range.length;
+    els.goNote.textContent = state.loadError ? 'Couldn’t load your list.'
+      : !state.loaded ? 'Loading your list…'
+      : waitingForGps() ? (state.start === 'halfway' ? 'Find halfway first.' : state.start === 'middle' ? 'Waiting on everyone’s starting point.'
+        : state.start === 'custom' ? 'Type where you’re headed first.' : 'Finding your location…')
+      : state.src === 'google' ? 'Google picks from popular places nearby.'
+      : n === 0 ? 'Nothing that close. Try a bigger distance.'
+      : rangeText();
+    // The same line shows above the buttons; no need to say it twice.
+    els.goNote.hidden = rosterInView && state.loaded && !state.loadError && !waitingForGps() && state.src !== 'google' && n > 0;
+  }
+  var rosterInView = false;
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      rosterInView = entries[entries.length - 1].isIntersecting;
+      renderGo();
+    }, { rootMargin: '0px 0px -150px 0px' }).observe(els.rosterSummary);
+  }
+  function renderPlaySum() {
+    if (!els.playSum) return;
+    var bits = [];
+    var o = originLabel();
+    bits.push(currentLimit() === 0 ? (state.src === 'google' ? 'Near ' + o : 'Any distance') : 'Within ' + limitText() + ' of ' + o);
+    if (state.src === 'google') bits.push('anywhere on Google');
+    var moods = state.moods.map(moodById).filter(Boolean);
+    bits.push(moods.length ? moods.map(function (m) { return m.emoji + ' ' + m.label; }).join(', ') : '🎲 Anything');
+    if (state.src === 'list' && state.tags.length) bits.push(state.tags.map(tagText).filter(Boolean).join(', '));
+    if (state.open != null) bits.push(state.open === 'now' ? 'open now' : 'open ' + fmtOpenAt(state.open));
+    els.playSum.textContent = bits.join(' · ');
+  }
+  els.goSpin.addEventListener('click', function () {
+    if (state.loadError) { load(); return; }
+    var cp = currentPick();
+    if (!cp) els.ticket.hidden = true;   // no flash of an old ticket before the new spin
+    showScreen('play');
+    setMode('spin');
+    if (!cp) setTimeout(function () { if (!els.spin.disabled) els.spin.click(); }, 60);
+  });
+  // A fresh spin with what's picked now, instead of the pick you already have.
+  els.goFresh.addEventListener('click', function () {
+    showScreen('play');
+    setMode('spin');
+    state.out = [];
+    if (roomOn()) {
+      liveCall('reset').then(function (res) {
+        if (!res || !res.ok) return;
+        state.pick = null;
+        state.spun = false;
+        els.ticket.hidden = true;
+        refresh();
+        liveSpin();
+      });
+      return;
+    }
+    state.vetoesLeft = VETOES;
+    state.spun = false;
+    state.pick = null;
+    els.ticket.hidden = true;
+    refresh();
+    setTimeout(function () { if (!els.spin.disabled) els.spin.click(); }, 60);
+  });
+  els.goSwipe.addEventListener('click', function () {
+    var had = liveRound('swipe');
+    showScreen('play');
+    setMode('swipe');
+    if (roomOn() && !had && !els.dealBtn.hidden && !els.dealBtn.disabled && !els.dealBtn.getAttribute('data-setup')) els.dealBtn.click();
+  });
+  function showLiveCard(msg) {
+    showScreen('plan');
+    live.forceCard = true;
+    renderLiveCard();
+    if (msg) liveMsg(msg);
+    els.liveCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function () { els.liveCode.focus(); }, 350);
+  }
+  // When someone else spins, vetoes or deals, this phone goes to the Play screen to watch.
+  // Opening the app in the middle of tonight's round starts there too.
+  function followRound(r) {
+    var mark = r && r.last ? r.id + ':' + r.last.what + ':' + r.last.at : r ? r.id : '';
+    if (mark === live.followed) return;
+    var first = live.followed === undefined;
+    live.followed = mark;
+    if (!r || state.screen === 'play') return;
+    if (first) {
+      if ((r.mode === 'spin' && r.pick && !r.locked) || (r.mode === 'swipe' && !r.match)) {
+        setMode(r.mode);
+        showScreen('play');
+      }
+      return;
+    }
+    var l = r.last;
+    if (l && l.who && l.who !== meName() && Date.now() - roomSkew() - l.at < 20000 && /spin|veto|closed|gone|deal|match|best|date|lock/.test(l.what)) {
+      setMode(r.mode);
+      showScreen('play');
+    }
   }
 
   // ---------- Loading ----------
