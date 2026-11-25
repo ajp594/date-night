@@ -28,12 +28,15 @@
   --ivory: #f7ecdc;
   --dusk: #bd9ea8;
   --bulb: #f5bf55;
+  --bulb-rgb: 245, 191, 85;
+  --ivory-rgb: 247, 236, 220;
+  --on-bulb: #1d0b12;
   --stub: #f3e4c8;
   --stub-ink: #701a32;
   --ok: #8fd6a8;
   --warn: #f2a65e;
   --bad: #ef7d8e;
-  --rule: rgba(247, 236, 220, 0.14);
+  --rule: rgba(var(--ivory-rgb), 0.14);
   --display: "Big Shoulders Display", "Oswald", "Arial Narrow", "Roboto Condensed", sans-serif;
   --body: "Figtree", "Helvetica Neue", Arial, sans-serif;
   color-scheme: dark;
@@ -43,7 +46,7 @@ html, body { margin: 0; min-height: 100%; background: var(--night); color: var(-
 body {
   font: 400 16px/1.45 var(--body);
   -webkit-font-smoothing: antialiased;
-  background: radial-gradient(120% 55% at 50% -12%, rgba(245, 191, 85, 0.11), transparent 62%), var(--night);
+  background: radial-gradient(120% 55% at 50% -12%, rgba(var(--bulb-rgb), 0.11), transparent 62%), var(--night);
 }
 .wrap { max-width: 480px; margin: 0 auto; padding: 22px 16px 44px; display: grid; gap: 22px; }
 
@@ -62,7 +65,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .chip { position: relative; }
 .chip input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
 .chip span { display: inline-block; padding: 9px 14px; border: 1px solid var(--rule); border-radius: 999px; font-size: 0.92rem; font-weight: 600; transition: background-color .15s, color .15s, border-color .15s; }
-.chip input:checked + span { background: var(--bulb); border-color: var(--bulb); color: #1d0b12; }
+.chip input:checked + span { background: var(--bulb); border-color: var(--bulb); color: var(--on-bulb); }
 .chip input:focus-visible + span { outline: 2px solid var(--bulb); outline-offset: 3px; }
 .hint { margin: 9px 0 0; font-size: 0.84rem; color: var(--dusk); }
 .hint.is-warn { color: var(--warn); }
@@ -71,7 +74,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 
 /* Marquee reel */
 .marquee { padding: 16px 14px; background: var(--velvet); border-radius: 16px; box-shadow: inset 0 0 0 1px var(--rule), 0 18px 40px -22px #000; }
-.bulbs { height: 10px; background: radial-gradient(circle at 6px 5px, var(--bulb) 0 3px, transparent 3.6px) 0 0 / 18px 10px repeat-x; filter: drop-shadow(0 0 4px rgba(245, 191, 85, 0.6));
+.bulbs { height: 10px; background: radial-gradient(circle at 6px 5px, var(--bulb) 0 3px, transparent 3.6px) 0 0 / 18px 10px repeat-x; filter: drop-shadow(0 0 4px rgba(var(--bulb-rgb), 0.6));
   -webkit-mask: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent);
           mask: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); }
 .marquee.is-spinning .bulbs { animation: chase 0.3s steps(2) infinite; }
@@ -89,14 +92,14 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 
 /* Spin */
 .actions { display: grid; gap: 12px; }
-.spin { appearance: none; border: 0; border-radius: 14px; padding: 17px 20px 15px; background: var(--bulb); color: #1d0b12; font: 900 1.7rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-shadow: 0 12px 30px -14px rgba(245, 191, 85, 0.8); transition: transform 0.08s; }
+.spin { appearance: none; border: 0; border-radius: 14px; padding: 17px 20px 15px; background: var(--bulb); color: var(--on-bulb); font: 900 1.7rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-shadow: 0 12px 30px -14px rgba(var(--bulb-rgb), 0.8); transition: transform 0.08s; }
 .spin:active { transform: translateY(1px) scale(0.99); }
 .spin:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
 .spin:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 .subactions { display: flex; justify-content: space-between; align-items: center; min-height: 28px; font-size: 0.88rem; color: var(--dusk); }
 .vetoes { display: inline-flex; align-items: center; gap: 7px; }
-.veto-bulb { width: 11px; height: 11px; border-radius: 50%; background: rgba(247, 236, 220, 0.16); }
-.veto-bulb.on { background: var(--bulb); box-shadow: 0 0 7px rgba(245, 191, 85, 0.85); }
+.veto-bulb { width: 11px; height: 11px; border-radius: 50%; background: rgba(var(--ivory-rgb), 0.16); }
+.veto-bulb.on { background: var(--bulb); box-shadow: 0 0 7px rgba(var(--bulb-rgb), 0.85); }
 .linkish { appearance: none; padding: 4px 0; border: 0; background: none; color: var(--ivory); font: 600 0.88rem var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .linkish:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 
@@ -141,7 +144,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .meet[hidden] { display: none; }
 .meet-row { display: grid; grid-template-columns: 62px 1fr auto; align-items: center; gap: 8px; }
 .meet-row label { font-size: 0.9rem; font-weight: 700; overflow-wrap: anywhere; }
-.meet-row input { min-width: 0; padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(247, 236, 220, 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
+.meet-row input { min-width: 0; padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 .meet-row input::placeholder { color: var(--dusk); }
 .meet-row input.has-coords { color: var(--bulb); }
 .meet-row input:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
@@ -149,12 +152,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .mini:disabled { opacity: 0.5; cursor: wait; }
 .mini:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 .meet-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
-.find { appearance: none; padding: 11px 16px; border: 0; border-radius: 10px; background: var(--ivory); color: #1d0b12; font: 700 0.95rem var(--body); cursor: pointer; }
+.find { appearance: none; padding: 11px 16px; border: 0; border-radius: 10px; background: var(--ivory); color: var(--on-bulb); font: 700 0.95rem var(--body); cursor: pointer; }
 .find:disabled { opacity: 0.5; cursor: wait; }
 .find:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 .meet-row .mini[hidden] { display: inline-block; visibility: hidden; }
 .custom-row { display: flex; gap: 8px; }
-.custom-row input { flex: 1; min-width: 0; padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(247, 236, 220, 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
+.custom-row input { flex: 1; min-width: 0; padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 .custom-row input::placeholder { color: var(--dusk); }
 .custom-row input:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 /* Suggestions while typing */
@@ -165,7 +168,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .suggest[hidden] { display: none; }
 .suggest button { display: grid; gap: 1px; width: 100%; padding: 9px 10px; border: 0; border-radius: 8px; background: none; color: var(--ivory); text-align: left; font: 600 0.92rem var(--body); cursor: pointer; }
 .suggest button span { font-size: 0.8rem; font-weight: 400; color: var(--dusk); }
-.suggest button:hover, .suggest button.is-active { background: rgba(245, 191, 85, 0.14); }
+.suggest button:hover, .suggest button.is-active { background: rgba(var(--bulb-rgb), 0.14); }
 .suggest .credit { padding: 4px 10px 2px; font-size: 0.7rem; color: var(--dusk); }
 .suggest .note { padding: 9px 10px; font-size: 0.85rem; color: var(--dusk); }
 .meet .who { font-size: 0.82rem; }
@@ -190,16 +193,209 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .add { display: grid; gap: 8px; }
 .add label { font-weight: 600; }
 .add-row { display: flex; gap: 8px; }
-.add input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(247, 236, 220, 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
+.add input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 .add input::placeholder { color: var(--dusk); }
 .add input:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
-.add button { padding: 0 18px; border: 0; border-radius: 10px; background: var(--ivory); color: #1d0b12; font: 700 0.95rem var(--body); cursor: pointer; }
+.add button { padding: 0 18px; border: 0; border-radius: 10px; background: var(--ivory); color: var(--on-bulb); font: 700 0.95rem var(--body); cursor: pointer; }
 .add button:disabled { opacity: 0.5; cursor: wait; }
 .add button:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+
+/* Pink version (Morgan's phone, or anyone's from Settings) */
+:root.theme-pink {
+  --night: #1c0715; --velvet: #320f27; --velvet-2: #47163a;
+  --ivory: #fff0f6; --ivory-rgb: 255, 240, 246; --dusk: #dca4c4;
+  --bulb: #ff70b0; --bulb-rgb: 255, 112, 176; --on-bulb: #2c0619;
+  --stub: #ffe3ef; --stub-ink: #8e1352; --rule: rgba(255, 240, 246, 0.15);
+}
+
+/* Header tools and presence */
+.toolbar { margin-top: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.presence { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 9px; border-radius: 999px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); font-size: 0.82rem; font-weight: 600; color: var(--dusk); }
+.presence::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dusk); }
+.presence.is-here { color: var(--ivory); }
+.presence.is-here::before { background: var(--ok); box-shadow: 0 0 0 3px rgba(143, 214, 168, 0.2); animation: breathe 1.6s ease-in-out infinite; }
+@keyframes breathe { 50% { box-shadow: 0 0 0 6px rgba(143, 214, 168, 0.05); } }
+.presence[hidden] { display: none; }
+.tool-gap { flex: 1; }
+.tool { appearance: none; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; background: none; color: var(--ivory); font: 600 0.84rem var(--body); cursor: pointer; }
+.tool:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+
+/* Live connect card */
+.live-card { padding: 16px; display: grid; gap: 10px; border-radius: 16px; background: linear-gradient(160deg, rgba(var(--bulb-rgb), 0.16), transparent 60%), var(--velvet); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.45); }
+.live-card[hidden] { display: none; }
+.card-title { margin: 0; font: 900 1.45rem/1 var(--display); letter-spacing: 0.03em; text-transform: uppercase; }
+.live-card .hint { margin: 0; }
+.live-card form { display: flex; gap: 8px; }
+.live-card input { flex: 1; min-width: 0; padding: 11px 12px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 1rem var(--body); }
+.live-card input::placeholder { color: var(--dusk); }
+.live-card button[type=submit] { padding: 0 18px; border: 0; border-radius: 10px; background: var(--bulb); color: var(--on-bulb); font: 700 0.95rem var(--body); cursor: pointer; }
+.live-card button[type=submit]:disabled { opacity: 0.5; cursor: wait; }
+.live-card .linkish { justify-self: start; }
+
+/* Spin / Swipe tabs */
+.modes { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); }
+.modes button { appearance: none; padding: 10px; border: 0; border-radius: 10px; background: none; color: var(--dusk); font: 900 1.15rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+.modes button[aria-selected=true] { background: var(--bulb); color: var(--on-bulb); }
+.modes button:focus-visible { outline: 2px solid var(--ivory); outline-offset: 2px; }
+.view[hidden] { display: none; }
+.view { display: grid; gap: 22px; }
+
+/* Distance units and options */
+.units { display: inline-flex; margin-bottom: 10px; padding: 3px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--rule); }
+.units .chip span { padding: 6px 12px; border: 0; font-size: 0.82rem; }
+.options { margin-top: 10px; }
+.chip.check span::before { content: "○ "; }
+.chip.check input:checked + span::before { content: "✓ "; }
+
+/* Live line, vetoes per person */
+.live-line { margin: 0; padding: 10px 12px; border-radius: 12px; background: rgba(var(--bulb-rgb), 0.12); color: var(--ivory); font-weight: 600; font-size: 0.92rem; text-align: center; }
+.live-line[hidden] { display: none; }
+.vetoes .who { margin-left: 6px; font-weight: 600; color: var(--ivory); }
+.vetoes .who:first-child { margin-left: 0; }
+
+/* Ticket extras */
+.ticket-badges { margin: 0; font-size: 0.84rem; font-weight: 700; color: var(--stub-ink); }
+.ticket-badges:empty { display: none; }
+.ticket-live { display: grid; gap: 8px; margin-top: 4px; }
+.ticket-live[hidden] { display: none; }
+.ticket-live .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.ticket-live .btn { appearance: none; padding: 11px 16px; border: 0; border-radius: 10px; background: var(--stub-ink); color: var(--stub); font: 700 0.95rem var(--body); cursor: pointer; }
+.ticket-live .btn.ghost { background: none; color: var(--stub-ink); box-shadow: inset 0 0 0 1.5px var(--stub-ink); }
+.ticket-live .btn:disabled { opacity: 0.5; cursor: wait; }
+.ticket-live .say { margin: 0; font-size: 0.9rem; font-weight: 600; }
+.ticket-live .tlink { appearance: none; padding: 2px 0; border: 0; background: none; color: var(--stub-ink); font: 600 0.88rem var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ticket-live .date { margin: 0; font: 900 1.4rem/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* Swipe */
+.swipe-box { display: grid; gap: 14px; }
+.swipe-empty { margin: 0; padding: 18px 16px; border-radius: 16px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); color: var(--dusk); text-align: center; }
+.swipe-empty strong { display: block; margin-bottom: 4px; color: var(--ivory); font: 900 1.35rem/1.05 var(--display); letter-spacing: 0.03em; text-transform: uppercase; }
+.swipe-empty[hidden] { display: none; }
+.deck { position: relative; height: 250px; }
+.deck[hidden] { display: none; }
+.card { position: absolute; inset: 0; padding: 18px; display: grid; align-content: start; gap: 8px; border-radius: 18px; background: var(--stub); color: var(--stub-ink); box-shadow: 0 18px 40px -20px #000; touch-action: pan-y; user-select: none; -webkit-user-select: none; transition: transform 0.25s ease, opacity 0.25s ease; }
+.card.is-under { transform: scale(0.95) translateY(10px); opacity: 0.7; pointer-events: none; }
+.card.is-dragging { transition: none; cursor: grabbing; }
+.card-top { display: flex; justify-content: space-between; gap: 10px; font: 700 0.72rem/1.2 var(--body); letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.75; }
+.card-name { margin: 6px 0 0; font: 900 2.1rem/0.98 var(--display); text-transform: uppercase; text-wrap: balance; overflow-wrap: anywhere; }
+.card-addr { margin: 0; font-size: 0.9rem; color: #54202f; }
+.card-badges { margin: 0; font-size: 0.86rem; font-weight: 700; }
+.card-badges:empty { display: none; }
+.card-count { position: absolute; left: 18px; bottom: 14px; font-size: 0.78rem; font-weight: 600; opacity: 0.6; }
+.stamp { position: absolute; top: 18px; padding: 4px 10px; border: 3px solid; border-radius: 8px; font: 900 1.6rem/1 var(--display); letter-spacing: 0.08em; opacity: 0; pointer-events: none; }
+.stamp.yes { right: 16px; color: #1f8a4c; transform: rotate(10deg); }
+.stamp.no { left: 16px; color: #b3243c; transform: rotate(-10deg); }
+.swipe-buttons { display: flex; justify-content: center; gap: 26px; }
+.swipe-buttons[hidden] { display: none; }
+.sw { appearance: none; width: 66px; height: 66px; border: 0; border-radius: 50%; font-size: 1.7rem; line-height: 1; cursor: pointer; box-shadow: 0 12px 24px -12px #000; }
+.sw.no { background: var(--velvet-2); color: var(--ivory); }
+.sw.yes { background: var(--bulb); color: var(--on-bulb); }
+.sw:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
+.swipe-msg { margin: 0; text-align: center; font-size: 0.88rem; color: var(--dusk); }
+.swipe-msg strong { color: var(--ivory); }
+.swipe-box .find { justify-self: center; }
+.swipe-box .find[hidden] { display: none; }
+
+/* It's a date / It's a match */
+.party { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px; background: rgba(10, 3, 7, 0.78); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); overflow: hidden; }
+.party[hidden] { display: none; }
+.party-card { position: relative; z-index: 2; width: min(100%, 380px); padding: 26px 22px 18px; display: grid; gap: 10px; text-align: center; border-radius: 20px; background: var(--velvet); box-shadow: inset 0 0 0 2px var(--bulb), 0 30px 60px -20px #000; animation: pop 0.5s cubic-bezier(0.2, 1.5, 0.4, 1); }
+@keyframes pop { from { transform: scale(0.7); opacity: 0; } }
+.party-kicker { margin: 0; color: var(--bulb); font: 900 2.3rem/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
+.party-name { margin: 0; font: 900 1.7rem/1.02 var(--display); text-transform: uppercase; overflow-wrap: anywhere; }
+.party-sub { margin: 0; color: var(--dusk); font-size: 0.92rem; }
+.party .go { margin-top: 6px; }
+.party .linkish { justify-self: center; }
+.confetti { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.confetti i { position: absolute; top: -12px; width: 9px; height: 14px; border-radius: 2px; opacity: 0.95; animation: fall linear forwards; }
+@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+/* Sheets: Our places, rating, settings */
+.sheet { width: min(100% - 24px, 460px); max-height: min(86vh, 720px); margin: auto; padding: 0; border: 0; border-radius: 18px; background: var(--velvet); color: var(--ivory); box-shadow: inset 0 0 0 1px var(--rule), 0 30px 60px -20px #000; }
+.sheet::backdrop { background: rgba(10, 3, 7, 0.7); }
+.sheet-in { padding: 18px 16px 16px; display: grid; gap: 14px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.sheet-head h2 { margin: 0; font: 900 1.6rem/1 var(--display); letter-spacing: 0.03em; text-transform: uppercase; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button { appearance: none; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; background: none; color: var(--ivory); font: 600 0.84rem var(--body); cursor: pointer; }
+.tabs button[aria-selected=true] { background: var(--bulb); border-color: var(--bulb); color: var(--on-bulb); }
+.rows { margin: 0; padding: 0; list-style: none; display: grid; }
+.rows li { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; padding: 11px 0; border-bottom: 1px solid var(--rule); }
+.rows .nm { font-weight: 700; overflow-wrap: anywhere; }
+.rows .sub { grid-column: 1; font-size: 0.82rem; color: var(--dusk); }
+.rows .acts { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 10px; align-items: center; }
+.rows .stars { color: var(--bulb); letter-spacing: 1px; }
+.rows-empty { margin: 0; color: var(--dusk); font-size: 0.9rem; }
+.starpick { display: flex; gap: 6px; justify-content: center; }
+.starpick button { appearance: none; width: 50px; height: 50px; border: 0; border-radius: 12px; background: rgba(var(--ivory-rgb), 0.07); color: var(--dusk); font-size: 1.7rem; line-height: 1; cursor: pointer; }
+.starpick button.on { color: var(--bulb); background: rgba(var(--bulb-rgb), 0.16); }
+.starpick button:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.sheet textarea { width: 100%; min-height: 64px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); resize: vertical; }
+.sheet .find { justify-self: start; }
+.set-group { display: grid; gap: 8px; }
+.set-group h3 { margin: 0; font: 600 0.72rem/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dusk); }
+.partner-rate { margin: 0; text-align: center; color: var(--dusk); font-size: 0.9rem; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+/* What sounds good: source, mood, tags, hours */
+.pills { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { appearance: none; display: inline-grid; gap: 2px; max-width: 100%; padding: 8px 14px 9px; border: 1px solid var(--rule); border-radius: 14px; background: var(--velvet); color: var(--ivory); font: 600 0.92rem/1.2 var(--body); text-align: left; cursor: pointer; }
+.pill .k { font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dusk); }
+.pill .v { overflow-wrap: anywhere; }
+.pill.is-set { border-color: rgba(var(--bulb-rgb), 0.7); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.5); }
+.pill:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.pill[hidden], .chips[hidden] { display: none; }
+.mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mood { appearance: none; display: grid; justify-items: center; align-content: start; gap: 5px; padding: 12px 6px 10px; border: 1px solid var(--rule); border-radius: 14px; background: rgba(var(--ivory-rgb), 0.04); color: var(--ivory); font: 600 0.8rem/1.15 var(--body); cursor: pointer; }
+.mood .e { font-size: 1.6rem; line-height: 1; }
+.mood.on { background: var(--bulb); border-color: var(--bulb); color: var(--on-bulb); }
+.mood:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.hours-at { display: flex; flex-wrap: wrap; gap: 8px; }
+.hours-at[hidden] { display: none; }
+.hours-at select, .hours-at input { padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
+/* Google info on the ticket and cards */
+.t-photos { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.t-photos.two { grid-template-columns: 1fr 1fr; }
+.t-photos[hidden] { display: none; }
+.t-photos img { display: block; width: 100%; height: 150px; object-fit: cover; border-radius: 8px; background: rgba(112, 26, 50, 0.12); }
+.t-google { margin: 0; font-size: 0.9rem; font-weight: 700; }
+.t-google.is-loading { font-weight: 500; opacity: 0.7; }
+.t-hours { margin: 0; font-size: 0.88rem; font-weight: 700; color: #1f6a3e; }
+.t-hours.is-closed { color: #a3203a; }
+.t-blurb { margin: 0; font-size: 0.88rem; line-height: 1.4; color: #54202f; }
+.t-credit, .card-credit { margin: 0; font-size: 0.72rem; line-height: 1.3; opacity: 0.8; }
+.t-credit a, .card-credit a { color: inherit; }
+.deck.tall { height: 410px; }
+.card { padding: 0; overflow: hidden; }
+.card-photo { display: block; width: 100%; height: 150px; object-fit: cover; background: rgba(112, 26, 50, 0.12); }
+.card-photo[hidden] { display: none; }
+.card-body { padding: 16px 18px 34px; display: grid; gap: 7px; align-content: start; }
+.card.has-photo .card-name { font-size: 1.7rem; }
+.card-google { margin: 0; font-size: 0.86rem; font-weight: 700; }
+.card-google:empty { display: none; }
+/* Group date */
+.group-card { padding: 14px 16px; display: grid; gap: 8px; border-radius: 16px; background: linear-gradient(160deg, rgba(var(--bulb-rgb), 0.12), transparent 60%), var(--velvet); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.35); }
+.group-card[hidden] { display: none; }
+.group-card .hint { margin: 0; }
+.gc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.gc-code { font: 900 1.25rem/1 var(--display); letter-spacing: 0.18em; color: var(--bulb); }
+.gm-people { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.gm-people li { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9rem; }
+.gm-people .nm { font-weight: 700; }
+.gm-people .at { color: var(--dusk); text-align: right; overflow-wrap: anywhere; }
+.gm-people li.waiting .at { font-style: italic; }
+.group-form { display: grid; gap: 8px; }
+.group-form[hidden], .group-in[hidden] { display: none; }
+.group-form label { font-size: 0.8rem; font-weight: 600; color: var(--dusk); }
+.group-form input { padding: 11px 12px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 1rem var(--body); }
+.group-in { display: grid; gap: 10px; }
+.group-code { margin: 0; font-size: 0.9rem; color: var(--dusk); }
+.group-code strong { margin-left: 6px; font: 900 1.6rem/1 var(--display); letter-spacing: 0.2em; color: var(--bulb); }
+.foot a { color: var(--ivory); }
+.swipe-box .linkish { justify-self: center; }
+.swipe-box .linkish[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -207,7 +403,35 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   <header>
     <h1 class="title">Date Night <span>Roulette</span></h1>
     <p class="status" id="status" role="status"><span class="dot"></span><span id="statusText">Pulling your list from Google Maps…</span></p>
+    <div class="toolbar">
+      <span class="presence" id="presence" role="status" hidden></span>
+      <span class="tool-gap"></span>
+      <button type="button" class="tool" id="groupBtn">Group Date</button>
+      <button type="button" class="tool" id="placesBtn">Our Places</button>
+      <button type="button" class="tool" id="settingsBtn">Settings</button>
+    </div>
   </header>
+
+  <section class="live-card" id="liveCard" hidden>
+    <h2 class="card-title">Play together, live</h2>
+    <p class="hint">Connect both phones with the same passcode. Then you see the same spins, swipe together, and keep your ratings and date history. The first phone to connect picks the passcode.</p>
+    <p class="hint who" id="liveWho"></p>
+    <form id="liveForm" novalidate>
+      <input id="liveCode" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Passcode" aria-label="Passcode">
+      <button type="submit" id="liveBtn">Connect</button>
+    </form>
+    <p class="hint" id="liveMsg" hidden></p>
+    <button type="button" class="linkish" id="liveLater">Not now</button>
+  </section>
+
+  <section class="group-card" id="groupCard" hidden>
+    <div class="gc-row"><h2 class="card-title" id="gcTitle">Group Date</h2><span class="gc-code" id="gcCode"></span></div>
+    <p class="hint" id="gcLine"></p>
+    <div class="gc-row">
+      <button type="button" class="mini" id="gcMain">Invite Friends</button>
+      <button type="button" class="linkish" id="gcSecond">Leave</button>
+    </div>
+  </section>
 
   <section class="setup" id="setup" hidden>
     <form class="add" id="setupForm" novalidate>
@@ -250,13 +474,41 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       </div>
       <p class="hint" id="customMsg" hidden></p>
     </div>
+    <div class="meet" id="groupMeet" hidden>
+      <ul class="gm-people" id="gmPeople"></ul>
+      <div class="meet-row">
+        <label for="gmInput">You</label>
+        <input id="gmInput" autocomplete="off" enterkeyhint="go" placeholder="Where you’re starting">
+        <button type="button" class="mini" id="gmHere">Here</button>
+      </div>
+      <p class="hint" id="gmMsg"></p>
+    </div>
   </fieldset>
 
   <fieldset>
     <legend>Within</legend>
+    <div class="chips units" id="units"></div>
     <div class="chips" id="radii"></div>
+    <div class="chips options" id="options"></div>
   </fieldset>
 
+  <fieldset>
+    <legend>What sounds good</legend>
+    <div class="chips" id="sources" hidden></div>
+    <div class="pills">
+      <button type="button" class="pill" id="moodBtn" aria-haspopup="dialog"></button>
+      <button type="button" class="pill" id="tagBtn" aria-haspopup="dialog" hidden></button>
+      <button type="button" class="pill" id="hoursBtn" aria-haspopup="dialog" hidden></button>
+    </div>
+    <p class="hint" id="filterHint" hidden></p>
+  </fieldset>
+
+  <div class="modes" role="tablist" aria-label="How to pick">
+    <button type="button" role="tab" id="modeSpin" aria-selected="true" aria-controls="spinView">Spin</button>
+    <button type="button" role="tab" id="modeSwipe" aria-selected="false" aria-controls="swipeView">Swipe</button>
+  </div>
+
+  <section class="view" id="spinView" role="tabpanel" aria-labelledby="modeSpin">
   <section class="marquee" id="marquee" aria-live="polite">
     <div class="bulbs" aria-hidden="true"></div>
     <div class="reel">
@@ -274,19 +526,42 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       <span class="vetoes" id="vetoes"></span>
       <button class="linkish" id="reset" type="button" hidden>Start over</button>
     </div>
+    <p class="live-line" id="liveLine" role="status" hidden></p>
   </div>
 
   <article class="ticket" id="ticket" hidden>
     <div class="stub"><span>Admit two</span></div>
     <div class="ticket-main">
       <div class="ticket-top"><span id="tDate"></span><span id="tTown"></span></div>
+      <div class="t-photos" id="tPhotos" hidden></div>
       <h2 class="ticket-name" id="tName"></h2>
       <p class="ticket-addr" id="tAddr"></p>
+      <p class="t-google" id="tGoogle" hidden></p>
+      <p class="t-hours" id="tHours" hidden></p>
+      <p class="t-blurb" id="tBlurb" hidden></p>
       <p class="ticket-dist" id="tDist"></p>
       <p class="ticket-drive" id="tDrive" hidden></p>
+      <p class="ticket-badges" id="tBadges"></p>
+      <div class="ticket-live" id="tLive" hidden></div>
       <a class="go" id="tGo" href="https://www.google.com/maps" target="_blank" rel="noopener">Open in Google Maps</a>
+      <p class="t-credit" id="tCredit" hidden></p>
     </div>
   </article>
+  </section>
+
+  <section class="view" id="swipeView" role="tabpanel" aria-labelledby="modeSwipe" hidden>
+    <div class="swipe-box">
+      <p class="swipe-empty" id="swipeEmpty"></p>
+      <div class="deck" id="deck" hidden></div>
+      <div class="swipe-buttons" id="swipeButtons" hidden>
+        <button type="button" class="sw no" id="swNo" aria-label="Nope">✕</button>
+        <button type="button" class="sw yes" id="swYes" aria-label="Yes, let’s go">♥</button>
+      </div>
+      <p class="swipe-msg" id="swipeMsg" role="status"></p>
+      <button type="button" class="find" id="dealBtn">Deal Cards</button>
+      <button type="button" class="linkish" id="dealMore" hidden>Deal more cards instead</button>
+    </div>
+  </section>
 
   <details class="roster" id="roster">
     <summary id="rosterSummary">Places in range</summary>
@@ -307,10 +582,104 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     </form>
   </section>
 
-  <p class="foot">Distances are straight-line miles. Every list reloads from Google Maps each time you open this page.</p>
+  <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
+  <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
 </main>
 
-<script>window.CONFIG = {"STARTS":[{"name":"Lockport","lat":41.5894,"lng":-88.0572},{"name":"Bartlett","lat":41.9944,"lng":-88.1853},{"name":"Downtown","lat":41.8819,"lng":-87.6278}],"RADII":[5,10,20,30,0],"DEFAULT_RADIUS":20,"VETOES":2,"LIST_CAP":3000,"PEOPLE":["Alec","Morgan"],"MEET_DEFAULTS":["Lockport","Bartlett"]};</script>
+<div class="party" id="party" role="dialog" aria-modal="true" aria-labelledby="partyName" hidden>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+  <div class="party-card">
+    <p class="party-kicker" id="partyKicker">It’s a date!</p>
+    <h2 class="party-name" id="partyName"></h2>
+    <p class="party-sub" id="partySub"></p>
+    <a class="go" id="partyGo" href="https://www.google.com/maps" target="_blank" rel="noopener">Open in Google Maps</a>
+    <button type="button" class="linkish" id="partyClose">Close</button>
+  </div>
+</div>
+
+<dialog class="sheet" id="placesSheet" aria-labelledby="placesHead">
+  <div class="sheet-in">
+    <div class="sheet-head"><h2 id="placesHead">Our Places</h2><button type="button" class="linkish" data-close>Close</button></div>
+    <div class="tabs" role="tablist" id="placesTabs"></div>
+    <ul class="rows" id="placesRows"></ul>
+    <p class="rows-empty" id="placesEmpty" hidden></p>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="rateSheet" aria-labelledby="rateHead">
+  <form class="sheet-in" id="rateForm" method="dialog">
+    <div class="sheet-head"><h2 id="rateHead">Rate it</h2><button type="button" class="linkish" data-close>Close</button></div>
+    <p class="hint" id="rateName"></p>
+    <div class="starpick" id="starPick" role="radiogroup" aria-label="Stars"></div>
+    <textarea id="rateNote" maxlength="200" placeholder="A note for next time (optional)"></textarea>
+    <p class="partner-rate" id="ratePartner" hidden></p>
+    <button type="submit" class="find" id="rateSave">Save</button>
+    <p class="hint is-warn" id="rateMsg" hidden></p>
+  </form>
+</dialog>
+
+<dialog class="sheet" id="settingsSheet" aria-labelledby="settingsHead">
+  <div class="sheet-in">
+    <div class="sheet-head"><h2 id="settingsHead">Settings</h2><button type="button" class="linkish" data-close>Close</button></div>
+    <div class="set-group"><h3>Whose phone</h3><div class="chips" id="setWho"></div></div>
+    <div class="set-group"><h3>Look</h3><div class="chips" id="setTheme"></div></div>
+    <div class="set-group"><h3>Skip places we went to in the last</h3><div class="chips" id="setSkip"></div><p class="hint" id="setSkipNote" hidden></p></div>
+    <div class="set-group"><h3>Live mode</h3><p class="hint" id="setLive"></p><div><button type="button" class="linkish" id="setLiveBtn"></button></div></div>
+    <div class="set-group"><h3>Google info</h3><p class="hint" id="setGoogle"></p></div>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="moodSheet" aria-labelledby="moodHead">
+  <div class="sheet-in">
+    <div class="sheet-head"><h2 id="moodHead">In the mood for?</h2><button type="button" class="linkish" data-close>Done</button></div>
+    <p class="hint">Pick one or more, or Anything.</p>
+    <div class="mood-grid" id="moodGrid"></div>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="tagSheet" aria-labelledby="tagHead">
+  <div class="sheet-in">
+    <div class="sheet-head"><h2 id="tagHead">Tags</h2><button type="button" class="linkish" data-close>Done</button></div>
+    <p class="hint">The tags on your Google Maps list. Spins and decks use places with any of the ones you pick. Pick none to use every place.</p>
+    <div class="chips" id="tagChips"></div>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="hoursSheet" aria-labelledby="hoursHead">
+  <div class="sheet-in">
+    <div class="sheet-head"><h2 id="hoursHead">Make sure it’s open</h2><button type="button" class="linkish" data-close>Done</button></div>
+    <div class="chips" id="hoursChips"></div>
+    <div class="hours-at" id="hoursAt" hidden>
+      <select id="hoursDay" aria-label="Day"></select>
+      <input id="hoursTime" type="time" value="19:00" aria-label="Time">
+    </div>
+    <p class="hint">Checks Google’s hours, with 45 minutes to spare before closing. Planning ahead for tomorrow? Pick a time, or don’t check.</p>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="groupSheet" aria-labelledby="groupHead">
+  <div class="sheet-in">
+    <div class="sheet-head"><h2 id="groupHead">Group Date</h2><button type="button" class="linkish" data-close>Close</button></div>
+    <p class="hint" id="groupIntro">Double or triple date? Everyone opens the link on their own phone, adds where they’re starting, and you spin or swipe together. Picks land near the middle.</p>
+    <form class="group-form" id="groupForm" novalidate>
+      <label for="groupName">Your name</label>
+      <input id="groupName" autocomplete="given-name" maxlength="24" placeholder="Your name">
+      <label for="groupCode">Joining someone’s group? Their code</label>
+      <input id="groupCode" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="8" placeholder="Leave empty to start one">
+      <div><button type="submit" class="find" id="groupGo">Start a Group Date</button></div>
+      <p class="hint is-warn" id="groupMsg" hidden></p>
+    </form>
+    <div class="group-in" id="groupIn" hidden>
+      <p class="group-code">Code<strong id="groupCodeShow"></strong></p>
+      <div><button type="button" class="find" id="groupShare">Share the Invite Link</button></div>
+      <p class="hint" id="groupShareMsg" hidden></p>
+      <ul class="rows" id="groupPeople"></ul>
+      <div><button type="button" class="linkish" id="groupLeave">Leave this group date</button></div>
+    </div>
+  </div>
+</dialog>
+
+<script>window.CONFIG = {"STARTS":[{"name":"Lockport","lat":41.5894,"lng":-88.0572},{"name":"Bartlett","lat":41.9944,"lng":-88.1853},{"name":"Downtown","lat":41.8819,"lng":-87.6278}],"RADII":[5,10,20,30,0],"DEFAULT_RADIUS":20,"VETOES":2,"LIST_CAP":3000,"PEOPLE":["Alec","Morgan"],"MEET_DEFAULTS":["Lockport","Bartlett"],"VETOES_EACH":1,"SKIP_DAYS":30,"MOODS":[{"id":"pizza","label":"Pizza","emoji":"🍕"},{"id":"mexican","label":"Mexican","emoji":"🌮"},{"id":"sushi","label":"Sushi","emoji":"🍣"},{"id":"japanese","label":"Japanese","emoji":"🍱"},{"id":"chinese","label":"Chinese","emoji":"🥡"},{"id":"thai","label":"Thai","emoji":"🍛"},{"id":"indian","label":"Indian","emoji":"🫓"},{"id":"korean","label":"Korean","emoji":"🥘"},{"id":"vietnamese","label":"Vietnamese","emoji":"🍲"},{"id":"ramen","label":"Ramen & Noodles","emoji":"🍜"},{"id":"italian","label":"Italian","emoji":"🍝"},{"id":"mediterranean","label":"Mediterranean","emoji":"🥙"},{"id":"burgers","label":"Burgers","emoji":"🍔"},{"id":"bbq","label":"BBQ","emoji":"🍖"},{"id":"steak","label":"Steak","emoji":"🥩"},{"id":"seafood","label":"Seafood","emoji":"🦞"},{"id":"chicken","label":"Chicken & Wings","emoji":"🍗"},{"id":"brunch","label":"Breakfast & Brunch","emoji":"🥞"},{"id":"healthy","label":"Healthy","emoji":"🥗"},{"id":"fancy","label":"Fancy","emoji":"🥂"},{"id":"dessert","label":"Dessert","emoji":"🍰"},{"id":"coffee","label":"Coffee & Tea","emoji":"☕"},{"id":"drinks","label":"Drinks","emoji":"🍸"}],"GOOGLE":{"on":false}};</script>
 <script>
 (function () {
   'use strict';
@@ -332,17 +701,45 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     meet: $('meet'), meet0: $('meet0'), meet1: $('meet1'), meetName0: $('meetName0'), meetName1: $('meetName1'),
     here0: $('here0'), here1: $('here1'), textBtn: $('textBtn'), textHelp: $('textHelp'), whoLine: $('whoLine'),
     findBtn: $('findBtn'), meetMsg: $('meetMsg'), tDrive: $('tDrive'),
-    custom: $('custom'), customInput: $('customInput'), customMsg: $('customMsg')
+    custom: $('custom'), customInput: $('customInput'), customMsg: $('customMsg'),
+    presence: $('presence'), placesBtn: $('placesBtn'), settingsBtn: $('settingsBtn'),
+    liveCard: $('liveCard'), liveWho: $('liveWho'), liveForm: $('liveForm'), liveCode: $('liveCode'), liveBtn: $('liveBtn'),
+    liveMsg: $('liveMsg'), liveLater: $('liveLater'), units: $('units'), options: $('options'),
+    modeSpin: $('modeSpin'), modeSwipe: $('modeSwipe'), spinView: $('spinView'), swipeView: $('swipeView'),
+    liveLine: $('liveLine'), tBadges: $('tBadges'), tLive: $('tLive'),
+    swipeEmpty: $('swipeEmpty'), deck: $('deck'), swipeButtons: $('swipeButtons'), swNo: $('swNo'), swYes: $('swYes'),
+    swipeMsg: $('swipeMsg'), dealBtn: $('dealBtn'), dealMore: $('dealMore'),
+    party: $('party'), confetti: $('confetti'), partyKicker: $('partyKicker'), partyName: $('partyName'),
+    partySub: $('partySub'), partyGo: $('partyGo'), partyClose: $('partyClose'),
+    placesSheet: $('placesSheet'), placesTabs: $('placesTabs'), placesRows: $('placesRows'), placesEmpty: $('placesEmpty'),
+    rateSheet: $('rateSheet'), rateForm: $('rateForm'), rateName: $('rateName'), starPick: $('starPick'), rateNote: $('rateNote'),
+    ratePartner: $('ratePartner'), rateSave: $('rateSave'), rateMsg: $('rateMsg'),
+    settingsSheet: $('settingsSheet'), setWho: $('setWho'), setTheme: $('setTheme'), setSkip: $('setSkip'),
+    setSkipNote: $('setSkipNote'), setLive: $('setLive'), setLiveBtn: $('setLiveBtn'), setGoogle: $('setGoogle'),
+    sources: $('sources'), moodBtn: $('moodBtn'), tagBtn: $('tagBtn'), hoursBtn: $('hoursBtn'), filterHint: $('filterHint'),
+    moodSheet: $('moodSheet'), moodGrid: $('moodGrid'), tagSheet: $('tagSheet'), tagChips: $('tagChips'),
+    hoursSheet: $('hoursSheet'), hoursChips: $('hoursChips'), hoursAt: $('hoursAt'), hoursDay: $('hoursDay'), hoursTime: $('hoursTime'),
+    tPhotos: $('tPhotos'), tGoogle: $('tGoogle'), tHours: $('tHours'), tBlurb: $('tBlurb'), tCredit: $('tCredit'), googleFoot: $('googleFoot'),
+    groupBtn: $('groupBtn'), groupCard: $('groupCard'), gcTitle: $('gcTitle'), gcCode: $('gcCode'), gcLine: $('gcLine'),
+    gcMain: $('gcMain'), gcSecond: $('gcSecond'), groupMeet: $('groupMeet'), gmPeople: $('gmPeople'), gmInput: $('gmInput'),
+    gmHere: $('gmHere'), gmMsg: $('gmMsg'), groupSheet: $('groupSheet'), groupIntro: $('groupIntro'), groupForm: $('groupForm'),
+    groupName: $('groupName'), groupCode: $('groupCode'), groupGo: $('groupGo'), groupMsg: $('groupMsg'), groupIn: $('groupIn'),
+    groupCodeShow: $('groupCodeShow'), groupShare: $('groupShare'), groupShareMsg: $('groupShareMsg'), groupPeople: $('groupPeople'),
+    groupLeave: $('groupLeave')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
   var MEET_DEFAULTS = CFG.MEET_DEFAULTS || [];
   var hosted = !(window.google && window.google.script && window.google.script.run);
   var LIST_CAP = typeof CFG.LIST_CAP === 'number' ? CFG.LIST_CAP : 3000;
+  var VETOES_EACH = typeof CFG.VETOES_EACH === 'number' ? CFG.VETOES_EACH : 1;
+  var SKIP_DAYS = typeof CFG.SKIP_DAYS === 'number' ? CFG.SKIP_DAYS : 30;
+  var RADII_MIN = [10, 15, 20, 30, 45, 0];
 
   // ---------- Talking to Apps Script ----------
   // Inside Apps Script the page uses google.script.run. Hosted anywhere else
   // (like GitHub Pages) it calls the web app's JSON feed at APP_URL instead.
-  var API_NAMES = { getPlaces: 'places', addList: 'add', removeList: 'remove', findHalfway: 'halfway', driveTimes: 'drive' };
+  var API_NAMES = { getPlaces: 'places', addList: 'add', removeList: 'remove', findHalfway: 'halfway', driveTimes: 'drive', live: 'live',
+    group: 'group', info: 'info', pick: 'pick' };
   var ACCESS_HINT = 'your app link didn’t answer. Check that it ends in /exec and that Who has access is set to Anyone';
   var savedAppUrl = '';
   function appUrl() { return String(window.APP_URL || store.get('appUrl') || savedAppUrl || '').trim(); }
@@ -362,7 +759,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       if (!base) { reject(new Error('NO_APP_URL')); return; }
       var url = base + (base.indexOf('?') < 0 ? '?' : '&') + 'api=' + API_NAMES[fn];
       Object.keys(params || {}).forEach(function (k) { url += '&' + k + '=' + encodeURIComponent(params[k]); });
-      fetch(url).then(function (r) {
+      fetch(url, { cache: 'no-store' }).then(function (r) {
         if (!r.ok) throw new Error('your app link answered with HTTP ' + r.status);
         return r.json().catch(function () { throw new Error(ACCESS_HINT); });
       }).then(resolve, function (err) {
@@ -390,10 +787,33 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     start: store.get('start') || 'gps',
     gps: null, gpsPending: false,
     radius: Number(store.get('radius') || (typeof CFG.DEFAULT_RADIUS === 'number' ? CFG.DEFAULT_RADIUS : 20)),
-    range: [], pick: null, vetoesLeft: VETOES, spun: false, spinning: false
+    range: [], pick: null, vetoesLeft: VETOES, spun: false, spinning: false,
+    // Distance in drive minutes (estimated from miles) or in miles.
+    unit: store.get('unit') === 'mi' ? 'mi' : 'min',
+    minutes: Number(store.get('minutes') || 20),
+    favOnly: store.get('favOnly') === '1',
+    includeBeen: false, skipDays: SKIP_DAYS,
+    mode: store.get('mode') === 'swipe' ? 'swipe' : 'spin'
   };
   if (RADII.indexOf(state.radius) < 0) state.radius = RADII[0];
-  if (state.start !== 'gps' && state.start !== 'halfway' && state.start !== 'custom' && !presetByName(state.start)) state.start = 'gps';
+  if (RADII_MIN.indexOf(state.minutes) < 0) state.minutes = 20;
+  if (state.start === 'middle' && !(store.get('grpCode') && store.get('grpMid'))) state.start = 'gps';
+  if (state.start !== 'gps' && state.start !== 'halfway' && state.start !== 'custom' && state.start !== 'middle' && !presetByName(state.start)) state.start = 'gps';
+  // What sounds good: from your list or anywhere on Google, moods, your list's tags, and hours.
+  var MOODS = CFG.MOODS || [];
+  var GOOGLE_ON = !!(CFG.GOOGLE && CFG.GOOGLE.on);
+  state.src = store.get('src') === 'google' ? 'google' : 'list';
+  state.moods = (store.get('moods') || '').split(',').filter(Boolean);
+  state.tags = [];
+  try { state.tags = JSON.parse(store.get('tags') || '[]') || []; } catch (e) {}
+  state.open = (function () {
+    var v = store.get('open');
+    if (v === 'now') return 'now';
+    var t = Number(v);
+    return t > Date.now() - 30 * 60000 ? t : null;   // a time that has passed is dropped
+  })();
+  state.tagsAll = [];
+  state.out = [];   // this phone's picks since Start Over, kept out of the next spin
 
   // ---------- Geometry ----------
   function miles(a, b) {
@@ -405,24 +825,38 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   }
   function origin() {
     if (state.start === 'gps') return state.gps;
+    if (state.start === 'middle') return group.on && group.state && group.state.middle ? group.state.middle : null;
     if (state.start === 'halfway') return state.halfway && state.halfway.point;
     if (state.start === 'custom') return state.custom && state.custom.point;
     return presetByName(state.start);
   }
   function originLabel() {
     if (state.start === 'gps') return 'you';
+    if (state.start === 'middle') return 'the middle';
     if (state.start === 'halfway') return 'halfway';
     if (state.start === 'custom') return (state.custom && state.custom.label) || 'there';
     return state.start;
   }
   function fmtMiles(d) { return (d < 10 ? d.toFixed(1) : String(Math.round(d))) + ' mi'; }
+  // Rough drive time from straight-line miles (the script uses the same numbers).
+  function estMinutes(miles) {
+    var r = miles * 1.3;
+    var m = r <= 3 ? r * 2.6 : r <= 10 ? 7.8 + (r - 3) * 1.9 : 21.1 + (r - 10) * 1.35;
+    return Math.round(m + 2);
+  }
+  function currentLimit() { return state.unit === 'min' ? state.minutes : state.radius; }
+  function limitText() { return state.unit === 'min' ? state.minutes + ' min' : state.radius + ' mi'; }
+  function fmtAway(d) { return d === null || d === undefined ? '' : state.unit === 'min' ? '~' + estMinutes(d) + ' min' : fmtMiles(d); }
 
   function computeRange() {
     var o = origin(), out = [];
+    var lim = currentLimit();
     for (var i = 0; i < state.places.length; i++) {
       var p = state.places[i];
+      if (!allowed(p)) continue;
       var d = (o && typeof p.lat === 'number' && typeof p.lng === 'number') ? miles(o, p) : null;
-      if (state.radius === 0 || (d !== null && d <= state.radius)) out.push({ p: p, d: d });
+      var x = d === null ? null : state.unit === 'min' ? estMinutes(d) : d;
+      if (lim === 0 || (x !== null && x <= lim)) out.push({ p: p, d: d });
     }
     out.sort(function (a, b) { return (a.d === null) - (b.d === null) || (a.d || 0) - (b.d || 0); });
     return out;
@@ -464,15 +898,59 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     lab.appendChild(span);
     return lab;
   }
+  function checkChip(id, label, checked, onChange) {
+    var lab = document.createElement('label');
+    lab.className = 'chip check';
+    var inp = document.createElement('input');
+    inp.type = 'checkbox';
+    inp.id = id;
+    inp.checked = checked;
+    inp.addEventListener('change', function () { onChange(inp.checked); });
+    var span = document.createElement('span');
+    span.textContent = label;
+    lab.appendChild(inp);
+    lab.appendChild(span);
+    return lab;
+  }
   function renderChips() {
     els.starts.innerHTML = '';
+    if (group.on) els.starts.appendChild(chip('start', 'middle', 'The Middle', state.start === 'middle', onStart));
     els.starts.appendChild(chip('start', 'gps', 'My Location', state.start === 'gps', onStart));
-    els.starts.appendChild(chip('start', 'halfway', 'Halfway', state.start === 'halfway', onStart));
+    if (!group.on) els.starts.appendChild(chip('start', 'halfway', 'Halfway', state.start === 'halfway', onStart));
     els.starts.appendChild(chip('start', 'custom', 'Somewhere Else', state.start === 'custom', onStart));
+    els.units.innerHTML = '';
+    els.units.appendChild(chip('unit', 'min', 'Minutes', state.unit === 'min', onUnit));
+    els.units.appendChild(chip('unit', 'mi', 'Miles', state.unit === 'mi', onUnit));
     els.radii.innerHTML = '';
-    RADII.forEach(function (r) {
-      els.radii.appendChild(chip('radius', String(r), r === 0 ? 'Any Distance' : r + ' mi', state.radius === r, onRadius));
+    (state.unit === 'min' ? RADII_MIN : RADII).forEach(function (r) {
+      var label = r === 0 ? 'Any Distance' : r + (state.unit === 'min' ? ' min' : ' mi');
+      els.radii.appendChild(chip('radius', String(r), label, currentLimit() === r, onRadius));
     });
+    renderOptions();
+    renderFilters();
+  }
+  // "Include places we've been" and "Favorites only" use what you've both marked, so they
+  // show once the phones are connected.
+  function renderOptions() {
+    els.options.innerHTML = '';
+    els.options.hidden = !live.on || group.on || state.src === 'google';
+    if (els.options.hidden) return;
+    els.options.appendChild(checkChip('optBeen', 'Include places we’ve been', state.includeBeen, function (on) {
+      state.includeBeen = on;
+      liveCall('settings', { been: on ? '1' : '0' });
+      refresh();
+    }));
+    els.options.appendChild(checkChip('optFav', 'Favorites only', state.favOnly, function (on) {
+      state.favOnly = on;
+      store.set('favOnly', on ? '1' : '0');
+      refresh();
+    }));
+  }
+  function onUnit(value) {
+    state.unit = value;
+    store.set('unit', value);
+    renderChips();
+    refresh();
   }
   function onStart(value) {
     state.start = value;
@@ -480,6 +958,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (value === 'gps') requestGps(!within(state.gpsAt || 0, FRESH_FIX)); else setHint('');
     renderMeet();
     renderCustom();
+    renderGroupBits();
     if (value === 'custom' && !(state.custom && state.custom.point)) els.customInput.focus();
     if (value === 'halfway') {
       refreshMyLocation();
@@ -490,8 +969,13 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     refresh();
   }
   function onRadius(value) {
-    state.radius = Number(value);
-    store.set('radius', value);
+    if (state.unit === 'min') {
+      state.minutes = Number(value);
+      store.set('minutes', value);
+    } else {
+      state.radius = Number(value);
+      store.set('radius', value);
+    }
     refresh();
   }
   function setHint(text, warn) {
@@ -513,6 +997,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       state.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude };
       state.gpsAt = Date.now();
       setHint('');
+      if (group.on) sendGroupStart();
       refresh();
     }, function (err) {
       state.gpsPending = false;
@@ -542,11 +1027,10 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (!state.spun && !state.spinning) renderIdleReel();
   }
   function waitingForGps() {
-    if (state.radius === 0) return false;
+    if (currentLimit() === 0 && state.src !== 'google') return false;
     return (state.start === 'gps' && !state.gps) || (state.start === 'halfway' && !state.halfway) ||
-      (state.start === 'custom' && !(state.custom && state.custom.point));
+      (state.start === 'middle' && !origin()) || (state.start === 'custom' && !(state.custom && state.custom.point));
   }
-
   function renderIdleReel() {
     var el = els.reelName;
     el.className = 'reel-name is-idle';
@@ -554,40 +1038,83 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     else if (state.needsSetup) el.textContent = 'Almost ready';
     else if (!state.loaded) el.textContent = 'Loading…';
     else if (waitingForGps()) el.textContent = state.start === 'halfway' ? 'Find halfway first'
+      : state.start === 'middle' ? 'Waiting on everyone’s start'
       : state.start === 'custom' ? 'Type where you’re headed' : 'Finding you…';
+    else if (state.src === 'google') el.textContent = 'Spin to search Google';
     else if (!state.range.length) el.textContent = 'Nothing that close';
     else el.textContent = 'Spin to find out';
   }
   function renderSpin() {
     var b = els.spin;
+    var r = liveRound('spin');
     if (state.loadError) {
       b.disabled = false;
       b.textContent = 'Try Again';
     } else if (!state.loaded || state.spinning) {
       b.disabled = true;
-    } else if (state.spun && state.vetoesLeft <= 0) {
+    } else if (roomOn() && r && r.pick && !r.locked) {
+      var left = vetoesLeft(r, meName());
+      b.disabled = left <= 0;
+      b.textContent = left > 0 ? 'Veto and Spin Again' : 'Your Veto’s Used';
+    } else if (!roomOn() && state.spun && state.vetoesLeft <= 0) {
       b.disabled = true;
       b.textContent = 'No Vetoes Left';
     } else {
-      b.disabled = waitingForGps() || !state.range.length;
-      b.textContent = state.spun ? 'Veto and Spin Again' : 'Spin';
+      b.disabled = !canSpin();
+      b.textContent = roomOn() ? (r && r.locked ? 'New Spin' : 'Spin') : state.spun ? 'Veto and Spin Again' : 'Spin';
     }
-    var v = '';
+    renderVetoes(r);
+    els.reset.hidden = state.spinning || (roomOn() ? !(roomState() && roomState().round) : !state.spun);
+  }
+  function vetoesLeft(r, n) { return r && r.vetoes && typeof r.vetoes[n] === 'number' ? r.vetoes[n] : VETOES_EACH; }
+  // Google picks need a place to search around; list picks need something in range.
+  function canSpin() {
+    if (waitingForGps()) return false;
+    return state.src === 'google' ? !!origin() : state.range.length > 0;
+  }
+  function bulbs(box, n, on) {
+    for (var i = 0; i < n; i++) {
+      var s = document.createElement('span');
+      s.className = 'veto-bulb' + (i < on ? ' on' : '');
+      box.appendChild(s);
+    }
+  }
+  // Live: one veto each, labeled by person. Otherwise the phone's own vetoes.
+  function renderVetoes(r) {
+    var box = els.vetoes;
+    box.innerHTML = '';
+    if (roomOn()) {
+      var said = [];
+      people().forEach(function (n) {
+        var left = vetoesLeft(r, n);
+        var w = document.createElement('span');
+        w.className = 'who';
+        w.textContent = n === meName() ? 'You' : n;
+        box.appendChild(w);
+        bulbs(box, VETOES_EACH, left);
+        said.push((n === meName() ? 'You have ' : n + ' has ') + left + (left === 1 ? ' veto' : ' vetoes') + ' left');
+      });
+      box.setAttribute('aria-label', said.join(', '));
+      return;
+    }
     if (VETOES > 0) {
-      v = '<span>Vetoes left</span>';
-      for (var i = 0; i < VETOES; i++) v += '<span class="veto-bulb' + (i < state.vetoesLeft ? ' on' : '') + '"></span>';
+      var t = document.createElement('span');
+      t.textContent = 'Vetoes left';
+      box.appendChild(t);
+      bulbs(box, VETOES, state.vetoesLeft);
     }
-    els.vetoes.innerHTML = v;
-    els.vetoes.setAttribute('aria-label', state.vetoesLeft + ' of ' + VETOES + ' vetoes left');
-    els.reset.hidden = !state.spun || state.spinning;
+    box.setAttribute('aria-label', state.vetoesLeft + ' of ' + VETOES + ' vetoes left');
   }
   function renderRoster() {
     var n = state.range.length;
-    var where = state.radius === 0 ? 'on your list' : 'within ' + state.radius + ' mi of ' + originLabel();
+    var where = currentLimit() === 0 ? 'on your list' : 'within ' + limitText() + ' of ' + originLabel();
+    var checks = state.src === 'list' && (state.moods.length || state.open != null) ? '. The mood and hours get checked when you spin' : '';
+    els.roster.hidden = state.src === 'google';
     els.rosterSummary.textContent = !state.loaded ? 'Places in range'
       : waitingForGps() ? (state.start === 'halfway' ? 'Waiting for the halfway point'
+        : state.start === 'middle' ? 'Waiting on everyone’s starting point'
         : state.start === 'custom' ? 'Waiting for a place' : 'Waiting for your location')
-      : n + (n === 1 ? ' place ' : ' places ') + where;
+      : n + (n === 1 ? ' place ' : ' places ') + where + checks;
     if (!els.roster.open) { els.rosterList.setAttribute('data-stale', '1'); return; }
     var frag = document.createDocumentFragment();
     state.range.forEach(function (e) {
@@ -596,8 +1123,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       a.href = mapsUrl(e.p);
       a.target = '_blank';
       a.rel = 'noopener';
-      var name = document.createElement('span'); name.className = 'r-name'; name.textContent = e.p.n;
-      var dist = document.createElement('span'); dist.className = 'r-dist'; dist.textContent = e.d === null ? '' : fmtMiles(e.d);
+      var name = document.createElement('span'); name.className = 'r-name'; name.textContent = e.p.n + tagEmojis(e.p);
+      var dist = document.createElement('span'); dist.className = 'r-dist'; dist.textContent = fmtAway(e.d);
       var town = document.createElement('span'); town.className = 'r-town'; town.textContent = townOf(e.p.a);
       a.appendChild(name); a.appendChild(dist); a.appendChild(town);
       li.appendChild(a);
@@ -751,6 +1278,17 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (typeof c.LIST_CAP === 'number') LIST_CAP = c.LIST_CAP;
     if (c.PEOPLE && c.PEOPLE.length === 2 && c.PEOPLE.join('|') !== PEOPLE.join('|')) { PEOPLE = c.PEOPLE; renderMeet(); }
     if (c.MEET_DEFAULTS) MEET_DEFAULTS = c.MEET_DEFAULTS;
+    if (c.MOODS) {
+      MOODS = c.MOODS;
+      state.moods = state.moods.filter(function (id) { return !!moodById(id); });
+    }
+    if (c.GOOGLE && !!c.GOOGLE.on !== GOOGLE_ON) {
+      GOOGLE_ON = !!c.GOOGLE.on;
+      changed = true;
+      if (!GOOGLE_ON && state.src === 'google') { state.src = 'list'; store.set('src', 'list'); }
+    }
+    CFG.GOOGLE = c.GOOGLE || CFG.GOOGLE;
+    renderFilters();
     if (changed) {
       if (RADII.indexOf(state.radius) < 0) {
         state.radius = RADII.indexOf(c.DEFAULT_RADIUS) >= 0 ? c.DEFAULT_RADIUS : RADII[0];
@@ -813,9 +1351,14 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   // Picked once, or worked out the first time someone taps Here or opens a texted link.
   state.me = store.get('me') === '0' ? 0 : store.get('me') === '1' ? 1 : null;
   function setMe(i) {
+    var changed = state.me !== i;
     state.me = i;
     store.set('me', String(i));
     renderMeet();
+    if (typeof live === 'undefined') return;   // still starting up
+    applyTheme();
+    renderLiveCard();
+    if (changed && live.code) { live.startSent = ''; live.roundSeen = ''; renderLive(); schedulePoll(0); }
   }
 
   function meetMsg(text, warn) {
@@ -835,6 +1378,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       state.halfway = null;
       refresh();
     }
+    if (i === state.me) sendMyStart();
   }
   function renderMeet() {
     els.meet.hidden = state.start !== 'halfway';
@@ -848,10 +1392,11 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       els['here' + i].setAttribute('aria-label', 'Use this phone’s location for ' + PEOPLE[i]);
     });
     var other = me === null ? '' : PEOPLE[1 - me];
-    els.textBtn.hidden = !hosted || me === null;
+    els.textBtn.hidden = !hosted || me === null || live.on;
     els.textBtn.textContent = 'Text ' + other + ' where I’m starting';
     els.textHelp.hidden = !hosted || me === null;
-    els.textHelp.textContent = 'When ' + other + ' texts you a starting point, tap the link. Pasting the whole text into a box works too.';
+    els.textHelp.textContent = live.on ? 'You’re live: your starting point shows up on ' + other + '’s phone, and theirs shows up here.'
+      : 'When ' + other + ' texts you a starting point, tap the link. Pasting the whole text into a box works too.';
     renderWho();
   }
   function renderWho() {
@@ -960,6 +1505,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var a = rowValue(0);
     var b = rowValue(1);
     if (!a || !b) { meetMsg('Fill in where ' + PEOPLE[0] + ' and ' + PEOPLE[1] + ' are starting.', true); return; }
+    sendMyStart();
     var token = ++halfwayToken;
     els.findBtn.disabled = true;
     els.findBtn.textContent = 'Finding…';
@@ -1009,8 +1555,34 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   function showDriveTimes(w) {
     var token = ++driveToken;
     var hw = state.halfway;
-    if (state.start !== 'halfway' || !hw || !hw.a || !hw.b || typeof w.p.lat !== 'number') {
-      els.tDrive.hidden = true;
+    if (typeof w.p.lat !== 'number') { els.tDrive.hidden = true; return; }
+    if (group.on) {
+      els.tDrive.hidden = false;
+      els.tDrive.textContent = 'Checking everyone’s drive…';
+      callServer('group', { op: 'drives', code: group.code, mid: group.mid, to: fmtCoords(w.p) }).then(function (r) {
+        if (token !== driveToken) return;
+        var list = r && r.ok ? people().filter(function (n) { return r.drives[n] != null; }) : [];
+        if (!list.length) { els.tDrive.hidden = true; return; }
+        els.tDrive.textContent = 'Drive: ' + list.map(function (n) { return (n === meName() ? 'You' : n) + ' ' + r.drives[n] + ' min'; }).join(' · ');
+      }, function () {
+        if (token === driveToken) els.tDrive.hidden = true;
+      });
+      return;
+    }
+    if (state.start !== 'halfway' || !hw || !hw.a || !hw.b || w.from) {
+      // One starting point: the real drive time from it.
+      var o = w.from || origin();
+      var label = w.fromLabel || originLabel();
+      if (!o) { els.tDrive.hidden = true; return; }
+      els.tDrive.hidden = false;
+      els.tDrive.textContent = 'Checking the drive…';
+      callServer('driveTimes', { a: fmtCoords(o), b: '', to: fmtCoords(w.p) }).then(function (r) {
+        if (token !== driveToken) return;
+        if (!r || !r.ok || r.a == null) { els.tDrive.hidden = true; return; }
+        els.tDrive.textContent = r.a + ' min drive from ' + label;
+      }, function () {
+        if (token === driveToken) els.tDrive.hidden = true;
+      });
       return;
     }
     els.tDrive.hidden = false;
@@ -1132,13 +1704,15 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
         takeStart(st);
         return;
       }
-      state.meet[i] = { text: input.value, coords: null };
+      state.meet[i] = { text: input.value, coords: null, editedAt: Date.now() };
       store.set('meet' + i, JSON.stringify(state.meet[i]));
       input.placeholder = MEET_PLACEHOLDER;
       input.classList.remove('has-coords');
       meetMsg('');
       if (state.halfway) { state.halfway = null; refresh(); }
     });
+    // A typed starting point goes to the other phone once you leave the box.
+    input.addEventListener('change', function () { if (i === state.me) sendMyStart(); });
     input.addEventListener('keydown', function (ev) {
       if (ev.key !== 'Enter') return;
       ev.preventDefault();
@@ -1176,10 +1750,13 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       }
     });
     if (state.start === 'halfway') refreshMyLocation();
-    if (state.start === 'gps' && state.gps && !within(state.gpsAt || 0, FRESH_FIX)) requestGps(true);
+    if ((state.start === 'gps' || (group.on && !state.gstart)) && state.gps && !within(state.gpsAt || 0, FRESH_FIX)) requestGps(true);
+    if (group.on) schedGroupPoll(0);
+    else if (live.code) schedulePoll(0);
   });
   els.findBtn.addEventListener('click', function () { findHalfway(); });
   window.addEventListener('hashchange', function () {
+    if (readJoinFromHash()) return;
     refreshMyLocation();
     readStartFromHash();
   });
@@ -1532,14 +2109,18 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (pool.length > 1 && state.pick && pool[k].p === state.pick.p) {
       k = (k + 1 + randomInt(pool.length - 1)) % pool.length;
     }
-    var winner = pool[k];
+    reelTo(pool[k]);
+  }
+  // Names tick by, slow down, and stop on the winner.
+  function reelTo(winner, firstStep, names) {
+    var pool = state.range.length ? state.range : [winner];
     state.spinning = true;
     state.spun = true;
     els.ticket.hidden = true;
     renderSpin();
     if (reduceMotion) { land(winner); return; }
     els.marquee.classList.add('is-spinning');
-    var step = 0;
+    var step = firstStep || 0;
     (function next() {
       step++;
       if (step >= SPIN_STEPS) {
@@ -1547,10 +2128,25 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
         setTimeout(function () { els.marquee.classList.remove('is-spinning'); land(winner); }, 140);
         return;
       }
-      showName(pool[randomInt(pool.length)].p.n, false);
+      showName(names && names.length ? names[randomInt(names.length)] : pool[randomInt(pool.length)].p.n, false);
       var t = step / SPIN_STEPS;
       setTimeout(next, 40 + 320 * t * t * t);
     })();
+  }
+  // Fast ticking while the script decides; returns a function that stops it.
+  function waitReel(names) {
+    var pool = state.range.length ? state.range : state.places.map(function (p) { return { p: p }; });
+    state.spinning = true;
+    state.spun = true;
+    els.ticket.hidden = true;
+    renderSpin();
+    els.marquee.classList.add('is-spinning');
+    var t = setInterval(function () {
+      if (reduceMotion) return;
+      if (names && names.length) showName(names[randomInt(names.length)], false);
+      else if (pool.length) showName(pool[randomInt(pool.length)].p.n, false);
+    }, names ? 140 : 70);
+    return function () { clearInterval(t); };
   }
   function land(w) {
     state.pick = w;
@@ -1560,9 +2156,13 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     els.tAddr.textContent = w.p.a || '';
     els.tTown.textContent = townOf(w.p.a);
     els.tDate.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    els.tDist.textContent = w.d === null ? 'No distance for this one' : fmtMiles(w.d) + ' from ' + originLabel();
+    var fromWhere = w.fromLabel || originLabel();
+    els.tDist.textContent = w.d === null || w.d === undefined ? 'No distance for this one'
+      : (state.unit === 'min' ? '~' + estMinutes(w.d) + ' min · ' : '') + fmtMiles(w.d) + ' from ' + fromWhere;
     els.tGo.href = mapsUrl(w.p);
     showDriveTimes(w);
+    showInfo(w);
+    renderTicketExtras();
     els.ticket.hidden = false;
     els.ticket.classList.remove('printing');
     void els.ticket.offsetWidth;
@@ -1572,9 +2172,18 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 
   els.spin.addEventListener('click', function () {
     if (state.loadError) { load(); return; }
+    if (roomOn()) { liveSpin(); return; }
+    if (needsServer()) { soloServerSpin(); return; }
     spin();
   });
   els.reset.addEventListener('click', function () {
+    state.out = [];
+    if (roomOn()) {
+      liveCall('reset').then(function (res) {
+        if (res && res.ok) { state.pick = null; els.ticket.hidden = true; state.spun = false; refresh(); }
+      });
+      return;
+    }
     state.vetoesLeft = VETOES;
     state.spun = false;
     state.pick = null;
@@ -1582,11 +2191,1611 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     refresh();
   });
 
+  // ---------- Live mode: both phones together ----------
+  // With the same passcode, both phones check in with Apps Script every couple of seconds.
+  // Spins and swipe decks are decided there, so both phones see the same thing and nobody
+  // can re-roll in secret. Ratings, "we went", history and hidden places are shared too.
+  var live = {
+    code: store.get('liveCode') || '',
+    on: false, v: null, bv: null, state: null, book: null, seen: {}, night: null, skew: 0,
+    timer: null, polling: false, fails: 0,
+    shownSeq: '', roundSeen: '', partied: store.get('partied') || '',
+    swiped: {}, startSent: '', flash: null, forceCard: false
+  };
+  // A group date (friends on their own phones) uses the same rounds as the two of you. While
+  // this phone is in one, everything round-related goes to the group instead.
+  var group = {
+    code: store.get('grpCode') || '', mid: store.get('grpMid') || '', name: store.get('grpName') || '',
+    on: false, state: null, v: null, seen: {}, skew: 0, timer: null, polling: false, fails: 0, startSent: ''
+  };
+  function roomOn() { return group.on || live.on; }
+  function roomState() { return group.on ? group.state : live.on ? live.state : null; }
+  function roomSkew() { return group.on ? group.skew : live.skew; }
+  function people() {
+    if (!group.on) return PEOPLE;
+    return ((group.state && group.state.members) || []).map(function (m) { return m.name; });
+  }
+  function coupleName() { return state.me === null ? null : PEOPLE[state.me]; }
+  function meName() { return group.on ? group.name : coupleName(); }
+  function others() { var me = meName(); return people().filter(function (n) { return n !== me; }); }
+  function namesText(list) {
+    return list.length <= 2 ? list.join(' and ') : list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
+  }
+  function otherName() {
+    if (!group.on) return state.me === null ? '' : PEOPLE[1 - state.me];
+    return namesText(others()) || 'your friends';
+  }
+  function who(n, lower) { return n === meName() ? (lower ? 'you' : 'You') : n; }
+  function liveRound(mode) {
+    var st = roomState();
+    var r = st ? st.round : null;
+    return r && (!mode || r.mode === mode) ? r : null;
+  }
+
+  // --- what you've both marked ---
+  function keyOf(p) { return (p.n + '|' + (p.a || '')).toLowerCase(); }
+  function bookInfo(p) { return (p && live.book && live.book.places && live.book.places[p.key || keyOf(p)]) || null; }
+  function avgStars(info) {
+    var s = info && info.stars;
+    if (!s) return null;
+    var vals = Object.keys(s).map(function (k) { return s[k]; }).filter(function (x) { return x >= 1; });
+    return vals.length ? vals.reduce(function (a, b) { return a + b; }, 0) / vals.length : null;
+  }
+  function lastWent(info) { return info && info.went && info.went.length ? info.went[info.went.length - 1] : null; }
+  function localNight() {
+    var d = new Date(Date.now() - 4 * 3600000);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function daysSince(day) {
+    return Math.round((Date.parse((live.night || localNight()) + 'T12:00:00Z') - Date.parse(day + 'T12:00:00Z')) / 864e5);
+  }
+  function fmtDay(day) {
+    var d = new Date(day + 'T12:00:00');
+    return isNaN(d) ? day : d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+  // The same rules the script uses for spins and decks.
+  function allowed(p) {
+    if (state.src === 'list' && state.tags.length && !(p.t && p.t.some(function (l) { return state.tags.indexOf(l) >= 0; }))) return false;
+    if (!live.on || group.on) return true;
+    var info = bookInfo(p);
+    if (!info) return !state.favOnly;
+    if (info.hidden) return false;
+    var last = lastWent(info);
+    var recent = last && daysSince(last) < state.skipDays;
+    if (state.favOnly) return avgStars(info) >= 4 && !recent;
+    if (last && (!state.includeBeen || recent)) return false;
+    return true;
+  }
+
+  // --- connecting ---
+  function liveMsg(text, warn) {
+    els.liveMsg.hidden = !text;
+    els.liveMsg.textContent = text || '';
+    els.liveMsg.classList.toggle('is-warn', !!warn);
+  }
+  function renderLiveCard() {
+    els.liveCard.hidden = live.on || group.on || (store.get('liveLater') === '1' && !live.forceCard);
+    var line = els.liveWho;
+    line.innerHTML = '';
+    function b(label, i) {
+      var x = document.createElement('button');
+      x.type = 'button';
+      x.className = 'linkish';
+      x.textContent = label;
+      x.addEventListener('click', function () { setMe(i); });
+      return x;
+    }
+    if (state.me === null) {
+      line.appendChild(document.createTextNode('Whose phone is this? '));
+      line.appendChild(b(PEOPLE[0] + '’s', 0));
+      line.appendChild(document.createTextNode(' · '));
+      line.appendChild(b(PEOPLE[1] + '’s', 1));
+    } else {
+      line.appendChild(document.createTextNode('This is ' + PEOPLE[state.me] + '’s phone. '));
+      line.appendChild(b('Switch', 1 - state.me));
+    }
+  }
+  function connect(code) {
+    if (state.me === null) { liveMsg('First pick whose phone this is.', true); return; }
+    code = String(code || '').trim();
+    if (code.length < 4) { liveMsg('Use at least 4 letters or numbers.', true); return; }
+    els.liveBtn.disabled = true;
+    liveMsg('Connecting…');
+    callServer('live', { op: 'join', who: meName(), code: code }).then(function (res) {
+      els.liveBtn.disabled = false;
+      if (!res || !res.ok) {
+        liveMsg(res && res.error === 'PASSCODE' ? 'That isn’t the passcode the other phone set. Try again.'
+          : (res && res.error) || 'Couldn’t connect.', true);
+        return;
+      }
+      live.code = code;
+      store.set('liveCode', code);
+      live.forceCard = false;
+      applyLive(res);
+      liveMsg('');
+      flash(res.created ? 'Connected! Have ' + otherName() + ' enter the same passcode.' : 'Connected! You’re live with ' + otherName() + '.');
+      sendMyStart(true);
+      schedulePoll(1500);
+    }, function (err) {
+      els.liveBtn.disabled = false;
+      liveMsg('Couldn’t connect: ' + errText(err), true);
+    });
+  }
+  function unpair(msg) {
+    clearTimeout(live.timer);
+    live.on = false;
+    live.code = '';
+    store.set('liveCode', '');
+    live.state = live.book = null;
+    live.v = live.bv = null;
+    if (msg) { live.forceCard = true; liveMsg(msg, true); }
+    renderChips();
+    renderLiveCard();
+    renderMeet();
+    renderLive();
+  }
+
+  // --- talking to the script ---
+  // Round requests go to the group while this phone is in one; ratings and history stay yours.
+  var ROOM_OPS = { spin: 1, closed: 1, 'in': 1, lock: 1, reset: 1, deal: 1, swipe: 1, best: 1 };
+  function liveCall(op, params) {
+    if (group.on && ROOM_OPS[op]) return groupCall(op, params);
+    if (!live.code || state.me === null) return Promise.resolve({ ok: false, error: 'OFF' });
+    var p = { op: op, who: meName(), code: live.code };
+    Object.keys(params || {}).forEach(function (k) { p[k] = params[k] == null ? '' : params[k]; });
+    return callServer('live', p).then(function (res) {
+      if (res && res.ok) applyLive(res);
+      else if (res && res.error === 'PASSCODE') unpair('The passcode changed. Enter it again to reconnect.');
+      return res || { ok: false, error: 'No answer' };
+    }, function (err) {
+      return { ok: false, error: errText(err), offline: true };
+    });
+  }
+  function schedulePoll(ms) {
+    clearTimeout(live.timer);
+    if (live.code && !group.on) live.timer = setTimeout(poll, ms);
+  }
+  function poll() {
+    if (!live.code || state.me === null || live.polling || group.on) return;
+    if (document.visibilityState === 'hidden') return;   // picks up again when the app comes back
+    live.polling = true;
+    liveCall('poll', { v: live.v == null ? '' : live.v, bv: live.bv == null ? '' : live.bv }).then(function (res) {
+      live.polling = false;
+      if (!live.code) return;
+      live.fails = res && res.ok ? 0 : live.fails + 1;
+      if (live.fails) renderPresence();
+      schedulePoll(live.fails ? Math.min(15000, 2500 * (live.fails + 1)) : 2000);
+    });
+  }
+  function applyLive(res) {
+    var wasOn = live.on;
+    live.on = true;
+    if (res.seen) live.seen = res.seen;
+    if (typeof res.now === 'number') live.skew = Date.now() - res.now;
+    if (res.night) live.night = res.night;
+    if (res.state) { live.state = res.state; live.v = res.v; }
+    if (res.book) { live.book = res.book; live.bv = res.bv; }
+    if (!wasOn) { renderChips(); renderLiveCard(); renderMeet(); }
+    if (res.state || res.book || !wasOn) renderLive(); else renderPresence();
+  }
+  function flash(text, warn) {
+    live.flash = { text: text, warn: !!warn, at: Date.now(), until: Date.now() + 6000 };
+    renderLiveRound();
+    setTimeout(renderLiveRound, 6100);
+  }
+
+  // --- showing it ---
+  function renderLive() {
+    renderPresence();
+    if (live.state && !group.on) {
+      var s = live.state.settings || {};
+      state.includeBeen = s.been === true;
+      state.skipDays = typeof s.skip === 'number' ? s.skip : SKIP_DAYS;
+      var ob = document.getElementById('optBeen');
+      if (ob) ob.checked = state.includeBeen;
+      syncPartnerStart();
+    }
+    // Whoever starts a round brings the other phones along to it.
+    var r = liveRound();
+    if (r && r.id !== live.roundSeen) {
+      var firstLook = !live.roundSeen;
+      live.roundSeen = r.id;
+      if (!firstLook && r.by !== meName() && r.mode !== state.mode) setMode(r.mode);
+    }
+    renderGroupBits();
+    refresh();
+    renderLiveRound();
+    renderSwipe();
+    if (els.placesSheet.open) renderPlaces();
+    if (els.groupSheet.open) renderGroupSheet();
+  }
+  function ago(ms) {
+    var m = Math.round(ms / 60000);
+    if (m < 1) return 'just now';
+    if (m < 60) return m + ' min ago';
+    var h = Math.round(m / 60);
+    if (h < 24) return h + (h === 1 ? ' hour ago' : ' hours ago');
+    var d = Math.round(h / 24);
+    return d + (d === 1 ? ' day ago' : ' days ago');
+  }
+  function renderPresence() {
+    var el = els.presence;
+    if (!roomOn() || meName() === null) { el.hidden = true; return; }
+    el.hidden = false;
+    var seen = group.on ? group.seen : live.seen;
+    var fails = group.on ? group.fails : live.fails;
+    var now = Date.now() - roomSkew();
+    var outs = others();
+    var here = outs.filter(function (n) { return seen[n] && now - seen[n] < 12000; });
+    el.classList.toggle('is-here', here.length > 0 && !fails);
+    if (fails > 1) { el.textContent = 'Reconnecting…'; return; }
+    if (group.on) {
+      el.textContent = !outs.length ? 'Waiting for friends to join'
+        : here.length === outs.length ? (outs.length === 1 ? outs[0] + ' is here' : 'Everyone’s here')
+        : here.length ? namesText(here) + (here.length === 1 ? ' is here' : ' are here')
+        : people().length + ' in this group';
+      return;
+    }
+    var other = outs[0];
+    var t = seen[other];
+    el.textContent = here.length ? other + ' is here' : t ? other + ' was here ' + ago(now - t) : other + ' hasn’t connected yet';
+  }
+  function lineFor(r) {
+    var l = (r && r.last) || {};
+    var w = l.who || '';
+    switch (l.what) {
+      case 'spin': return who(w) + ' spun!' + filterNote(r);
+      case 'veto': return who(w) + ' vetoed ' + (l.prev || 'that one') + '!';
+      case 'closed': return l.empty ? l.prev + ' is closed tonight, and that was the last place in range.'
+        : l.prev + ' is closed tonight, so ' + who(w, true) + ' spun again. No veto used.';
+      case 'gone': return l.prev + ' is closed for good' + (group.on ? ', so ' + who(w, true) + ' spun again.' : ', so it’s hidden for both of you.');
+      case 'in':
+        if (w !== meName()) return w + ' is in! Tap I’m In to make it a date.';
+        return 'You’re in! Waiting on ' + namesText(people().filter(function (n) { return !(r.inn && r.inn[n]); })) + '.';
+      case 'date': return 'It’s a date! 🎉';
+      case 'lock': return who(w) + ' locked it in! 🎉';
+      case 'deal': return who(w) + ' dealt a deck. Start swiping!';
+      case 'more': return who(w) + ' dealt more cards.';
+      case 'match': return 'It’s a match! 🎉';
+      case 'best': return who(w) + ' went with the most liked. 🎉';
+      default: return '';
+    }
+  }
+  function renderLiveRound() {
+    var st = roomState();
+    var r = st ? st.round : null;
+    var sk = roomSkew();
+    var f = live.flash && live.flash.until > Date.now() ? live.flash : null;
+    if (f && r && r.last && r.last.at + sk > f.at) f = null;   // something newer happened
+    var line = f ? f.text : r && r.mode === 'spin' ? lineFor(r) : '';
+    if (!r && !f && st && st.lastReset && Date.now() - sk - st.lastReset.at < 60000) {
+      line = who(st.lastReset.who) + ' started over.';
+    }
+    els.liveLine.hidden = !line;
+    els.liveLine.textContent = line;
+    els.liveLine.classList.toggle('is-warn', !!(f && f.warn));
+    if (!roomOn() || state.spinning) return;
+    if (r && r.pick && (r.mode === 'spin' || r.match)) {
+      var sig = r.id + ':' + r.seq + ':' + (r.match ? 'm' : '');
+      if (sig !== live.shownSeq) {
+        live.shownSeq = sig;
+        var entry = fromCard(r.pick, r);
+        var recent = r.last && r.last.at && Date.now() - sk - r.last.at < 8000;
+        if (recent && r.mode === 'spin' && state.mode === 'spin' && /spin|veto|closed|gone/.test(r.last.what)) reelTo(entry, 6, tickNames(r));
+        else land(entry);
+      } else {
+        renderTicketExtras();
+      }
+    } else if (state.pick && state.pick.live) {
+      state.pick = null;
+      state.spun = false;
+      els.ticket.hidden = true;
+      refresh();
+    }
+    if (r && r.locked && r.pick && r.id !== live.partied && r.lockedAt && Date.now() - sk - r.lockedAt < 600000) celebrate(r);
+  }
+  function fromCard(c, r) {
+    var label = r.label || 'there';
+    if (label === meName() + '’s location') label = 'you';
+    return { p: { n: c.n, a: c.a, lat: c.lat, lng: c.lng, key: c.key, t: c.t, gid: c.gid, g: c.g }, d: c.d, key: c.key, live: true, from: r.origin || null, fromLabel: label };
+  }
+
+  // --- the ticket: badges, I'm in, closed, we went ---
+  function tButton(label, cls, onClick) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = cls;
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+  function placeParams(p) { return { key: p.key || keyOf(p), n: p.n, a: p.a || '' }; }
+  function renderTicketExtras() {
+    var w = state.pick;
+    els.tBadges.textContent = '';
+    els.tLive.innerHTML = '';
+    els.tLive.hidden = true;
+    if (!w) return;
+    var info = bookInfo(w.p);
+    var bits = [];
+    var avg = avgStars(info);
+    if (avg >= 4) bits.push('♥ Favorite');
+    if (avg) bits.push('Your stars ' + avg.toFixed(1));
+    var last = lastWent(info);
+    if (last) bits.push('You went ' + fmtDay(last));
+    if (w.p.g) bits.push('New to you: not on your list');
+    (w.p.t || []).forEach(function (l) { bits.push(tagText(l)); });
+    els.tBadges.textContent = bits.join(' · ');
+    var r = liveRound();
+    if (!w.live || !r || !r.pick || r.pick.key !== w.key) return;
+    els.tLive.hidden = false;
+    var box = els.tLive;
+    var row = document.createElement('div');
+    row.className = 'row';
+    var many = people().length > 2;
+    if (r.locked) {
+      var big = document.createElement('p');
+      big.className = 'date';
+      big.textContent = r.last && r.last.what === 'best' ? 'Most liked wins!' : r.match || (r.last && r.last.what === 'match') ? 'It’s a match!' : 'It’s a date!';
+      box.appendChild(big);
+      if (!live.on) return;   // stars and "we went" are kept for the two of you
+      var wentTonight = info && info.went && info.went.indexOf(r.night) >= 0;
+      var mine = info && info.stars && info.stars[coupleName()];
+      row.appendChild(tButton(mine ? 'Change My Rating' : 'We Went! Rate It', 'btn', function () { openRate(w.p); }));
+      if (!wentTonight && !mine) {
+        row.appendChild(tButton('Just mark we went', 'tlink', function () {
+          liveCall('went', Object.assign(placeParams(w.p), { day: r.night })).then(function () { renderTicketExtras(); });
+        }));
+      }
+      box.appendChild(row);
+      return;
+    }
+    if (r.mode !== 'spin') return;
+    var inList = people().filter(function (n) { return r.inn && r.inn[n]; });
+    var meIn = inList.indexOf(meName()) >= 0;
+    var othersIn = inList.filter(function (n) { return n !== meName(); });
+    var waiting = others().filter(function (n) { return inList.indexOf(n) < 0; });
+    var say = document.createElement('p');
+    say.className = 'say';
+    say.textContent = meIn ? 'You’re in. Waiting on ' + namesText(waiting) + '…'
+      : othersIn.length ? namesText(othersIn) + (othersIn.length === 1 ? ' is in!' : ' are in!')
+      : (many ? 'Everyone taps' : 'Both tap') + ' I’m In to make it a date.';
+    box.appendChild(say);
+    if (!meIn) row.appendChild(tButton('I’m In 👍', 'btn', function (e) { e.target.disabled = true; liveCall('in'); }));
+    else row.appendChild(tButton(many ? 'Lock it in for everyone' : 'Lock it in for both of us', 'tlink', function () { liveCall('lock'); }));
+    box.appendChild(row);
+    var row2 = document.createElement('div');
+    row2.className = 'row';
+    row2.appendChild(tButton('Closed tonight', 'tlink', function () { liveCall('closed').then(afterSkip); }));
+    var gone = tButton('Closed for good', 'tlink', function () {
+      if (gone.getAttribute('data-sure') !== '1') {
+        gone.setAttribute('data-sure', '1');
+        gone.textContent = group.on ? 'Tap again to skip it' : 'Tap again to hide it for good';
+        return;
+      }
+      liveCall('closed', { good: '1' }).then(afterSkip);
+    });
+    row2.appendChild(gone);
+    box.appendChild(row2);
+  }
+  function afterSkip(res) {
+    if (res && !res.ok && res.error !== 'OFF') flash(res.error, true);
+    if (res && !res.ok) pollNow();
+  }
+  function pollNow() { if (group.on) schedGroupPoll(0); else schedulePoll(0); }
+
+  // --- spinning together ---
+  function liveOriginLabel() {
+    if (state.start === 'gps') return meName() + '’s location';
+    if (state.start === 'middle') return 'the middle' + (origin() && origin().label ? ' near ' + origin().label : '');
+    if (state.start === 'halfway') return 'halfway' + (state.halfway && state.halfway.label ? ' near ' + state.halfway.label : '');
+    if (state.start === 'custom') return (state.custom && state.custom.label) || 'there';
+    return state.start;
+  }
+  function spinParams(extra) {
+    var o = origin();
+    var p = { olat: o ? o.lat : '', olng: o ? o.lng : '', olabel: liveOriginLabel(), unit: state.unit, lim: currentLimit(),
+      fav: state.favOnly && !group.on ? '1' : '0' };
+    var f = filterParams();
+    Object.keys(f).forEach(function (k) { p[k] = f[k]; });
+    Object.keys(extra || {}).forEach(function (k) { p[k] = extra[k]; });
+    return p;
+  }
+  function liveSpin() {
+    if (state.spinning) return;
+    var before = state.pick;
+    var stop = waitReel(tickNames(null));
+    var started = Date.now();
+    liveCall('spin', spinParams()).then(function (res) {
+      setTimeout(function () {
+        stop();
+        var r = liveRound('spin');
+        if (!res || !res.ok || !r || !r.pick) {
+          els.marquee.classList.remove('is-spinning');
+          state.spinning = false;
+          if (before) land(before); else { state.spun = false; refresh(); }
+          var canVeto = others().filter(function (n) { return vetoesLeft(r, n) > 0; });
+          flash(res && res.error === 'NO_VETO' ? 'You used your veto' + (canVeto.length ? '. ' + namesText(canVeto) + ' can still veto.' : ', and so has everyone else.')
+            : res && res.error === 'OFF' ? 'Connect live mode first.' : (res && res.error) || 'Couldn’t spin.', true);
+          if (res && !res.ok) pollNow();
+          renderSpin();
+          return;
+        }
+        live.shownSeq = r.id + ':' + r.seq + ':';
+        reelTo(fromCard(r.pick, r), 8, tickNames(r));
+        if (r.note) setTimeout(function () { flash(noteText(r.note)); }, 2600);
+      }, Math.max(0, 600 - (Date.now() - started)));
+    });
+  }
+
+  // --- celebrations ---
+  function celebrate(r) {
+    live.partied = r.id;
+    store.set('partied', r.id);
+    var many = people().length > 2;
+    var best = r.last && r.last.what === 'best';
+    var match = !best && (!!r.match || (r.last && r.last.what === 'match'));
+    els.partyKicker.textContent = best ? 'Most liked wins!' : match ? 'It’s a match!' : 'It’s a date!';
+    els.partyName.textContent = r.pick.n;
+    var town = townOf(r.pick.a);
+    els.partySub.textContent = (town ? town + ' · ' : '') + (best ? 'The pick most of you liked.'
+      : match ? (many ? 'Everyone swiped right.' : 'You both swiped right.') : (many ? 'Everyone’s in.' : 'You’re both in.'));
+    els.partyGo.href = mapsUrl(r.pick);
+    infoFor(r.pick, false).then(function (i) { if (i && i.url) els.partyGo.href = i.url; });
+    els.party.hidden = false;
+    confettiBurst();
+    try { if (navigator.vibrate) navigator.vibrate([40, 60, 120]); } catch (e) {}
+    els.partyClose.focus();
+  }
+  function confettiBurst() {
+    if (reduceMotion) return;
+    var colors = ['var(--bulb)', 'var(--ivory)', '#ff7eb6', '#8fd6a8', '#f2a65e'];
+    var box = els.confetti;
+    box.innerHTML = '';
+    for (var i = 0; i < 70; i++) {
+      var c = document.createElement('i');
+      c.style.left = (Math.random() * 100) + '%';
+      c.style.background = colors[i % colors.length];
+      c.style.animationDuration = (2.2 + Math.random() * 1.6) + 's';
+      c.style.animationDelay = (Math.random() * 0.6) + 's';
+      c.style.transform = 'rotate(' + Math.round(Math.random() * 360) + 'deg)';
+      box.appendChild(c);
+    }
+    setTimeout(function () { box.innerHTML = ''; }, 4800);
+  }
+  els.partyClose.addEventListener('click', function () { els.party.hidden = true; });
+  els.party.addEventListener('keydown', function (e) { if (e.key === 'Escape') els.party.hidden = true; });
+
+  // --- spin or swipe ---
+  function setMode(m) {
+    state.mode = m === 'swipe' ? 'swipe' : 'spin';
+    store.set('mode', state.mode);
+    els.modeSpin.setAttribute('aria-selected', String(state.mode === 'spin'));
+    els.modeSwipe.setAttribute('aria-selected', String(state.mode === 'swipe'));
+    els.spinView.hidden = state.mode !== 'spin';
+    els.swipeView.hidden = state.mode !== 'swipe';
+    renderSwipe();
+  }
+  els.modeSpin.addEventListener('click', function () { setMode('spin'); });
+  els.modeSwipe.addEventListener('click', function () { setMode('swipe'); });
+
+  // --- swiping ---
+  function swipeMsg(text) {
+    els.swipeMsg.textContent = '';
+    if (typeof text === 'string') { els.swipeMsg.textContent = text; return; }
+    (text || []).forEach(function (part) {
+      if (part.b) { var s = document.createElement('strong'); s.textContent = part.b; els.swipeMsg.appendChild(s); }
+      else els.swipeMsg.appendChild(document.createTextNode(part));
+    });
+  }
+  function swipeEmpty(title, text) {
+    els.swipeEmpty.hidden = false;
+    els.swipeEmpty.innerHTML = '';
+    var s = document.createElement('strong');
+    s.textContent = title;
+    els.swipeEmpty.appendChild(s);
+    els.swipeEmpty.appendChild(document.createTextNode(text));
+  }
+  function renderSwipe() {
+    if (state.mode !== 'swipe') return;
+    var r = liveRound('swipe');
+    els.deck.hidden = true;
+    els.swipeButtons.hidden = true;
+    els.dealBtn.hidden = false;
+    els.dealBtn.removeAttribute('data-more');
+    els.dealBtn.removeAttribute('data-best');
+    els.dealMore.hidden = true;
+    if (!roomOn()) {
+      swipeEmpty('Swipe together', 'Connect both phones (Play together, live) or start a Group Date to swipe. Everyone swipes on their own phone, and the first place you all like wins.');
+      els.dealBtn.hidden = true;
+      swipeMsg('');
+      if (!live.code) { live.forceCard = true; renderLiveCard(); }
+      return;
+    }
+    var outs = others();
+    var all = group.on ? 'you all' : 'you both';
+    if (!r) {
+      swipeEmpty('Swipe together', 'Deal a deck of places in range. Everyone swipes on their own phone, and the first place ' + all + ' like wins.');
+      els.dealBtn.textContent = 'Deal Cards';
+      els.dealBtn.disabled = !state.loaded || waitingForGps() || (state.src === 'google' && !origin());
+      swipeMsg(waitingForGps() ? 'Set where you’re starting first.' : '');
+      return;
+    }
+    if (r.match) {
+      var best = r.last && r.last.what === 'best';
+      swipeEmpty(best ? 'Most liked wins!' : 'It’s a match!', r.match.n + (townOf(r.match.a) ? ' · ' + townOf(r.match.a) : '') + '. Its ticket is on the Spin tab.');
+      els.dealBtn.textContent = 'Deal a New Deck';
+      els.dealBtn.disabled = false;
+      swipeMsg('');
+      return;
+    }
+    var mine = {};
+    Object.keys(r.mine || {}).forEach(function (k) { mine[k] = r.mine[k]; });
+    Object.keys(live.swiped).forEach(function (k) { mine[k] = live.swiped[k]; });
+    var left = r.deck.filter(function (c) { return !(c.key in mine); });
+    var n = r.deck.length;
+    var count = function (o) { return Math.min((r.counts && r.counts[o]) || 0, n); };
+    var parts = ['You: ', { b: (n - left.length) + ' of ' + n }];
+    outs.forEach(function (o) { parts.push(' · ' + o + ': '); parts.push({ b: count(o) + ' of ' + n }); });
+    swipeMsg(parts);
+    if (!left.length) {
+      els.deck.innerHTML = '';
+      els.deck.removeAttribute('data-top');
+      var behind = outs.filter(function (o) { return count(o) < n; });
+      if (!behind.length) {
+        var b = r.best && people().length > 2 ? r.deck.filter(function (c) { return c.key === r.best.key; })[0] : null;
+        if (b) {
+          swipeEmpty('No match this time', 'Most liked: ' + b.n + ' (' + r.best.likes + ' of ' + r.best.of + ' liked it). Go with it, or deal more?');
+          els.dealBtn.textContent = 'Go With ' + b.n;
+          els.dealBtn.setAttribute('data-best', '1');
+          els.dealMore.hidden = false;
+        } else {
+          swipeEmpty('No match this time', (group.on ? 'You didn’t all like' : 'You didn’t both like') + ' the same place in this deck. Deal more?');
+          els.dealBtn.textContent = 'Deal More Cards';
+          els.dealBtn.setAttribute('data-more', '1');
+        }
+        els.dealBtn.disabled = false;
+      } else {
+        swipeEmpty('You’re done!', 'Waiting on ' + namesText(behind) + '. A match pops up the moment ' + all + ' like the same place.');
+        els.dealBtn.hidden = true;
+      }
+      return;
+    }
+    els.swipeEmpty.hidden = true;
+    els.dealBtn.hidden = true;
+    els.deck.hidden = false;
+    els.deck.classList.toggle('tall', GOOGLE_ON);
+    els.swipeButtons.hidden = false;
+    if (els.deck.getAttribute('data-top') !== left[0].key) {
+      els.deck.innerHTML = '';
+      if (left[1]) els.deck.appendChild(makeCard(left[1], n - left.length + 2, n, true));
+      els.deck.appendChild(makeCard(left[0], n - left.length + 1, n, false));
+      els.deck.setAttribute('data-top', left[0].key);
+    }
+  }
+  function makeCard(c, at, n, under) {
+    var el = document.createElement('div');
+    el.className = 'card' + (under ? ' is-under' : '');
+    el.setAttribute('data-key', c.key);
+    if (!under) el.setAttribute('aria-label', c.n);
+    var photo = document.createElement('img');
+    photo.className = 'card-photo';
+    photo.alt = '';
+    photo.hidden = true;
+    photo.referrerPolicy = 'no-referrer';
+    photo.draggable = false;
+    var body = document.createElement('div');
+    body.className = 'card-body';
+    var top = document.createElement('div');
+    top.className = 'card-top';
+    var t1 = document.createElement('span'); t1.textContent = townOf(c.a);
+    var t2 = document.createElement('span'); t2.textContent = c.d == null ? '' : fmtAway(c.d);
+    top.appendChild(t1); top.appendChild(t2);
+    var name = document.createElement('h3'); name.className = 'card-name'; name.textContent = c.n;
+    var addr = document.createElement('p'); addr.className = 'card-addr'; addr.textContent = c.a || '';
+    var google = document.createElement('p'); google.className = 'card-google';
+    var badges = document.createElement('p'); badges.className = 'card-badges';
+    var info = bookInfo(c);
+    var avg = avgStars(info);
+    var last = lastWent(info);
+    badges.textContent = [avg >= 4 ? '♥ Favorite' : '', avg ? 'Your stars ' + avg.toFixed(1) : '', last ? 'Went ' + fmtDay(last) : '',
+      c.g ? 'Not on your list' : ''].concat((c.t || []).map(tagText)).filter(Boolean).join(' · ');
+    var credit = document.createElement('p'); credit.className = 'card-credit'; credit.hidden = true;
+    [top, name, addr, google, badges, credit].forEach(function (x) { body.appendChild(x); });
+    var count = document.createElement('span'); count.className = 'card-count'; count.textContent = at + ' of ' + n;
+    var yes = document.createElement('span'); yes.className = 'stamp yes'; yes.textContent = 'Yes!';
+    var no = document.createElement('span'); no.className = 'stamp no'; no.textContent = 'Nope';
+    [photo, body, count, yes, no].forEach(function (x) { el.appendChild(x); });
+    // Stars, hours and a photo from Google for the top card (and the next one, ahead of time).
+    infoFor(c, true).then(function (i) {
+      if (!i || !el.isConnected) return;
+      if (i.photos && i.photos[0]) {
+        photo.src = i.photos[0].u;
+        photo.alt = 'Photo of ' + c.n;
+        photo.hidden = false;
+        el.classList.add('has-photo');
+        photo.addEventListener('error', function () { photo.hidden = true; el.classList.remove('has-photo'); });
+      }
+      google.textContent = [ratingText(i), i.hours].filter(Boolean).join(' · ');
+      credit.hidden = false;
+      fillCredit(credit, (i.photos || []).slice(0, 1));
+    });
+    if (!under) dragCard(el, c, yes, no);
+    return el;
+  }
+  function dragCard(el, c, yes, no) {
+    var x0 = null;
+    var dx = 0;
+    el.addEventListener('pointerdown', function (e) {
+      if (e.button > 0) return;
+      x0 = e.clientX;
+      dx = 0;
+      try { el.setPointerCapture(e.pointerId); } catch (err) {}
+      el.classList.add('is-dragging');
+    });
+    el.addEventListener('pointermove', function (e) {
+      if (x0 === null) return;
+      dx = e.clientX - x0;
+      el.style.transform = 'translateX(' + dx + 'px) rotate(' + (dx / 18) + 'deg)';
+      yes.style.opacity = String(Math.max(0, Math.min(1, dx / 90)));
+      no.style.opacity = String(Math.max(0, Math.min(1, -dx / 90)));
+    });
+    function end() {
+      if (x0 === null) return;
+      x0 = null;
+      el.classList.remove('is-dragging');
+      if (Math.abs(dx) > 90) { commitSwipe(c, dx > 0, el); return; }
+      el.style.transform = '';
+      yes.style.opacity = no.style.opacity = '0';
+    }
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+  }
+  function topCardKey() { return els.deck.getAttribute('data-top'); }
+  function commitSwipe(c, like, el, tries) {
+    if (!tries) {
+      if (live.swiped[c.key] !== undefined) return;
+      live.swiped[c.key] = like ? 1 : 0;
+      el = el || els.deck.querySelector('.card:not(.is-under)');
+      if (el) {
+        el.style.transform = 'translateX(' + (like ? 520 : -520) + 'px) rotate(' + (like ? 24 : -24) + 'deg)';
+        el.style.opacity = '0';
+      }
+      setTimeout(function () { els.deck.removeAttribute('data-top'); renderSwipe(); }, 200);
+    }
+    liveCall('swipe', { key: c.key, like: like ? '1' : '0' }).then(function (res) {
+      if (res && res.offline && (tries || 0) < 4) {
+        setTimeout(function () { commitSwipe(c, like, null, (tries || 0) + 1); }, 2500);
+        return;
+      }
+      delete live.swiped[c.key];
+      if (res && !res.ok && res.error !== 'OFF') swipeMsg(res.error);
+      renderSwipe();
+    });
+  }
+  function swipeTop(like) {
+    var r = liveRound('swipe');
+    var key = topCardKey();
+    if (!r || !key) return;
+    for (var i = 0; i < r.deck.length; i++) if (r.deck[i].key === key) { commitSwipe(r.deck[i], like); return; }
+  }
+  els.dealMore.addEventListener('click', function () {
+    els.dealBtn.removeAttribute('data-best');
+    els.dealBtn.setAttribute('data-more', '1');
+    els.dealBtn.click();
+  });
+  els.swYes.addEventListener('click', function () { swipeTop(true); });
+  els.swNo.addEventListener('click', function () { swipeTop(false); });
+  els.dealBtn.addEventListener('click', function () {
+    if (els.dealBtn.getAttribute('data-best') === '1') {
+      els.dealBtn.disabled = true;
+      liveCall('best').then(function (res) {
+        els.dealBtn.disabled = false;
+        if (res && !res.ok) swipeMsg(res.error);
+      });
+      return;
+    }
+    var more = els.dealBtn.getAttribute('data-more') === '1';
+    els.dealBtn.disabled = true;
+    liveCall('deal', spinParams(more ? { more: '1' } : {})).then(function (res) {
+      els.dealBtn.disabled = false;
+      if (res && !res.ok) { swipeMsg(res.error === 'OFF' ? 'Connect live mode first.' : res.error); pollNow(); }
+      else {
+        els.deck.removeAttribute('data-top');
+        renderSwipe();
+        var rd = liveRound('swipe');
+        if (rd && rd.note) flash(noteText(rd.note));
+      }
+    });
+  });
+
+  // --- starting points: yours goes to the other phone, theirs comes back ---
+  function sendMyStart(force) {
+    if (!live.on || group.on || state.me === null) return;
+    var r = state.meet[state.me];
+    if (!r || r.finding) return;
+    var c = r.coords;
+    var payload = { text: (r.text || '').trim(), lat: c ? c.lat : '', lng: c ? c.lng : '', gps: isMyLocation(r) ? '1' : '0' };
+    var sig = JSON.stringify(payload);
+    if (!force && sig === live.startSent) return;
+    live.startSent = sig;
+    liveCall('start', payload).then(function (res) { if (!res || !res.ok) live.startSent = ''; });
+  }
+  function syncPartnerStart() {
+    if (group.on || state.me === null || !live.state || !live.state.starts) return;
+    var o = 1 - state.me;
+    var s = live.state.starts[PEOPLE[o]];
+    if (!s || !s.at) return;
+    var r = state.meet[o];
+    if (r && r.syncAt === s.at) return;
+    if (r && r.editedAt && r.editedAt > s.at + live.skew) return;   // typed on this phone since
+    var hasC = typeof s.lat === 'number' && typeof s.lng === 'number';
+    var row = s.gps && hasC
+      ? { text: PEOPLE[o] + '’s location', coords: { lat: s.lat, lng: s.lng }, sentAt: s.at + live.skew, syncAt: s.at }
+      : { text: s.text, coords: hasC ? { lat: s.lat, lng: s.lng } : null, syncAt: s.at };
+    if (sentTooOld(row)) return;
+    if (r && r.text === row.text && JSON.stringify(r.coords || null) === JSON.stringify(row.coords || null)) {
+      r.syncAt = s.at;
+      return;
+    }
+    setRow(o, row);
+    if (state.start === 'halfway' && rowValue(state.me) && !state.meet[state.me].finding) findHalfway();
+    else if (state.start === 'halfway') meetMsg(PEOPLE[o] + '’s starting point came in.');
+  }
+
+  // --- Our places: favorites, history, been there, hidden ---
+  var placesTab = 'fav';
+  var TABS = [['fav', 'Favorites'], ['hist', 'History'], ['been', 'Been There'], ['hidden', 'Hidden']];
+  function openPlaces() {
+    if (!live.on) {
+      live.forceCard = true;
+      renderLiveCard();
+      liveMsg('Connect both phones to keep favorites, ratings and your date history.');
+      els.liveCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    renderPlaces();
+    if (!els.placesSheet.open) els.placesSheet.showModal();
+  }
+  function starsText(n) { return '★★★★★'.slice(0, Math.round(n)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(n)); }
+  function ratingLine(info) {
+    var s = (info && info.stars) || {};
+    var mineRated = !!s[meName()];
+    var parts = [];
+    PEOPLE.forEach(function (n) {
+      if (!s[n]) return;
+      if (n === meName()) parts.push('You ' + s[n] + '★');
+      else parts.push(mineRated ? n + ' ' + s[n] + '★' : n + ' rated it');
+    });
+    return parts.join(' · ');
+  }
+  function placeRow(pl, sub, acts) {
+    var li = document.createElement('li');
+    var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = pl.n;
+    var sb = document.createElement('span'); sb.className = 'sub'; sb.textContent = sub;
+    var ac = document.createElement('span'); ac.className = 'acts';
+    acts.forEach(function (a) { ac.appendChild(a); });
+    li.appendChild(nm); li.appendChild(ac); li.appendChild(sb);
+    return li;
+  }
+  function mapLink(pl) {
+    var a = document.createElement('a');
+    a.className = 'linkish';
+    a.href = mapsUrl(pl);
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = 'Map';
+    return a;
+  }
+  function rateBtn(pl) { return tButton('Rate', 'linkish', function () { openRate(pl); }); }
+  function renderPlaces() {
+    els.placesTabs.innerHTML = '';
+    TABS.forEach(function (t) {
+      var b = tButton(t[1], '', function () { placesTab = t[0]; renderPlaces(); });
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(placesTab === t[0]));
+      els.placesTabs.appendChild(b);
+    });
+    var rows = els.placesRows;
+    rows.innerHTML = '';
+    var book = live.book || { places: {}, history: [] };
+    var all = Object.keys(book.places).map(function (k) { var i = book.places[k]; return { key: k, n: i.n || k.split('|')[0], a: i.a || '', info: i }; });
+    var empty = '';
+    if (placesTab === 'fav') {
+      var favs = all.filter(function (x) { return avgStars(x.info) >= 4 && !x.info.hidden; })
+        .sort(function (a, b) { return avgStars(b.info) - avgStars(a.info) || a.n.localeCompare(b.n); });
+      favs.forEach(function (x) {
+        rows.appendChild(placeRow(x, [townOf(x.a), starsText(avgStars(x.info)) + ' ' + avgStars(x.info).toFixed(1), ratingLine(x.info)].filter(Boolean).join(' · '), [rateBtn(x), mapLink(x)]));
+      });
+      empty = 'Places you both rate 4 or 5 stars show up here. Spin just these with Favorites only.';
+    } else if (placesTab === 'hist') {
+      book.history.forEach(function (h) {
+        var info = book.places[h.key] || {};
+        var went = info.went && info.went.indexOf(h.night) >= 0;
+        var vetoes = PEOPLE.filter(function (n) { return h.vetoes && h.vetoes[n] > 0; }).map(function (n) { return who(n) + ' vetoed ' + h.vetoes[n]; });
+        var sub = [fmtDay(h.night), h.how === 'swipe' ? 'Swipe match' : 'Spin'].concat(vetoes).concat(went ? ['Went ✓'] : []).concat([ratingLine(info)]).filter(Boolean).join(' · ');
+        var pl = { key: h.key, n: h.n, a: h.a };
+        var acts = [rateBtn(pl), mapLink(pl)];
+        if (!went) acts.unshift(tButton('We went', 'linkish', function () { liveCall('went', Object.assign(placeParams(pl), { day: h.night })); }));
+        rows.appendChild(placeRow(pl, sub, acts));
+      });
+      empty = 'Every date night you lock in goes here.';
+    } else if (placesTab === 'been') {
+      all.filter(function (x) { return x.info.went && x.info.went.length; })
+        .sort(function (a, b) { return lastWent(b.info).localeCompare(lastWent(a.info)); })
+        .forEach(function (x) {
+          var dates = x.info.went.slice(-3).reverse().map(fmtDay).join(', ');
+          rows.appendChild(placeRow(x, ['Went ' + dates, ratingLine(x.info)].filter(Boolean).join(' · '), [rateBtn(x), mapLink(x)]));
+        });
+      empty = 'Tap We Went on a ticket or in History to mark a place.';
+    } else {
+      all.filter(function (x) { return x.info.hidden; }).forEach(function (x) {
+        rows.appendChild(placeRow(x, townOf(x.a), [tButton('Unhide', 'linkish', function () { liveCall('hide', Object.assign(placeParams(x), { on: '0' })); })]));
+      });
+      empty = 'Places marked closed for good show up here, in case one reopens.';
+    }
+    els.placesEmpty.hidden = !!rows.children.length;
+    els.placesEmpty.textContent = empty;
+  }
+  els.placesBtn.addEventListener('click', openPlaces);
+
+  // --- rating ---
+  var rating = { place: null, stars: 0, saved: false };
+  function openRate(pl) {
+    if (!live.on) { openPlaces(); return; }
+    rating.place = { key: pl.key || keyOf(pl), n: pl.n, a: pl.a || '' };
+    rating.saved = false;
+    var info = bookInfo(rating.place);
+    rating.stars = (info && info.stars && info.stars[meName()]) || 0;
+    els.rateName.textContent = pl.n + (townOf(pl.a) ? ' · ' + townOf(pl.a) : '');
+    els.rateNote.value = (info && info.notes && info.notes[meName()]) || '';
+    els.rateMsg.hidden = true;
+    els.rateSave.textContent = 'Save';
+    renderStars();
+    showPartnerRating();
+    if (!els.rateSheet.open) els.rateSheet.showModal();
+  }
+  function renderStars() {
+    els.starPick.innerHTML = '';
+    for (var i = 1; i <= 5; i++) {
+      (function (n) {
+        var b = tButton(n <= rating.stars ? '★' : '☆', n <= rating.stars ? 'on' : '', function () { rating.stars = n; renderStars(); });
+        b.setAttribute('role', 'radio');
+        b.setAttribute('aria-checked', String(n === rating.stars));
+        b.setAttribute('aria-label', n + (n === 1 ? ' star' : ' stars'));
+        els.starPick.appendChild(b);
+      })(i);
+    }
+  }
+  // You see the other person's stars only once you've rated it yourself.
+  function showPartnerRating() {
+    var info = bookInfo(rating.place);
+    var other = otherName();
+    var theirs = info && info.stars && info.stars[other];
+    var mine = info && info.stars && info.stars[meName()];
+    var note = info && info.notes && info.notes[other];
+    els.ratePartner.hidden = false;
+    els.ratePartner.textContent = !theirs ? other + ' hasn’t rated it yet.'
+      : mine ? other + ' gave it ' + starsText(theirs) + (note ? ': “' + note + '”' : '')
+        : other + ' rated it. Save yours to see their stars.';
+  }
+  els.rateForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (rating.saved) { els.rateSheet.close(); return; }
+    if (!rating.stars) { els.rateMsg.hidden = false; els.rateMsg.textContent = 'Pick 1 to 5 stars.'; return; }
+    els.rateSave.disabled = true;
+    liveCall('rate', Object.assign(placeParams(rating.place), { stars: rating.stars, note: els.rateNote.value })).then(function (res) {
+      els.rateSave.disabled = false;
+      if (!res || !res.ok) { els.rateMsg.hidden = false; els.rateMsg.textContent = (res && res.error) || 'Couldn’t save.'; return; }
+      rating.saved = true;
+      els.rateSave.textContent = 'Done';
+      showPartnerRating();
+      renderTicketExtras();
+    });
+  });
+
+  // --- settings ---
+  function applyTheme() {
+    var t = store.get('theme') || (state.me === 1 ? 'pink' : 'marquee');
+    document.documentElement.classList.toggle('theme-pink', t === 'pink');
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', t === 'pink' ? '#1c0715' : '#160a10');
+  }
+  function renderSettings() {
+    els.setWho.innerHTML = '';
+    PEOPLE.forEach(function (n, i) {
+      els.setWho.appendChild(chip('setwho', String(i), n + '’s', state.me === i, function () { setMe(i); renderSettings(); }));
+    });
+    var theme = document.documentElement.classList.contains('theme-pink') ? 'pink' : 'marquee';
+    els.setTheme.innerHTML = '';
+    els.setTheme.appendChild(chip('settheme', 'marquee', 'Gold Marquee', theme === 'marquee', function () { store.set('theme', 'marquee'); applyTheme(); }));
+    els.setTheme.appendChild(chip('settheme', 'pink', 'Pink', theme === 'pink', function () { store.set('theme', 'pink'); applyTheme(); }));
+    els.setSkip.innerHTML = '';
+    [[14, '2 Weeks'], [30, '1 Month'], [90, '3 Months'], [0, 'Don’t Skip']].forEach(function (o) {
+      var c = chip('setskip', String(o[0]), o[1], state.skipDays === o[0], function () {
+        state.skipDays = o[0];
+        liveCall('settings', { skip: o[0] });
+        refresh();
+      });
+      if (!live.on) c.querySelector('input').disabled = true;
+      els.setSkip.appendChild(c);
+    });
+    els.setSkipNote.hidden = live.on;
+    els.setSkipNote.textContent = 'Connect live mode to change this. It applies to both phones.';
+    els.setLive.textContent = live.on ? 'Connected as ' + meName() + '. Both phones share spins, swipes, ratings and history.'
+      : 'Not connected. Spins happen on this phone only.';
+    els.setLiveBtn.textContent = live.on ? 'Disconnect this phone' : 'Connect';
+    var g = CFG.GOOGLE || {};
+    els.setGoogle.textContent = !g.on
+      ? 'Off. With a Google Places key in the script (PLACES_KEY), tickets show photos, stars and hours, and moods, hours checks and Anywhere on Google turn on.'
+      : 'On. Left this month before the free amount runs out: ' + (g.left ? g.left.photo + ' photos, ' + g.left.info + ' tickets, ' + g.left.details + ' cards or hours checks.' : 'plenty.');
+  }
+  els.settingsBtn.addEventListener('click', function () { renderSettings(); els.settingsSheet.showModal(); });
+  els.setLiveBtn.addEventListener('click', function () {
+    els.settingsSheet.close();
+    if (live.on) { unpair(); return; }
+    live.forceCard = true;
+    renderLiveCard();
+    els.liveCode.focus();
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function (b) {
+    b.addEventListener('click', function () { b.closest('dialog').close(); });
+  });
+  els.liveForm.addEventListener('submit', function (e) { e.preventDefault(); connect(els.liveCode.value); });
+  els.liveLater.addEventListener('click', function () {
+    store.set('liveLater', '1');
+    live.forceCard = false;
+    renderLiveCard();
+  });
+
+  // ---------- What sounds good: source, moods, tags, hours ----------
+  function moodById(id) {
+    for (var i = 0; i < MOODS.length; i++) if (MOODS[i].id === id) return MOODS[i];
+    return null;
+  }
+  function tagEmoji(label) {
+    for (var i = 0; i < state.tagsAll.length; i++) if (state.tagsAll[i].label === label) return state.tagsAll[i].emoji;
+    return '';
+  }
+  function tagText(label) { var e = tagEmoji(label); return (e ? e + ' ' : '') + label; }
+  function tagEmojis(p) {
+    var e = (p.t || []).map(tagEmoji).filter(Boolean).join('');
+    return e ? ' ' + e : '';
+  }
+  // Moods, hours and Google picks are decided by the script (it asks Google); the rest happens here.
+  function needsServer() { return state.src === 'google' || state.moods.length > 0 || state.open != null; }
+  function openParam() { return state.open === 'now' ? 'now' : typeof state.open === 'number' ? String(state.open) : ''; }
+  function filterParams() {
+    return { src: state.src, moods: state.moods.join(','), open: openParam(), tags: state.src === 'list' ? state.tags.join('|') : '' };
+  }
+  var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  function fmtClock(d) {
+    var h = d.getHours();
+    var m = d.getMinutes();
+    return (h % 12 || 12) + (m ? ':' + ('0' + m).slice(-2) : '') + (h < 12 ? ' AM' : ' PM');
+  }
+  function dayDiff(t) {
+    var d = new Date(t);
+    var now = new Date();
+    return Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5);
+  }
+  function fmtOpenAt(t) {
+    var n = dayDiff(t);
+    return (n === 0 ? 'today ' : n === 1 ? 'tomorrow ' : DAYS[new Date(t).getDay()] + ' ') + fmtClock(new Date(t));
+  }
+  function filterNote(r) {
+    if (!r) return '';
+    var bits = [];
+    if (r.src === 'google') bits.push('anywhere on Google');
+    (r.moods || []).forEach(function (id) { var m = moodById(id); if (m) bits.push(m.emoji + ' ' + m.label); });
+    (r.tags || []).forEach(function (l) { bits.push(tagText(l)); });
+    if (r.open) bits.push(r.open === 'now' ? 'open now' : 'open ' + fmtOpenAt(r.open));
+    return bits.length ? ' (' + bits.join(' · ') + ')' : '';
+  }
+  // While Google picks, the reel flips through the moods instead of your list's names.
+  function tickNames(r) {
+    var src = r ? r.src : state.src;
+    if (src !== 'google') return null;
+    var moods = ((r ? r.moods : state.moods) || []).map(moodById).filter(Boolean);
+    return (moods.length ? moods : [{ emoji: '🍽️', label: 'Somewhere new' }])
+      .map(function (m) { return m.emoji + ' ' + m.label + '…'; }).concat(['Asking Google…']);
+  }
+  function noteText(n) {
+    return n === 'NAMES' ? 'Moods went by place names, since Google info isn’t set up.'
+      : n === 'HOURS' ? 'Hours weren’t checked, since Google info isn’t set up.'
+      : n === 'CAP' ? 'Google’s free checks for this month ran out, so some checks were skipped.'
+      : n === 'MORE' ? 'That’s all that turned up so far. Try again to keep looking.' : '';
+  }
+  function pillText(btn, k, v, set) {
+    btn.innerHTML = '';
+    var a = document.createElement('span'); a.className = 'k'; a.textContent = k;
+    var b = document.createElement('span'); b.className = 'v'; b.textContent = v;
+    btn.appendChild(a);
+    btn.appendChild(b);
+    btn.classList.toggle('is-set', !!set);
+  }
+  function renderFilters() {
+    els.sources.innerHTML = '';
+    var showGoogle = GOOGLE_ON || state.src === 'google';
+    els.sources.hidden = !showGoogle;
+    if (showGoogle) {
+      els.sources.appendChild(chip('src', 'list', 'Our List', state.src === 'list', onSource));
+      els.sources.appendChild(chip('src', 'google', 'Anywhere on Google', state.src === 'google', onSource));
+    }
+    var moods = state.moods.map(moodById).filter(Boolean);
+    pillText(els.moodBtn, 'In the mood for', !moods.length ? '🎲 Anything'
+      : moods.length <= 2 ? moods.map(function (m) { return m.emoji + ' ' + m.label; }).join(', ')
+      : moods.map(function (m) { return m.emoji; }).join(' ') + ' (' + moods.length + ')', moods.length);
+    els.tagBtn.hidden = state.src !== 'list' || !state.tagsAll.length;
+    pillText(els.tagBtn, 'Tags', state.tags.length ? state.tags.map(tagText).join(', ') : 'Any', state.tags.length);
+    els.hoursBtn.hidden = !GOOGLE_ON;
+    pillText(els.hoursBtn, 'Hours', state.open == null ? 'Don’t check' : state.open === 'now' ? 'Open now' : 'Open ' + fmtOpenAt(state.open), state.open != null);
+    var note = !GOOGLE_ON && moods.length ? 'Moods go by place names until Google info is set up (see Settings).'
+      : state.src === 'google' ? 'Popular places Google knows in range that aren’t on your list.' : '';
+    els.filterHint.hidden = !note;
+    els.filterHint.textContent = note;
+    els.googleFoot.hidden = !GOOGLE_ON;
+  }
+  function onSource(v) {
+    state.src = v;
+    store.set('src', v);
+    renderOptions();
+    renderFilters();
+    refresh();
+    renderSwipe();
+  }
+  function moodTile(emoji, label, on, onClick) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'mood' + (on ? ' on' : '');
+    b.setAttribute('aria-pressed', String(on));
+    var e = document.createElement('span'); e.className = 'e'; e.textContent = emoji; e.setAttribute('aria-hidden', 'true');
+    var l = document.createElement('span'); l.className = 'l'; l.textContent = label;
+    b.appendChild(e);
+    b.appendChild(l);
+    b.addEventListener('click', onClick);
+    return b;
+  }
+  function renderMoodSheet() {
+    els.moodGrid.innerHTML = '';
+    els.moodGrid.appendChild(moodTile('🎲', 'Anything', !state.moods.length, function () { setMoods([]); }));
+    MOODS.forEach(function (m) {
+      var on = state.moods.indexOf(m.id) >= 0;
+      els.moodGrid.appendChild(moodTile(m.emoji, m.label, on, function () {
+        setMoods(on ? state.moods.filter(function (x) { return x !== m.id; }) : state.moods.concat([m.id]));
+      }));
+    });
+  }
+  function setMoods(list) {
+    state.moods = list;
+    store.set('moods', list.join(','));
+    var focusAt = Array.prototype.indexOf.call(els.moodGrid.children, document.activeElement);
+    renderMoodSheet();
+    if (focusAt >= 0 && els.moodGrid.children[focusAt]) els.moodGrid.children[focusAt].focus();
+    renderFilters();
+    refresh();
+  }
+  function renderTagSheet() {
+    els.tagChips.innerHTML = '';
+    state.tagsAll.forEach(function (t, i) {
+      els.tagChips.appendChild(checkChip('tag-' + i, (t.emoji ? t.emoji + ' ' : '') + t.label + ' (' + t.count + ')', state.tags.indexOf(t.label) >= 0, function (on) {
+        state.tags = on ? state.tags.concat([t.label]) : state.tags.filter(function (x) { return x !== t.label; });
+        store.set('tags', JSON.stringify(state.tags));
+        renderFilters();
+        refresh();
+      }));
+    });
+  }
+  function hoursMode() { return state.open == null ? 'off' : state.open === 'now' ? 'now' : 'at'; }
+  function renderHoursSheet() {
+    var mode = hoursMode();
+    els.hoursChips.innerHTML = '';
+    els.hoursChips.appendChild(chip('hours', 'off', 'Don’t Check', mode === 'off', function () { setOpen(null); }));
+    els.hoursChips.appendChild(chip('hours', 'now', 'Open Now', mode === 'now', function () { setOpen('now'); }));
+    els.hoursChips.appendChild(chip('hours', 'at', 'Open At…', mode === 'at', function () { setOpen(atFromInputs()); }));
+    els.hoursAt.hidden = mode !== 'at';
+    if (!els.hoursDay.options.length) {
+      for (var i = 0; i < 7; i++) {
+        var o = document.createElement('option');
+        o.value = String(i);
+        o.textContent = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : DAYS[new Date(Date.now() + i * 864e5).getDay()];
+        els.hoursDay.appendChild(o);
+      }
+    }
+    if (mode === 'at') {
+      var d = new Date(state.open);
+      els.hoursDay.value = String(Math.max(0, Math.min(6, dayDiff(state.open))));
+      els.hoursTime.value = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+    } else {
+      els.hoursDay.value = new Date().getHours() >= 19 ? '1' : '0';   // late at night, it's probably for tomorrow
+    }
+  }
+  function atFromInputs() {
+    var hm = (els.hoursTime.value || '19:00').split(':');
+    var d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + (Number(els.hoursDay.value) || 0));
+    d.setHours(Number(hm[0]) || 0, Number(hm[1]) || 0, 0, 0);
+    return d.getTime();
+  }
+  function setOpen(v) {
+    state.open = v;
+    store.set('open', v == null ? '' : String(v));
+    renderHoursSheet();
+    renderFilters();
+    refresh();
+  }
+  els.hoursDay.addEventListener('change', function () { if (hoursMode() === 'at') setOpen(atFromInputs()); });
+  els.hoursTime.addEventListener('change', function () { if (hoursMode() === 'at') setOpen(atFromInputs()); });
+  els.moodBtn.addEventListener('click', function () { renderMoodSheet(); els.moodSheet.showModal(); });
+  els.tagBtn.addEventListener('click', function () { renderTagSheet(); els.tagSheet.showModal(); });
+  els.hoursBtn.addEventListener('click', function () { renderHoursSheet(); els.hoursSheet.showModal(); });
+
+  // A spin on this phone only, when a mood, the hours or Google is in play: the script picks.
+  function soloServerSpin() {
+    if (state.spinning) return;
+    var veto = state.spun;
+    if (veto) {
+      if (state.vetoesLeft <= 0) return;
+      state.vetoesLeft--;
+    }
+    var before = state.pick;
+    var names = tickNames(null);
+    var stop = waitReel(names);
+    var started = Date.now();
+    var o = origin();
+    var params = { olat: o ? o.lat : '', olng: o ? o.lng : '', unit: state.unit, lim: currentLimit(), out: state.out.join('\n') };
+    var f = filterParams();
+    Object.keys(f).forEach(function (k) { params[k] = f[k]; });
+    function done(res) {
+      setTimeout(function () {
+        stop();
+        if (!res || !res.ok || !res.pick) {
+          if (veto) state.vetoesLeft++;
+          els.marquee.classList.remove('is-spinning');
+          state.spinning = false;
+          if (before) land(before); else { state.spun = false; refresh(); }
+          flash((res && res.error) || 'Couldn’t spin.', true);
+          renderSpin();
+          return;
+        }
+        var c = res.pick;
+        state.out.push(c.key);
+        reelTo({ p: { n: c.n, a: c.a, lat: c.lat, lng: c.lng, key: c.key, t: c.t, gid: c.gid, g: c.g }, d: c.d, key: c.key }, 8, names);
+        if (res.note) setTimeout(function () { flash(noteText(res.note)); }, 2600);
+      }, Math.max(0, 600 - (Date.now() - started)));
+    }
+    callServer('pick', params).then(done, function (err) { done({ ok: false, error: 'Couldn’t spin: ' + errText(err) }); });
+  }
+
+  // ---------- Google info: photos, stars, hours, a blurb ----------
+  // Asked for when a place is shown, and kept only while this page is open (Google's rules).
+  var infoCache = {};
+  function infoFor(p, card) {
+    if (!GOOGLE_ON || !p || !p.n) return Promise.resolve(null);
+    var k = (p.key || keyOf(p)) + (card ? '|card' : '|ticket');
+    if (!infoCache[k]) {
+      infoCache[k] = callServer('info', {
+        key: p.key || keyOf(p), n: p.n, a: p.a || '', lat: p.lat == null ? '' : p.lat, lng: p.lng == null ? '' : p.lng,
+        gid: p.gid || '', ph: card ? 1 : 2, card: card ? '1' : '0'
+      }).then(function (r) {
+        if (!r || !r.ok) delete infoCache[k];
+        return r && r.ok ? r.info : null;
+      }, function () { delete infoCache[k]; return null; });
+    }
+    return infoCache[k];
+  }
+  function ratingText(i) {
+    var bits = [];
+    if (i.rating) bits.push('★ ' + i.rating.toFixed(1) + (i.count ? ' (' + i.count.toLocaleString('en-US') + ')' : ''));
+    if (i.type) bits.push(i.type);
+    if (i.price) bits.push(i.price);
+    return bits.join(' · ');
+  }
+  // "Google Maps", plus each photo's author with a link, as Google asks.
+  function fillCredit(box, photos) {
+    box.innerHTML = '';
+    box.appendChild(document.createTextNode('Google Maps'));
+    var by = [];
+    (photos || []).forEach(function (ph) {
+      (ph.by || []).forEach(function (a) { if (a.n && !by.some(function (x) { return x.n === a.n; })) by.push(a); });
+    });
+    if (!by.length) return;
+    box.appendChild(document.createTextNode(by.length > 1 ? ' · Photos: ' : ' · Photo: '));
+    by.forEach(function (a, i) {
+      if (i) box.appendChild(document.createTextNode(', '));
+      if (!a.u) { box.appendChild(document.createTextNode(a.n)); return; }
+      var l = document.createElement('a');
+      l.href = a.u;
+      l.target = '_blank';
+      l.rel = 'noopener';
+      l.textContent = a.n;
+      box.appendChild(l);
+    });
+  }
+  var infoToken = 0;
+  function showInfo(w) {
+    var token = ++infoToken;
+    [els.tPhotos, els.tGoogle, els.tHours, els.tBlurb, els.tCredit].forEach(function (x) { x.hidden = true; });
+    els.tPhotos.innerHTML = '';
+    if (!GOOGLE_ON || !w || !w.p) return;
+    els.tGoogle.hidden = false;
+    els.tGoogle.textContent = 'Getting stars and photos from Google…';
+    els.tGoogle.classList.add('is-loading');
+    infoFor(w.p, false).then(function (i) {
+      if (token !== infoToken) return;
+      els.tGoogle.classList.remove('is-loading');
+      if (!i) { els.tGoogle.hidden = true; return; }
+      (i.photos || []).forEach(function (ph, k) {
+        var img = document.createElement('img');
+        img.src = ph.u;
+        img.alt = k ? '' : 'Photo of ' + w.p.n;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.referrerPolicy = 'no-referrer';
+        img.addEventListener('error', function () {
+          img.remove();
+          els.tPhotos.classList.toggle('two', els.tPhotos.children.length > 1);
+          if (!els.tPhotos.children.length) els.tPhotos.hidden = true;
+        });
+        els.tPhotos.appendChild(img);
+      });
+      els.tPhotos.classList.toggle('two', els.tPhotos.children.length > 1);
+      els.tPhotos.hidden = !els.tPhotos.children.length;
+      var rt = ratingText(i);
+      els.tGoogle.hidden = !rt;
+      els.tGoogle.textContent = rt;
+      els.tHours.hidden = !i.hours;
+      els.tHours.textContent = i.hours || '';
+      els.tHours.classList.toggle('is-closed', i.open === false || (i.status && i.status !== 'OPERATIONAL'));
+      els.tBlurb.hidden = !i.blurb;
+      els.tBlurb.textContent = i.blurb || '';
+      els.tCredit.hidden = false;
+      fillCredit(els.tCredit, i.photos);
+      if (i.url) els.tGo.href = i.url;
+    });
+  }
+
+  // ---------- Group dates: friends join from their own phones ----------
+  function groupMsg(text, warn) {
+    els.groupMsg.hidden = !text;
+    els.groupMsg.textContent = text || '';
+    els.groupMsg.classList.toggle('is-warn', !!warn);
+  }
+  function cleanCode(c) { return String(c || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8); }
+  function inviteUrl() { return location.href.split('#')[0] + '#join=' + group.code; }
+  function groupCall(op, params) {
+    if (!group.code || !group.mid) return Promise.resolve({ ok: false, error: 'OFF' });
+    var p = { op: op, code: group.code, mid: group.mid };
+    Object.keys(params || {}).forEach(function (k) { p[k] = params[k] == null ? '' : params[k]; });
+    return callServer('group', p).then(function (res) {
+      if (res && res.ok) applyGroup(res);
+      else if (res && (res.error === 'GONE' || res.error === 'WHO')) {
+        leaveGroup(res.error === 'GONE' ? 'That group date has ended.' : 'You’re no longer in that group date.', false);
+      }
+      return res || { ok: false, error: 'No answer' };
+    }, function (err) {
+      return { ok: false, error: errText(err), offline: true };
+    });
+  }
+  function applyGroup(res) {
+    var was = group.on;
+    group.on = true;
+    if (res.seen) group.seen = res.seen;
+    if (typeof res.now === 'number') group.skew = Date.now() - res.now;
+    if (res.night) live.night = res.night;
+    if (res.state) { group.state = res.state; group.v = res.v; }
+    if (!was) {
+      clearTimeout(live.timer);   // the two of you pick up again after the group date
+      live.shownSeq = '';
+      live.roundSeen = '';
+      if (state.start === 'halfway' || state.start === 'gps') state.start = 'middle';
+      state.pick = null;
+      state.spun = false;
+      els.ticket.hidden = true;
+      renderChips();
+      renderLiveCard();
+      renderMeet();
+      renderCustom();
+      renderToolbar();
+    }
+    if (res.state || !was) renderLive(); else renderPresence();
+  }
+  function schedGroupPoll(ms) {
+    clearTimeout(group.timer);
+    if (group.code && group.mid) group.timer = setTimeout(groupPoll, ms);
+  }
+  function groupPoll() {
+    if (!group.code || !group.mid || group.polling) return;
+    if (document.visibilityState === 'hidden') return;
+    group.polling = true;
+    groupCall('poll', { v: group.v == null ? '' : group.v }).then(function (res) {
+      group.polling = false;
+      if (!group.code) return;
+      group.fails = res && res.ok ? 0 : group.fails + 1;
+      if (group.fails) renderPresence();
+      schedGroupPoll(group.fails ? Math.min(15000, 2500 * (group.fails + 1)) : 2000);
+    });
+  }
+  function saveGroup() {
+    store.set('grpCode', group.code);
+    store.set('grpMid', group.mid);
+    store.set('grpName', group.name);
+  }
+  function joined(res) {
+    group.code = (res.state && res.state.code) || res.code || group.code;
+    group.mid = res.mid;
+    group.name = res.name;
+    store.set('myName', res.name);
+    saveGroup();
+    groupMsg('');
+    applyGroup(res);
+    if (!state.gstart) requestGps(true);
+    sendGroupStart(true);
+    schedGroupPoll(1500);
+    renderGroupSheet();
+  }
+  function startGroup(name) {
+    els.groupGo.disabled = true;
+    groupMsg('Starting…');
+    callServer('group', { op: 'create', name: name }).then(function (res) {
+      els.groupGo.disabled = false;
+      if (!res || !res.ok) { groupMsg((res && res.error) || 'Couldn’t start a group date.', true); return; }
+      joined(res);
+      if (live.on) liveCall('settings', { group: group.code });   // so the other phone can join with one tap
+      els.groupShareMsg.hidden = false;
+      els.groupShareMsg.textContent = 'Send the invite link to everyone coming. They’ll add their name and where they’re starting.';
+    }, function (err) {
+      els.groupGo.disabled = false;
+      groupMsg('Couldn’t start a group date: ' + errText(err), true);
+    });
+  }
+  function joinGroup(code, name) {
+    code = cleanCode(code);
+    els.groupGo.disabled = true;
+    groupMsg('Joining…');
+    var mid = code === store.get('grpCode') ? store.get('grpMid') || '' : '';
+    callServer('group', { op: 'join', code: code, name: name, mid: mid }).then(function (res) {
+      els.groupGo.disabled = false;
+      if (!res || !res.ok) {
+        groupMsg(res && res.error === 'GONE' ? 'There’s no group date with that code. It may have ended (they last a day and a half).'
+          : (res && res.error) || 'Couldn’t join.', true);
+        return;
+      }
+      if (group.on && group.code !== code) leaveGroup('', true, true);
+      joined(res);
+      els.groupSheet.close();
+      flash('You’re in ' + (res.state && res.state.host ? res.state.host + '’s' : 'the') + ' group date!');
+    }, function (err) {
+      els.groupGo.disabled = false;
+      groupMsg('Couldn’t join: ' + errText(err), true);
+    });
+  }
+  function leaveGroup(msg, tellServer, quiet) {
+    if (tellServer && group.code && group.mid) callServer('group', { op: 'leave', code: group.code, mid: group.mid }).then(null, function () {});
+    var mine = live.on && live.state && live.state.group && live.state.group.code === group.code && live.state.group.by === coupleName();
+    if (tellServer && mine) liveCall('settings', { group: '' });
+    clearTimeout(group.timer);
+    var was = group.on;
+    group.on = false;
+    group.code = group.mid = '';
+    group.state = null;
+    group.v = null;
+    group.seen = {};
+    group.startSent = '';
+    saveGroup();
+    if (quiet) return;
+    if (state.start === 'middle') { state.start = 'gps'; store.set('start', 'gps'); requestGps(); }
+    live.shownSeq = '';
+    live.roundSeen = '';
+    if (was) { state.pick = null; state.spun = false; els.ticket.hidden = true; }
+    renderChips();
+    renderLiveCard();
+    renderMeet();
+    renderCustom();
+    renderToolbar();
+    renderGroupSheet();
+    if (live.code && state.me !== null) schedulePoll(0);
+    renderLive();
+    if (msg) flash(msg, true);
+  }
+
+  // Where you're starting: your location, or a place you type. Everyone's makes the middle.
+  state.gstart = null;
+  try { state.gstart = JSON.parse(store.get('grpStart') || 'null'); } catch (e) {}
+  function sendGroupStart(force) {
+    if (!group.on) return;
+    var s = state.gstart;
+    if (!s && state.gps) s = { text: 'My location', coords: state.gps, gps: true };
+    if (!s || !s.coords) return;
+    if (s.gps && state.gps) s = { text: 'My location', coords: state.gps, gps: true };
+    var payload = { text: s.text, lat: s.coords.lat, lng: s.coords.lng, gps: s.gps ? '1' : '0' };
+    var sig = JSON.stringify(payload);
+    if (!force && sig === group.startSent) return;
+    group.startSent = sig;
+    groupCall('start', payload).then(function (res) { if (!res || !res.ok) group.startSent = ''; });
+  }
+  function setGroupStart(s) {
+    state.gstart = s;
+    store.set('grpStart', JSON.stringify(s));
+    sendGroupStart(true);
+    renderGroupBits();
+  }
+  function renderGroupBits() {
+    var st = group.state || {};
+    var dc = live.on && !group.on && live.state && live.state.group;   // the other phone started one
+    var invited = dc && dc.by !== coupleName() && Date.now() - roomSkew() - dc.at < 12 * 3600e3 && store.get('grpSkip') !== dc.code;
+    els.groupCard.hidden = !group.on && !invited;
+    if (invited) {
+      els.gcTitle.textContent = 'Group Date';
+      els.gcCode.textContent = dc.code;
+      els.gcLine.textContent = dc.by + ' started a group date. Join it to spin and swipe with everyone.';
+      els.gcMain.textContent = 'Join';
+      els.gcSecond.textContent = 'Not now';
+      els.gcMain.setAttribute('data-act', 'join');
+    } else if (group.on) {
+      var n = (st.members || []).length;
+      els.gcTitle.textContent = 'Group Date';
+      els.gcCode.textContent = group.code;
+      var line = namesText((st.members || []).map(function (m) { return m.name === meName() ? 'you' : m.name; }));
+      els.gcLine.textContent = n <= 1 ? 'Just you so far. Invite everyone who’s coming.'
+        : line.charAt(0).toUpperCase() + line.slice(1) + ' are in. Spins and swipes are shared with everyone here.';
+      els.gcMain.textContent = 'Invite Friends';
+      els.gcSecond.textContent = 'Leave';
+      els.gcMain.setAttribute('data-act', 'invite');
+    }
+    els.groupMeet.hidden = !(group.on && state.start === 'middle');
+    if (!group.on) return;
+    els.gmPeople.innerHTML = '';
+    (st.members || []).forEach(function (m) {
+      if (m.name === meName()) return;
+      var s = (st.starts || {})[m.name];
+      var li = document.createElement('li');
+      if (!s) li.className = 'waiting';
+      var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = m.name;
+      var at = document.createElement('span'); at.className = 'at';
+      at.textContent = !s ? 'Hasn’t said yet' : s.gps ? 'Their location' : s.text;
+      li.appendChild(nm);
+      li.appendChild(at);
+      els.gmPeople.appendChild(li);
+    });
+    var mineNow = state.gstart || (state.gps ? { text: 'My location', gps: true } : null);
+    if (document.activeElement !== els.gmInput) {
+      els.gmInput.value = mineNow ? mineNow.text : '';
+      els.gmInput.classList.toggle('has-coords', !!mineNow);
+    }
+    var mid = st.middle;
+    var total = (st.members || []).length;
+    els.gmMsg.textContent = !mid ? 'Add where you’re starting. The middle shows up once people do.'
+      : mid.n < total ? 'The middle so far' + (mid.label ? ' is near ' + mid.label : '') + '. Waiting on ' + (total - mid.n) + ' more.'
+      : 'The middle is near ' + (mid.label || 'all of you') + '. The longest drive is about ' + mid.far + ' min.';
+  }
+  function lookUpGroupStart() {
+    var q = els.gmInput.value.trim();
+    if (!q || (state.gstart && q === state.gstart.text)) return;
+    if (q === 'My location') { setGroupStart(null); requestGps(true); return; }
+    els.gmMsg.textContent = 'Looking up ' + q + '…';
+    callServer('findHalfway', { a: q, b: q }).then(function (res) {
+      if (!res || !res.ok) { els.gmMsg.textContent = (res && res.error) || 'Couldn’t find that place.'; return; }
+      var pt = res.a || res.point;
+      setGroupStart({ text: q, coords: { lat: pt.lat, lng: pt.lng }, gps: false });
+    }, function (err) { els.gmMsg.textContent = 'Couldn’t look that up: ' + errText(err) + '.'; });
+  }
+  attachSuggest(els.gmInput, function (it) {
+    els.gmInput.value = it.text;
+    if (it.coords) setGroupStart({ text: it.text, coords: it.coords, gps: false });
+    else lookUpGroupStart();
+  });
+  els.gmInput.addEventListener('keydown', function (ev) {
+    if (ev.key !== 'Enter') return;
+    ev.preventDefault();
+    lookUpGroupStart();
+    els.gmInput.blur();
+  });
+  els.gmInput.addEventListener('blur', function () { setTimeout(lookUpGroupStart, 250); });
+  els.gmHere.addEventListener('click', function () {
+    setGroupStart(null);
+    state.gstart = null;
+    store.set('grpStart', 'null');
+    requestGps(true);
+  });
+
+  function renderToolbar() {
+    els.placesBtn.hidden = group.on && !live.on;
+    els.groupBtn.textContent = group.on ? 'Group' : 'Group Date';
+  }
+  function renderGroupSheet() {
+    els.groupForm.hidden = group.on;
+    els.groupIn.hidden = !group.on;
+    if (group.on) {
+      els.groupCodeShow.textContent = group.code;
+      els.groupPeople.innerHTML = '';
+      var st = group.state || {};
+      (st.members || []).forEach(function (m) {
+        var s = (st.starts || {})[m.name];
+        var li = document.createElement('li');
+        var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = m.name === meName() ? m.name + ' (you)' : m.name;
+        var sub = document.createElement('span'); sub.className = 'sub';
+        sub.textContent = (m.name === st.host ? 'Started it · ' : '') + (!s ? 'No starting point yet' : s.gps ? 'Starting from their location' : 'Starting from ' + s.text);
+        li.appendChild(nm);
+        li.appendChild(sub);
+        els.groupPeople.appendChild(li);
+      });
+      return;
+    }
+    if (!els.groupName.value) els.groupName.value = store.get('myName') || coupleName() || '';
+    els.groupGo.textContent = cleanCode(els.groupCode.value) ? 'Join Group Date' : 'Start a Group Date';
+  }
+  function shareInvite() {
+    var url = inviteUrl();
+    var text = (meName() || 'Someone') + ' started a group date on Date Night Roulette. Open the link, add your name and where you’re starting, and we’ll pick a place together.';
+    var note = function (t) { els.groupShareMsg.hidden = false; els.groupShareMsg.textContent = t; };
+    if (navigator.share) {
+      navigator.share({ title: 'Group date', text: text, url: url }).then(null, function () {});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text + ' ' + url).then(function () { note('Invite copied. Paste it in your group chat.'); },
+        function () { note('Send this link: ' + url); });
+      return;
+    }
+    note('Send this link: ' + url);
+  }
+  els.groupBtn.addEventListener('click', function () { groupMsg(''); renderGroupSheet(); els.groupSheet.showModal(); });
+  els.groupCode.addEventListener('input', renderGroupSheet);
+  els.groupForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = els.groupName.value.replace(/\s+/g, ' ').trim();
+    if (!name) { groupMsg('Type your name first.', true); els.groupName.focus(); return; }
+    var code = cleanCode(els.groupCode.value);
+    if (code) joinGroup(code, name); else startGroup(name);
+  });
+  els.groupShare.addEventListener('click', shareInvite);
+  els.groupLeave.addEventListener('click', function () { els.groupSheet.close(); leaveGroup('You left the group date.', true); });
+  els.gcMain.addEventListener('click', function () {
+    if (els.gcMain.getAttribute('data-act') === 'join') {
+      var dc = live.state && live.state.group;
+      if (dc) joinGroup(dc.code, coupleName() || store.get('myName') || 'Me');
+      return;
+    }
+    shareInvite();
+  });
+  els.gcSecond.addEventListener('click', function () {
+    if (group.on) { leaveGroup('You left the group date.', true); return; }
+    var dc = live.state && live.state.group;
+    if (dc) store.set('grpSkip', dc.code);
+    renderGroupBits();
+  });
+  // A link like …#join=ABCDE opens the join form with the code filled in.
+  function readJoinFromHash() {
+    var m = /^#join=([A-Za-z0-9]{4,8})$/.exec(location.hash || '');
+    if (!m) return false;
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    var code = cleanCode(m[1]);
+    if (group.on && group.code === code) return true;
+    els.groupCode.value = code;
+    groupMsg('');
+    renderGroupSheet();
+    if (els.groupSheet.open) els.groupSheet.close();
+    els.groupSheet.showModal();
+    callServer('group', { op: 'peek', code: code }).then(function (res) {
+      if (res && res.ok) {
+        els.groupIntro.textContent = res.host + ' invited you to a group date' + (res.people.length > 1 ? ' with ' + namesText(res.people.filter(function (n) { return n !== res.host; })) : '') +
+          '. Add your name, and where you’re starting comes next.';
+        if (res.full) groupMsg('That group date is full.', true);
+      } else {
+        groupMsg('That group date has ended or the link is wrong.', true);
+      }
+    }, function () {});
+    if (!els.groupName.value) els.groupName.focus();
+    return true;
+  }
+
   // ---------- Loading ----------
   function load() {
     state.loadError = false;
     els.status.classList.remove('is-live', 'is-stale');
-    els.statusText.textContent = 'Pulling your list from Google Maps…';
+    els.statusText.textContent = state.loaded ? 'Showing your saved list while it updates from Google Maps…' : 'Pulling your list from Google Maps…';
     refresh();
     callServer('getPlaces').then(onLoaded, function (err) {
       if (err && err.message === 'NO_APP_URL') { showSetup(); return; }
@@ -1602,8 +3811,13 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     }
     if (res && res.ok) {
       state.places = res.places || [];
+      state.tagsAll = res.tags || [];
+      state.tags = state.tags.filter(function (l) { return state.tagsAll.some(function (t) { return t.label === l; }); });
+      store.set('tags', JSON.stringify(state.tags));
       state.loaded = true;
       state.loadError = false;
+      store.set('placesCache', JSON.stringify({ at: Date.now(), url: appUrl(), places: state.places, lists: res.lists || [], tags: state.tagsAll }));
+      renderFilters();
     } else if (!state.loaded) {
       state.loadError = true;
     }
@@ -1617,12 +3831,34 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     state.start = 'custom';
     store.set('start', 'custom');
   }
+  // Opens instantly with the last list this phone saw; the fresh pull replaces it a moment later.
+  try {
+    var cached = JSON.parse(store.get('placesCache') || 'null');
+    if (cached && cached.places && cached.places.length && cached.url === appUrl()) {
+      state.places = cached.places;
+      state.lists = cached.lists || [];
+      state.tagsAll = cached.tags || [];
+      state.loaded = true;
+      renderLists();
+    }
+  } catch (e) {}
+  applyTheme();
   renderChips();
   renderMeet();
   renderCustom();
-  if (state.start === 'halfway' || /^#[^=]+=/.test(location.hash || '')) refreshMyLocation();
-  var fromLink = readStartFromHash();
-  if (state.start === 'gps') requestGps();
+  renderLiveCard();
+  renderToolbar();
+  setMode(state.mode);
+  var joining = readJoinFromHash();
+  if (group.code && group.mid) {
+    // Back in a group date this phone joined: pick up where it left off.
+    groupCall('poll', {}).then(function (res) { if (res && res.ok) { sendGroupStart(true); schedGroupPoll(2000); } });
+  } else if (live.code && state.me !== null) {
+    schedulePoll(0);
+  }
+  if (!joining && (state.start === 'halfway' || /^#[^=]+=/.test(location.hash || ''))) refreshMyLocation();
+  var fromLink = joining ? false : readStartFromHash();
+  if (state.start === 'gps' || state.start === 'middle') requestGps();
   if (state.start === 'custom' && customExpired) useCustom();
   if (state.start === 'halfway' && !fromLink) {
     if (state.halfway) showHalfwayMsg();
