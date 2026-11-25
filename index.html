@@ -396,6 +396,21 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .foot a { color: var(--ivory); }
 .swipe-box .linkish { justify-self: center; }
 .swipe-box .linkish[hidden] { display: none; }
+/* Name your tags */
+.tag-names { margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.tag-names[hidden] { display: none; }
+.tn-list { display: grid; gap: 16px; }
+.tn-row { display: grid; gap: 8px; }
+.tn-what { margin: 0; font-size: 0.88rem; line-height: 1.35; color: var(--dusk); }
+.tn-what strong { color: var(--ivory); }
+.tn-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+.tn-pick { appearance: none; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--velvet); color: var(--ivory); font: 600 0.85rem/1.2 var(--body); cursor: pointer; }
+.tn-pick.on { background: var(--bulb); border-color: var(--bulb); color: var(--on-bulb); }
+.tn-pick.used { opacity: 0.5; }
+.tn-pick:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.tn-own { display: flex; gap: 8px; }
+.tn-own[hidden] { display: none; }
+.tn-own input { flex: 1; min-width: 0; padding: 9px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 </style>
 </head>
 <body>
@@ -642,6 +657,13 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     <div class="sheet-head"><h2 id="tagHead">Tags</h2><button type="button" class="linkish" data-close>Done</button></div>
     <p class="hint">The tags on your Google Maps list. Spins and decks use places with any of the ones you pick. Pick none to use every place.</p>
     <div class="chips" id="tagChips"></div>
+    <div class="set-group tag-names" id="tagNames" hidden>
+      <h3>Name your tags</h3>
+      <p class="hint" id="tagNamesHint"></p>
+      <p class="hint is-warn" id="tagMsg" hidden></p>
+      <div class="tn-list" id="tagNameRows"></div>
+    </div>
+    <div><button type="button" class="linkish" id="tagRename" hidden>Rename tags</button></div>
   </div>
 </dialog>
 
@@ -679,7 +701,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   </div>
 </dialog>
 
-<script>window.CONFIG = {"STARTS":[{"name":"Lockport","lat":41.5894,"lng":-88.0572},{"name":"Bartlett","lat":41.9944,"lng":-88.1853},{"name":"Downtown","lat":41.8819,"lng":-87.6278}],"RADII":[5,10,20,30,0],"DEFAULT_RADIUS":20,"VETOES":2,"LIST_CAP":3000,"PEOPLE":["Alec","Morgan"],"MEET_DEFAULTS":["Lockport","Bartlett"],"VETOES_EACH":1,"SKIP_DAYS":30,"MOODS":[{"id":"pizza","label":"Pizza","emoji":"🍕"},{"id":"mexican","label":"Mexican","emoji":"🌮"},{"id":"sushi","label":"Sushi","emoji":"🍣"},{"id":"japanese","label":"Japanese","emoji":"🍱"},{"id":"chinese","label":"Chinese","emoji":"🥡"},{"id":"thai","label":"Thai","emoji":"🍛"},{"id":"indian","label":"Indian","emoji":"🫓"},{"id":"korean","label":"Korean","emoji":"🥘"},{"id":"vietnamese","label":"Vietnamese","emoji":"🍲"},{"id":"ramen","label":"Ramen & Noodles","emoji":"🍜"},{"id":"italian","label":"Italian","emoji":"🍝"},{"id":"mediterranean","label":"Mediterranean","emoji":"🥙"},{"id":"burgers","label":"Burgers","emoji":"🍔"},{"id":"bbq","label":"BBQ","emoji":"🍖"},{"id":"steak","label":"Steak","emoji":"🥩"},{"id":"seafood","label":"Seafood","emoji":"🦞"},{"id":"chicken","label":"Chicken & Wings","emoji":"🍗"},{"id":"brunch","label":"Breakfast & Brunch","emoji":"🥞"},{"id":"healthy","label":"Healthy","emoji":"🥗"},{"id":"fancy","label":"Fancy","emoji":"🥂"},{"id":"dessert","label":"Dessert","emoji":"🍰"},{"id":"coffee","label":"Coffee & Tea","emoji":"☕"},{"id":"drinks","label":"Drinks","emoji":"🍸"}],"GOOGLE":{"on":false}};</script>
+<script>window.CONFIG = {"STARTS":[{"name":"Lockport","lat":41.5894,"lng":-88.0572},{"name":"Bartlett","lat":41.9944,"lng":-88.1853},{"name":"Downtown","lat":41.8819,"lng":-87.6278}],"RADII":[5,10,20,30,0],"DEFAULT_RADIUS":20,"VETOES":2,"LIST_CAP":3000,"PEOPLE":["Alec","Morgan"],"MEET_DEFAULTS":["Lockport","Bartlett"],"VETOES_EACH":1,"SKIP_DAYS":30,"MOODS":[{"id":"pizza","label":"Pizza","emoji":"🍕"},{"id":"mexican","label":"Mexican","emoji":"🌮"},{"id":"sushi","label":"Sushi","emoji":"🍣"},{"id":"japanese","label":"Japanese","emoji":"🍱"},{"id":"chinese","label":"Chinese","emoji":"🥡"},{"id":"thai","label":"Thai","emoji":"🍛"},{"id":"indian","label":"Indian","emoji":"🫓"},{"id":"korean","label":"Korean","emoji":"🥘"},{"id":"vietnamese","label":"Vietnamese","emoji":"🍲"},{"id":"ramen","label":"Ramen & Noodles","emoji":"🍜"},{"id":"italian","label":"Italian","emoji":"🍝"},{"id":"mediterranean","label":"Mediterranean","emoji":"🥙"},{"id":"burgers","label":"Burgers","emoji":"🍔"},{"id":"bbq","label":"BBQ","emoji":"🍖"},{"id":"steak","label":"Steak","emoji":"🥩"},{"id":"seafood","label":"Seafood","emoji":"🦞"},{"id":"chicken","label":"Chicken & Wings","emoji":"🍗"},{"id":"brunch","label":"Breakfast & Brunch","emoji":"🥞"},{"id":"healthy","label":"Healthy","emoji":"🥗"},{"id":"fancy","label":"Fancy","emoji":"🥂"},{"id":"dessert","label":"Dessert","emoji":"🍰"},{"id":"coffee","label":"Coffee & Tea","emoji":"☕"},{"id":"drinks","label":"Drinks","emoji":"🍸"}],"TAG_CHOICES":[{"emoji":"🤗","label":"Activities"},{"emoji":"😋","label":"Let’s try together"},{"emoji":"🛍️","label":"Shops"},{"emoji":"🧳","label":"Travel ideas"},{"emoji":"❤️","label":"We like"}],"GOOGLE":{"on":false}};</script>
 <script>
 (function () {
   'use strict';
@@ -718,6 +740,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     setSkipNote: $('setSkipNote'), setLive: $('setLive'), setLiveBtn: $('setLiveBtn'), setGoogle: $('setGoogle'),
     sources: $('sources'), moodBtn: $('moodBtn'), tagBtn: $('tagBtn'), hoursBtn: $('hoursBtn'), filterHint: $('filterHint'),
     moodSheet: $('moodSheet'), moodGrid: $('moodGrid'), tagSheet: $('tagSheet'), tagChips: $('tagChips'),
+    tagNames: $('tagNames'), tagNamesHint: $('tagNamesHint'), tagMsg: $('tagMsg'), tagNameRows: $('tagNameRows'), tagRename: $('tagRename'),
     hoursSheet: $('hoursSheet'), hoursChips: $('hoursChips'), hoursAt: $('hoursAt'), hoursDay: $('hoursDay'), hoursTime: $('hoursTime'),
     tPhotos: $('tPhotos'), tGoogle: $('tGoogle'), tHours: $('tHours'), tBlurb: $('tBlurb'), tCredit: $('tCredit'), googleFoot: $('googleFoot'),
     groupBtn: $('groupBtn'), groupCard: $('groupCard'), gcTitle: $('gcTitle'), gcCode: $('gcCode'), gcLine: $('gcLine'),
@@ -739,7 +762,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   // Inside Apps Script the page uses google.script.run. Hosted anywhere else
   // (like GitHub Pages) it calls the web app's JSON feed at APP_URL instead.
   var API_NAMES = { getPlaces: 'places', addList: 'add', removeList: 'remove', findHalfway: 'halfway', driveTimes: 'drive', live: 'live',
-    group: 'group', info: 'info', pick: 'pick' };
+    group: 'group', info: 'info', pick: 'pick', tagName: 'tagname' };
   var ACCESS_HINT = 'your app link didn’t answer. Check that it ends in /exec and that Who has access is set to Anyone';
   var savedAppUrl = '';
   function appUrl() { return String(window.APP_URL || store.get('appUrl') || savedAppUrl || '').trim(); }
@@ -801,6 +824,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   if (state.start !== 'gps' && state.start !== 'halfway' && state.start !== 'custom' && state.start !== 'middle' && !presetByName(state.start)) state.start = 'gps';
   // What sounds good: from your list or anywhere on Google, moods, your list's tags, and hours.
   var MOODS = CFG.MOODS || [];
+  var TAG_CHOICES = CFG.TAG_CHOICES || [];
   var GOOGLE_ON = !!(CFG.GOOGLE && CFG.GOOGLE.on);
   state.src = store.get('src') === 'google' ? 'google' : 'list';
   state.moods = (store.get('moods') || '').split(',').filter(Boolean);
@@ -1278,6 +1302,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (typeof c.LIST_CAP === 'number') LIST_CAP = c.LIST_CAP;
     if (c.PEOPLE && c.PEOPLE.length === 2 && c.PEOPLE.join('|') !== PEOPLE.join('|')) { PEOPLE = c.PEOPLE; renderMeet(); }
     if (c.MEET_DEFAULTS) MEET_DEFAULTS = c.MEET_DEFAULTS;
+    if (c.TAG_CHOICES) TAG_CHOICES = c.TAG_CHOICES;
     if (c.MOODS) {
       MOODS = c.MOODS;
       state.moods = state.moods.filter(function (id) { return !!moodById(id); });
@@ -2255,7 +2280,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
   }
   // The same rules the script uses for spins and decks.
   function allowed(p) {
-    if (state.src === 'list' && state.tags.length && !(p.t && p.t.some(function (l) { return state.tags.indexOf(l) >= 0; }))) return false;
+    if (state.src === 'list' && state.tags.length && !(p.t && p.t.some(function (id) { return state.tags.indexOf(id) >= 0; }))) return false;
     if (!live.on || group.on) return true;
     var info = bookInfo(p);
     if (!info) return !state.favOnly;
@@ -2524,7 +2549,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var last = lastWent(info);
     if (last) bits.push('You went ' + fmtDay(last));
     if (w.p.g) bits.push('New to you: not on your list');
-    (w.p.t || []).forEach(function (l) { bits.push(tagText(l)); });
+    (w.p.t || []).forEach(function (id) { var x = tagText(id); if (x) bits.push(x); });
     els.tBadges.textContent = bits.join(' · ');
     var r = liveRound();
     if (!w.live || !r || !r.pick || r.pick.key !== w.key) return;
@@ -3153,11 +3178,21 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     for (var i = 0; i < MOODS.length; i++) if (MOODS[i].id === id) return MOODS[i];
     return null;
   }
-  function tagEmoji(label) {
-    for (var i = 0; i < state.tagsAll.length; i++) if (state.tagsAll[i].label === label) return state.tagsAll[i].emoji;
-    return '';
+  // Tags go by their Google ID; a tag you haven't named yet shows as "Unnamed tag 1".
+  function normTag(t) { return { id: t.id || t.label, label: t.label || null, emoji: t.emoji || null, count: t.count || 0 }; }
+  function numberTags() {
+    var k = 0;
+    state.tagsAll.forEach(function (t) { t.name = t.label || 'Unnamed tag ' + (++k); });
   }
-  function tagText(label) { var e = tagEmoji(label); return (e ? e + ' ' : '') + label; }
+  function tagById(id) {
+    for (var i = 0; i < state.tagsAll.length; i++) if (state.tagsAll[i].id === id) return state.tagsAll[i];
+    return null;
+  }
+  function tagEmoji(id) { var t = tagById(id); return t && t.emoji ? t.emoji : ''; }
+  function tagText(id) {
+    var t = tagById(id);
+    return t ? (t.emoji ? t.emoji + ' ' : '') + (t.name || t.label) : '';
+  }
   function tagEmojis(p) {
     var e = (p.t || []).map(tagEmoji).filter(Boolean).join('');
     return e ? ' ' + e : '';
@@ -3188,7 +3223,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     var bits = [];
     if (r.src === 'google') bits.push('anywhere on Google');
     (r.moods || []).forEach(function (id) { var m = moodById(id); if (m) bits.push(m.emoji + ' ' + m.label); });
-    (r.tags || []).forEach(function (l) { bits.push(tagText(l)); });
+    (r.tags || []).forEach(function (id) { var x = tagText(id); if (x) bits.push(x); });
     if (r.open) bits.push(r.open === 'now' ? 'open now' : 'open ' + fmtOpenAt(r.open));
     return bits.length ? ' (' + bits.join(' · ') + ')' : '';
   }
@@ -3227,7 +3262,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
       : moods.length <= 2 ? moods.map(function (m) { return m.emoji + ' ' + m.label; }).join(', ')
       : moods.map(function (m) { return m.emoji; }).join(' ') + ' (' + moods.length + ')', moods.length);
     els.tagBtn.hidden = state.src !== 'list' || !state.tagsAll.length;
-    pillText(els.tagBtn, 'Tags', state.tags.length ? state.tags.map(tagText).join(', ') : 'Any', state.tags.length);
+    var unnamed = state.tagsAll.some(function (t) { return !t.label; });
+    pillText(els.tagBtn, 'Tags', state.tags.length ? state.tags.map(tagText).filter(Boolean).join(', ') : unnamed ? 'Any (name yours)' : 'Any', state.tags.length);
     els.hoursBtn.hidden = !GOOGLE_ON;
     pillText(els.hoursBtn, 'Hours', state.open == null ? 'Don’t check' : state.open === 'now' ? 'Open now' : 'Open ' + fmtOpenAt(state.open), state.open != null);
     var note = !GOOGLE_ON && moods.length ? 'Moods go by place names until Google info is set up (see Settings).'
@@ -3275,17 +3311,120 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     renderFilters();
     refresh();
   }
+  var tagRenaming = false;
+  function isTagId(id) { return /^[A-Za-z0-9_-]{16,40}$/.test(id || '') && /[A-Za-z]/.test(id); }
   function renderTagSheet() {
+    numberTags();
     els.tagChips.innerHTML = '';
     state.tagsAll.forEach(function (t, i) {
-      els.tagChips.appendChild(checkChip('tag-' + i, (t.emoji ? t.emoji + ' ' : '') + t.label + ' (' + t.count + ')', state.tags.indexOf(t.label) >= 0, function (on) {
-        state.tags = on ? state.tags.concat([t.label]) : state.tags.filter(function (x) { return x !== t.label; });
+      els.tagChips.appendChild(checkChip('tag-' + i, (t.emoji ? t.emoji + ' ' : '') + t.name + ' (' + t.count + ')', state.tags.indexOf(t.id) >= 0, function (on) {
+        state.tags = on ? state.tags.concat([t.id]) : state.tags.filter(function (x) { return x !== t.id; });
         store.set('tags', JSON.stringify(state.tags));
         renderFilters();
         refresh();
       }));
     });
+    // Google sends which places share a tag, not its name: you name each one once.
+    var nameable = state.tagsAll.filter(function (t) { return isTagId(t.id); });
+    var unnamed = nameable.filter(function (t) { return !t.label; });
+    var show = tagRenaming ? nameable : unnamed;
+    els.tagNames.hidden = !show.length;
+    els.tagRename.hidden = !nameable.length || !!show.length;
+    els.tagNamesHint.textContent = unnamed.length
+      ? 'Google sends which places share a tag, but not what it’s called. Tap the right name for each one. You only do this once, for both phones.'
+      : 'Tap a new name for any tag.';
+    els.tagNameRows.innerHTML = '';
+    show.forEach(function (t) { els.tagNameRows.appendChild(tagNameRow(t)); });
   }
+  function tagNameRow(t) {
+    var row = document.createElement('div');
+    row.className = 'tn-row';
+    var what = document.createElement('p');
+    what.className = 'tn-what';
+    var b = document.createElement('strong');
+    b.textContent = (t.emoji ? t.emoji + ' ' : '') + t.name;
+    var sample = state.places.filter(function (p) { return p.t && p.t.indexOf(t.id) >= 0; }).slice(0, 3).map(function (p) { return p.n; });
+    what.appendChild(b);
+    what.appendChild(document.createTextNode(' · ' + t.count + (t.count === 1 ? ' place' : ' places') + (sample.length ? ', like ' + namesText(sample) : '')));
+    row.appendChild(what);
+    var picks = document.createElement('div');
+    picks.className = 'tn-picks';
+    var own = document.createElement('div');
+    own.className = 'tn-own';
+    own.hidden = true;
+    var input = document.createElement('input');
+    input.maxLength = 40;
+    input.placeholder = 'Tag name';
+    input.setAttribute('aria-label', 'Name for ' + t.name);
+    var save = document.createElement('button');
+    save.type = 'button';
+    save.className = 'mini';
+    save.textContent = 'Save';
+    own.appendChild(input);
+    own.appendChild(save);
+    TAG_CHOICES.forEach(function (c) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'tn-pick';
+      if (t.label === c.label) btn.classList.add('on');
+      else if (state.tagsAll.some(function (x) { return x.id !== t.id && x.label === c.label; })) btn.classList.add('used');
+      btn.textContent = c.emoji + ' ' + c.label;
+      btn.addEventListener('click', function () { nameTag(t, c.label, c.emoji, btn); });
+      picks.appendChild(btn);
+    });
+    var other = document.createElement('button');
+    other.type = 'button';
+    other.className = 'tn-pick';
+    other.textContent = 'Something else…';
+    other.addEventListener('click', function () {
+      own.hidden = false;
+      input.value = t.label && !TAG_CHOICES.some(function (c) { return c.label === t.label; }) ? t.label : '';
+      input.focus();
+    });
+    picks.appendChild(other);
+    save.addEventListener('click', function () {
+      var v = input.value.replace(/\s+/g, ' ').trim();
+      if (v) nameTag(t, v, '', save);
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      save.click();
+    });
+    row.appendChild(picks);
+    row.appendChild(own);
+    return row;
+  }
+  function tagMsg(text) {
+    els.tagMsg.hidden = !text;
+    els.tagMsg.textContent = text || '';
+  }
+  function nameTag(t, label, emoji, btn) {
+    btn.disabled = true;
+    tagMsg('');
+    callServer('tagName', { id: t.id, label: label, emoji: emoji || '' }).then(function (res) {
+      btn.disabled = false;
+      if (!res || !res.ok) { tagMsg((res && res.error) || 'Couldn’t save that name.'); return; }
+      t.label = res.label;
+      t.emoji = res.emoji;
+      // Named tags first, the way the script lists them.
+      state.tagsAll = state.tagsAll.filter(function (x) { return x.label; }).concat(state.tagsAll.filter(function (x) { return !x.label; }));
+      numberTags();
+      try {
+        var c = JSON.parse(store.get('placesCache') || 'null');
+        if (c) { c.tags = state.tagsAll; store.set('placesCache', JSON.stringify(c)); }
+      } catch (e) {}
+      renderTagSheet();
+      renderFilters();
+      refresh();
+      if (state.pick) renderTicketExtras();
+    }, function (err) {
+      btn.disabled = false;
+      tagMsg('Couldn’t save that name: ' + errText(err));
+    });
+  }
+  els.tagRename.addEventListener('click', function () { tagRenaming = true; renderTagSheet(); });
+  els.tagSheet.addEventListener('close', function () { tagRenaming = false; tagMsg(''); });
   function hoursMode() { return state.open == null ? 'off' : state.open === 'now' ? 'now' : 'at'; }
   function renderHoursSheet() {
     var mode = hoursMode();
@@ -3811,8 +3950,9 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     }
     if (res && res.ok) {
       state.places = res.places || [];
-      state.tagsAll = res.tags || [];
-      state.tags = state.tags.filter(function (l) { return state.tagsAll.some(function (t) { return t.label === l; }); });
+      state.tagsAll = (res.tags || []).map(normTag);
+      numberTags();
+      state.tags = state.tags.filter(function (id) { return !!tagById(id); });
       store.set('tags', JSON.stringify(state.tags));
       state.loaded = true;
       state.loadError = false;
@@ -3837,7 +3977,8 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
     if (cached && cached.places && cached.places.length && cached.url === appUrl()) {
       state.places = cached.places;
       state.lists = cached.lists || [];
-      state.tagsAll = cached.tags || [];
+      state.tagsAll = (cached.tags || []).map(normTag);
+      numberTags();
       state.loaded = true;
       renderLists();
     }
