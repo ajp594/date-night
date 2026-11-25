@@ -48,12 +48,14 @@ body {
   -webkit-font-smoothing: antialiased;
   background: radial-gradient(120% 55% at 50% -12%, rgba(var(--bulb-rgb), 0.11), transparent 62%), var(--night);
 }
-.wrap { max-width: 480px; margin: 0 auto; padding: 22px 16px 44px; display: grid; gap: 22px; }
+.wrap { max-width: 480px; height: 100vh; height: 100dvh; margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
 
 /* Header */
-.title { margin: 0; font: 900 clamp(2.3rem, 11vw, 3rem)/0.92 var(--display); letter-spacing: 0.02em; text-transform: uppercase; text-wrap: balance; }
+.title { margin: 0; flex: 1; min-width: 0; font: 900 clamp(1.2rem, 5.6vw, 1.45rem)/0.9 var(--display); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
+.title span { display: block; }
 .title span { color: var(--bulb); }
-.status { margin: 10px 0 0; display: flex; align-items: baseline; gap: 8px; font-size: 0.85rem; color: var(--dusk); }
+.status { margin: 0; flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; font-size: 0.82rem; color: var(--dusk); }
+#statusText { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .status .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--dusk); transform: translateY(-1px); }
 .status.is-live .dot { background: var(--ok); box-shadow: 0 0 0 3px rgba(143, 214, 168, 0.18); }
 .status.is-stale .dot { background: var(--warn); }
@@ -64,7 +66,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { position: relative; }
 .chip input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
-.chip span { display: inline-block; padding: 9px 14px; border: 1px solid var(--rule); border-radius: 999px; font-size: 0.92rem; font-weight: 600; transition: background-color .15s, color .15s, border-color .15s; }
+.chip > span { display: inline-block; padding: 9px 14px; border: 1px solid var(--rule); border-radius: 999px; font-size: 0.92rem; font-weight: 600; transition: background-color .15s, color .15s, border-color .15s; }
 .chip input:checked + span { background: var(--bulb); border-color: var(--bulb); color: var(--on-bulb); }
 .chip input:focus-visible + span { outline: 2px solid var(--bulb); outline-offset: 3px; }
 .hint { margin: 9px 0 0; font-size: 0.84rem; color: var(--dusk); }
@@ -80,7 +82,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .marquee.is-spinning .bulbs { animation: chase 0.3s steps(2) infinite; }
 .marquee.is-spinning .bulbs + .reel + .bulbs { animation-direction: reverse; }
 @keyframes chase { to { background-position-x: 18px; } }
-.reel { height: 164px; display: grid; place-items: center; text-align: center; overflow: hidden; }
+.reel { flex: 1; min-height: 110px; display: grid; place-items: center; text-align: center; overflow: hidden; }
 .reel-label { font: 600 0.72rem/1 var(--body); letter-spacing: 0.18em; text-transform: uppercase; color: var(--dusk); }
 .reel-name { margin-top: 10px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font: 900 clamp(2rem, 9.5vw, 2.8rem)/0.98 var(--display); letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; overflow-wrap: anywhere; }
 .reel-name.is-long { font-size: clamp(1.55rem, 7.2vw, 2.1rem); }
@@ -105,23 +107,24 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 
 /* Ticket */
 .ticket {
-  display: grid; grid-template-columns: 50px 1fr; border-radius: 10px; background: var(--stub); color: var(--stub-ink);
-  -webkit-mask: radial-gradient(circle 10px at 50px 0, #0000 98%, #000) top / 100% 51% no-repeat,
-                radial-gradient(circle 10px at 50px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
-          mask: radial-gradient(circle 10px at 50px 0, #0000 98%, #000) top / 100% 51% no-repeat,
-                radial-gradient(circle 10px at 50px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+  display: grid; grid-template-columns: 40px 1fr; border-radius: 10px; background: var(--stub); color: var(--stub-ink);
+  -webkit-mask: radial-gradient(circle 9px at 40px 0, #0000 98%, #000) top / 100% 51% no-repeat,
+                radial-gradient(circle 9px at 40px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+          mask: radial-gradient(circle 9px at 40px 0, #0000 98%, #000) top / 100% 51% no-repeat,
+                radial-gradient(circle 9px at 40px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
 }
 .ticket[hidden] { display: none; }
 .ticket.printing { animation: print 0.6s ease-out; }
 @keyframes print { from { clip-path: inset(0 0 100% 0); transform: translateY(-8px); } to { clip-path: inset(0); transform: none; } }
 .stub { display: grid; place-items: center; border-right: 2px dashed rgba(112, 26, 50, 0.35); }
-.stub span { writing-mode: vertical-rl; transform: rotate(180deg); font: 900 1.05rem/1 var(--display); letter-spacing: 0.24em; text-transform: uppercase; }
-.ticket-main { min-width: 0; padding: 16px 16px 16px 18px; display: grid; gap: 6px; }
+.stub span { writing-mode: vertical-rl; transform: rotate(180deg); font: 900 0.95rem/1 var(--display); letter-spacing: 0.22em; text-transform: uppercase; white-space: nowrap; }
+.ticket-main { min-width: 0; min-height: 0; padding: 12px 14px 12px 15px; display: flex; flex-direction: column; gap: 5px; }
+.ticket-main > * { flex: none; }
 .ticket-top { display: flex; justify-content: space-between; gap: 10px; font: 700 0.72rem/1.2 var(--body); letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.75; }
-.ticket-name { margin: 2px 0 0; font: 900 1.95rem/1 var(--display); text-transform: uppercase; text-wrap: balance; overflow-wrap: anywhere; }
+.ticket-name { margin: 2px 0 0; font: 900 clamp(1.5rem, 7vw, 1.95rem)/1 var(--display); text-transform: uppercase; text-wrap: balance; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .ticket-addr { margin: 0; font-size: 0.9rem; line-height: 1.35; color: #54202f; }
 .ticket-dist { margin: 0; font-size: 0.9rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.go { margin-top: 8px; display: flex; justify-content: center; align-items: center; padding: 13px 16px; border-radius: 10px; background: var(--stub-ink); color: var(--stub); font: 700 1rem var(--body); text-decoration: none; }
+.go { margin-top: 0; display: flex; justify-content: center; align-items: center; padding: 13px 16px; border-radius: 10px; background: var(--stub-ink); color: var(--stub); font: 700 1rem var(--body); text-decoration: none; }
 .go:focus-visible { outline: 3px solid var(--stub-ink); outline-offset: 3px; }
 
 /* Roster */
@@ -209,19 +212,18 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 }
 
 /* Header tools and presence */
-.toolbar { margin-top: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.presence { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 9px; border-radius: 999px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); font-size: 0.82rem; font-weight: 600; color: var(--dusk); }
+.presence { flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 3px 10px 3px 8px; border-radius: 999px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); font-size: 0.82rem; font-weight: 600; color: var(--dusk); }
 .presence::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dusk); }
 .presence.is-here { color: var(--ivory); }
 .presence.is-here::before { background: var(--ok); box-shadow: 0 0 0 3px rgba(143, 214, 168, 0.2); animation: breathe 1.6s ease-in-out infinite; }
 @keyframes breathe { 50% { box-shadow: 0 0 0 6px rgba(143, 214, 168, 0.05); } }
 .presence[hidden] { display: none; }
-.tool-gap { flex: 1; }
 .tool { appearance: none; padding: 7px 12px; border: 1px solid var(--rule); border-radius: 999px; background: none; color: var(--ivory); font: 600 0.84rem var(--body); cursor: pointer; }
+.tool[hidden] { display: none; }
 .tool:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 
 /* Live connect card */
-.live-card { padding: 16px; display: grid; gap: 10px; border-radius: 16px; background: linear-gradient(160deg, rgba(var(--bulb-rgb), 0.16), transparent 60%), var(--velvet); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.45); }
+.live-card { padding: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; border-radius: 16px; background: linear-gradient(160deg, rgba(var(--bulb-rgb), 0.16), transparent 60%), var(--velvet); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.45); }
 .live-card[hidden] { display: none; }
 .card-title { margin: 0; font: 900 1.45rem/1 var(--display); letter-spacing: 0.03em; text-transform: uppercase; }
 .live-card .hint { margin: 0; }
@@ -233,12 +235,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .live-card .linkish { justify-self: start; }
 
 /* Spin / Swipe tabs */
-.modes { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); }
-.modes button { appearance: none; padding: 10px; border: 0; border-radius: 10px; background: none; color: var(--dusk); font: 900 1.15rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+.modes { flex: 1; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); }
+.modes button { appearance: none; padding: 9px; border: 0; border-radius: 10px; background: none; color: var(--dusk); font: 900 1.15rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
 .modes button[aria-selected=true] { background: var(--bulb); color: var(--on-bulb); }
 .modes button:focus-visible { outline: 2px solid var(--ivory); outline-offset: 2px; }
+.view { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
 .view[hidden] { display: none; }
-.view { display: grid; gap: 22px; }
 
 /* Distance units and options */
 .units { display: inline-flex; margin-bottom: 10px; padding: 3px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--rule); }
@@ -248,7 +250,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .chip.check input:checked + span::before { content: "✓ "; }
 
 /* Live line, vetoes per person */
-.live-line { margin: 0; padding: 10px 12px; border-radius: 12px; background: rgba(var(--bulb-rgb), 0.12); color: var(--ivory); font-weight: 600; font-size: 0.92rem; text-align: center; }
+.live-line { margin: 0; padding: 7px 12px; border-radius: 12px; background: rgba(var(--bulb-rgb), 0.12); color: var(--ivory); font-weight: 600; font-size: 0.92rem; text-align: center; }
 .live-line[hidden] { display: none; }
 .vetoes .who { margin-left: 6px; font-weight: 600; color: var(--ivory); }
 .vetoes .who:first-child { margin-left: 0; }
@@ -267,11 +269,11 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .ticket-live .date { margin: 0; font: 900 1.4rem/1 var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
 
 /* Swipe */
-.swipe-box { display: grid; gap: 14px; }
+.swipe-box { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
 .swipe-empty { margin: 0; padding: 18px 16px; border-radius: 16px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); color: var(--dusk); text-align: center; }
 .swipe-empty strong { display: block; margin-bottom: 4px; color: var(--ivory); font: 900 1.35rem/1.05 var(--display); letter-spacing: 0.03em; text-transform: uppercase; }
 .swipe-empty[hidden] { display: none; }
-.deck { position: relative; height: 250px; }
+.deck { position: relative; flex: 1 1 auto; min-height: 220px; max-height: 560px; }
 .deck[hidden] { display: none; }
 .card { position: absolute; inset: 0; padding: 18px; display: grid; align-content: start; gap: 8px; border-radius: 18px; background: var(--stub); color: var(--stub-ink); box-shadow: 0 18px 40px -20px #000; touch-action: pan-y; user-select: none; -webkit-user-select: none; transition: transform 0.25s ease, opacity 0.25s ease; }
 .card.is-under { transform: scale(0.95) translateY(10px); opacity: 0.7; pointer-events: none; }
@@ -351,20 +353,23 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .pill:focus-visible { outline: 2px solid var(--bulb); outline-offset: -2px; }
 .pill[hidden], .chips[hidden] { display: none; }
 #sources { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-#sources .chip span { display: block; text-align: center; }
-.mood-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.mood { appearance: none; display: grid; justify-items: center; align-content: start; gap: 5px; padding: 12px 6px 10px; border: 1px solid var(--rule); border-radius: 14px; background: rgba(var(--ivory-rgb), 0.04); color: var(--ivory); font: 600 0.8rem/1.15 var(--body); cursor: pointer; }
-.mood .e { font-size: 1.6rem; line-height: 1; }
+#sources .chip > span { display: block; text-align: center; }
+.mood-grid { flex: 1 1 auto; min-height: 0; max-height: 560px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(0, 1fr); gap: 6px; }
+.mood { appearance: none; min-height: 0; overflow: hidden; display: grid; justify-items: center; align-content: center; gap: 3px; padding: 3px 3px; border: 1px solid var(--rule); border-radius: 12px; background: rgba(var(--ivory-rgb), 0.04); color: var(--ivory); font: 600 0.72rem/1.1 var(--body); cursor: pointer; }
+.mood .e { font-size: clamp(1rem, 3.3dvh, 1.5rem); line-height: 1; }
+.mood .l { line-height: 1.08; }
+.mood.long .l { font-size: 0.62rem; letter-spacing: -0.01em; }
+.mood.on { animation: pick 0.28s cubic-bezier(0.2, 1.6, 0.4, 1); }
 .mood.on { background: var(--bulb); border-color: var(--bulb); color: var(--on-bulb); }
 .mood:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 .hours-at { display: flex; flex-wrap: wrap; gap: 8px; }
 .hours-at[hidden] { display: none; }
 .hours-at select, .hours-at input { padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 /* Google info on the ticket and cards */
-.t-photos { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.t-photos { flex: 1 1 0; min-height: 64px; max-height: 240px; display: grid; grid-template-columns: 1fr; gap: 6px; }
 .t-photos.two { grid-template-columns: 1fr 1fr; }
 .t-photos[hidden] { display: none; }
-.t-photos img { display: block; width: 100%; height: 150px; object-fit: cover; border-radius: 8px; background: rgba(112, 26, 50, 0.12); }
+.t-photos img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; border-radius: 8px; background: rgba(112, 26, 50, 0.12); }
 .t-google { margin: 0; font-size: 0.9rem; font-weight: 700; }
 .t-google.is-loading { font-weight: 500; opacity: 0.7; }
 .t-hours { margin: 0; font-size: 0.88rem; font-weight: 700; color: #1f6a3e; }
@@ -372,11 +377,10 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .t-blurb { margin: 0; font-size: 0.88rem; line-height: 1.4; color: #54202f; }
 .t-credit, .card-credit { margin: 0; font-size: 0.72rem; line-height: 1.3; opacity: 0.8; }
 .t-credit a, .card-credit a { color: inherit; }
-.deck.tall { height: 410px; }
-.card { padding: 0; overflow: hidden; }
-.card-photo { display: block; width: 100%; height: 150px; object-fit: cover; background: rgba(112, 26, 50, 0.12); }
+.card { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+.card-photo { display: block; flex: 1 1 0; min-height: 60px; width: 100%; object-fit: cover; background: rgba(112, 26, 50, 0.12); }
 .card-photo[hidden] { display: none; }
-.card-body { padding: 16px 18px 34px; display: grid; gap: 7px; align-content: start; }
+.card-body { flex: none; padding: 14px 16px 30px; display: grid; gap: 6px; align-content: start; }
 .card.has-photo .card-name { font-size: 1.7rem; }
 .card-google { margin: 0; font-size: 0.86rem; font-weight: 700; }
 .card-google:empty { display: none; }
@@ -417,7 +421,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .tn-own[hidden] { display: none; }
 .tn-own input { flex: 1; min-width: 0; padding: 9px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 /* Two screens: plan the night, then play. */
-.screen { display: grid; gap: 18px; }
+.screen { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
 .screen[hidden] { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   .screen.enter { animation: screen-in 0.26s ease-out; }
@@ -425,68 +429,220 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 }
 @keyframes screen-in { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
 @keyframes screen-in-left { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
-fieldset.step { padding: 16px 16px 18px; border-radius: 18px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); }
-fieldset.step > legend { float: left; width: 100%; margin-bottom: 12px; }
-fieldset.step > legend + * { clear: both; }
-.step-n { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-right: 9px; border-radius: 50%; background: rgba(var(--bulb-rgb), 0.2); color: var(--bulb); font-size: 0.7rem; letter-spacing: 0; vertical-align: 1px; }
-fieldset.step .chips + .chips { margin-top: 10px; }
 .units .chip span { padding: 6px 12px; font-size: 0.82rem; }
-.go-bar { position: sticky; bottom: 0; z-index: 5; margin: 0 -16px; padding: 26px 16px calc(12px + env(safe-area-inset-bottom)); display: grid; gap: 8px; background: linear-gradient(to bottom, transparent 0, var(--night) 22px); }
+.go-bar { margin-top: auto; display: grid; gap: 10px; }
 .go-note[hidden] { display: none; }
-.on-play .title { font-size: clamp(1.45rem, 6.4vw, 1.75rem); }
-@media (prefers-reduced-motion: no-preference) { .title { transition: font-size 0.2s ease; } }
 .go-note { margin: 0; text-align: center; font-size: 0.85rem; color: var(--dusk); }
 .go-buttons { display: grid; grid-template-columns: 1.35fr 1fr; gap: 10px; }
-.go-btn { appearance: none; border: 0; border-radius: 14px; padding: 17px 10px 15px; background: var(--velvet-2); color: var(--ivory); font: 900 1.3rem/1 var(--display); letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); }
+.go-btn { appearance: none; border: 0; border-radius: 16px; padding: 22px 10px 20px; background: var(--velvet-2); color: var(--ivory); font: 900 1.6rem/1 var(--display); letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); }
 .go-btn.primary { background: var(--bulb); color: var(--on-bulb); box-shadow: 0 12px 30px -14px rgba(var(--bulb-rgb), 0.8); }
 .go-btn:active { transform: translateY(1px) scale(0.99); }
 .go-btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; transform: none; }
 .go-btn:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
 .go-bar .linkish { justify-self: center; }
 .go-bar .linkish[hidden] { display: none; }
-.play-bar { display: flex; align-items: center; gap: 12px; }
-.back { appearance: none; flex: none; padding: 9px 15px 9px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--velvet); color: var(--ivory); font: 600 0.92rem var(--body); cursor: pointer; }
+.play-bar { flex: none; display: flex; align-items: center; gap: 10px; }
+.back { appearance: none; flex: none; padding: 11px 14px 11px 11px; border: 1px solid var(--rule); border-radius: 999px; background: var(--velvet); color: var(--ivory); font: 600 0.92rem var(--body); cursor: pointer; }
 .back:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
-.play-sum { margin: 0; flex: 1; min-width: 0; font-size: 0.84rem; line-height: 1.35; color: var(--dusk); }
+.play-sum { margin: 0; font-size: 0.84rem; line-height: 1.35; color: var(--dusk); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
 .set-lists .lists { padding-top: 0; border-top: 0; }
+/* One question per screen: everything fits on the phone without scrolling. */
+.top { flex: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.top-row { display: flex; align-items: center; gap: 10px; }
+.tools { flex: none; display: flex; gap: 6px; }
+.tool.icon { width: 38px; height: 38px; padding: 0; display: grid; place-items: center; border-radius: 50%; }
+.tool.icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tool.icon.on { background: var(--bulb); border-color: var(--bulb); color: var(--on-bulb); }
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.status-row { display: flex; align-items: center; gap: 10px; min-height: 22px; }
+html.on-q .status-row { display: none; }
+
+/* The bulb trail: 1 2 3 4 GO. Lit ones are answered; tap one to change that answer. */
+.trail { flex: none; position: relative; display: flex; align-items: center; justify-content: space-between; padding: 2px 4px; }
+.trail::before { content: ""; position: absolute; left: 16px; right: 24px; top: 50%; height: 2px; background: var(--rule); }
+.pip { position: relative; z-index: 1; appearance: none; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--velvet-2); color: var(--dusk); font: 800 0.76rem/1 var(--body); cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); transition: background-color .2s, color .2s, box-shadow .2s, transform .2s; }
+.pip.go { width: 46px; border-radius: 14px; font: 900 0.95rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; }
+.pip.lit { background: var(--bulb); color: var(--on-bulb); box-shadow: 0 0 9px rgba(var(--bulb-rgb), 0.65); }
+.pip.cur { transform: scale(1.16); box-shadow: 0 0 0 3px rgba(var(--bulb-rgb), 0.35), 0 0 16px rgba(var(--bulb-rgb), 0.8); }
+.pip.cur:not(.lit) { background: var(--ivory); color: var(--on-bulb); }
+.pip:focus-visible { outline: 2px solid var(--ivory); outline-offset: 3px; }
+html.on-welcome .trail { display: none; }
+
+/* A question */
+.q { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+.q[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .q.enter { animation: screen-in 0.24s ease-out; }
+  .q.enter.from-left { animation-name: screen-in-left; }
+}
+.q-kicker { margin: 4px 0 0; font: 700 0.72rem/1 var(--body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--bulb); }
+.q-title { margin: 0; font: 900 clamp(1.75rem, 8.4vw, 2.4rem)/0.98 var(--display); letter-spacing: 0.01em; text-transform: uppercase; text-wrap: balance; }
+.q-body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; overscroll-behavior: contain; margin: 0 -4px; padding: 4px; }
+.q-body > * { flex: none; }
+.q-body > .mood-grid, .q-body > .tiles.two-up { flex: 1 1 auto; }
+.q > *, .q-body > *, .view > * { min-width: 0; }
+.q-nav { flex: none; display: flex; align-items: center; gap: 10px; }
+.q-back { appearance: none; padding: 12px 8px 12px 2px; border: 0; background: none; color: var(--dusk); font: 600 0.98rem var(--body); cursor: pointer; }
+.q-back[hidden] { display: inline-block; visibility: hidden; }
+.q-next { appearance: none; margin-left: auto; padding: 15px 28px 13px; border: 0; border-radius: 14px; background: var(--ivory); color: var(--on-bulb); font: 900 1.2rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+.q-next:disabled { opacity: 0.35; cursor: not-allowed; }
+.q-next:focus-visible, .q-back:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+#qWelcome { justify-content: center; }
+
+/* Big answer tiles */
+.tiles { display: grid; gap: 10px; }
+.tiles .chip > span { display: flex; align-items: center; gap: 14px; padding: 15px 16px; border-radius: 16px; background: rgba(var(--ivory-rgb), 0.04); font-size: 1.08rem; font-weight: 700; line-height: 1.2; }
+.tiles .t-e { font-style: normal; font-size: 1.55rem; line-height: 1; }
+.tiles .t-l { display: grid; gap: 2px; text-align: left; }
+.tiles .t-s { font-size: 0.8rem; font-weight: 500; color: var(--dusk); }
+.tiles .chip input:checked + span .t-s { color: inherit; opacity: 0.78; }
+.tiles .chip input:checked + span { animation: pick 0.28s cubic-bezier(0.2, 1.6, 0.4, 1); }
+@keyframes pick { from { transform: scale(0.95); } }
+.tiles.compact { display: flex; flex-wrap: wrap; gap: 8px; }
+.tiles.compact .chip > span { gap: 7px; padding: 9px 13px; border-radius: 999px; font-size: 0.9rem; }
+.tiles.compact .t-e { font-size: 1rem; }
+.tiles.compact .t-s { display: none; }
+.tiles.two-up { flex: 1 1 auto; max-height: 380px; grid-template-columns: 1fr 1fr; grid-auto-rows: minmax(54px, 1fr); }
+.tiles.two-up .chip > span { height: 100%; justify-content: center; padding: 10px; font: 900 1.5rem/1 var(--display); letter-spacing: 0.05em; text-transform: uppercase; }
+.units { align-self: center; margin-bottom: 0; }
+
+/* Anything else? */
+.q-group { display: grid; gap: 7px; }
+.q-group[hidden] { display: none; }
+.q-group h3 { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font: 600 0.72rem/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dusk); }
+.q-group h3 .linkish { padding: 0; font-size: 0.82rem; letter-spacing: 0; text-transform: none; }
+.q-group .chips { gap: 7px; }
+.q-group .chip > span { padding: 8px 12px; font-size: 0.88rem; }
+.q-group .hint { margin: 0; }
+#sources .chip > span { padding: 12px 8px; }
+.options { margin-top: 0; }
+
+/* Spin or swipe? */
+.q.home { gap: 12px; }
+/* On Spin or Swipe the group card is two lines: the code with its buttons, then who's in. */
+.home .group-card { grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "code . main second" "line line line line"; align-items: center; gap: 6px 10px; padding: 9px 12px 10px; }
+.home .group-card .gc-row { display: contents; }
+.home .group-card .card-title { display: none; }
+.home .gc-code { grid-area: code; font-size: 1.15rem; }
+.home .gc-code::before { content: "👥 "; letter-spacing: 0; }
+.home #gcMain { grid-area: main; padding: 8px 11px; }
+.home #gcSecond { grid-area: second; }
+.home #gcLine { grid-area: line; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 0.82rem; line-height: 1.3; }
+.sum { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sum-chip { appearance: none; min-width: 0; display: grid; gap: 4px; align-content: center; min-height: 58px; padding: 9px 12px; border: 0; border-radius: 14px; background: var(--velvet); box-shadow: inset 0 0 0 1px var(--rule); color: var(--ivory); text-align: left; cursor: pointer; transition: transform .08s; }
+.sum-chip[hidden] { display: none; }
+.sum-chip .k { font: 600 0.66rem/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dusk); }
+.sum-chip .v { min-width: 0; font: 700 0.95rem/1.2 var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sum-chip .v::after { content: none; }
+.sum-chip.is-set .v { color: var(--bulb); }
+.sum-chip.is-warn .v { color: var(--warn); }
+.sum-chip:active { transform: scale(0.98); }
+.sum-chip:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.sum-tip { margin: -4px 0 0; font-size: 0.78rem; color: var(--dusk); text-align: center; }
+.go-count { margin: 0; text-align: center; font-size: 0.92rem; font-weight: 600; }
+.go-count[hidden] { display: none; }
+.go-count .linkish { margin-left: 4px; }
+
+/* Play: the reel until something lands, then the ticket with its buttons under it. */
+.play-line { flex: none; min-height: 19px; display: grid; }
+.live-line:not([hidden]) + .play-sum { display: none; }
+#spinView .marquee { flex: 1 1 auto; min-height: 150px; max-height: 340px; display: flex; flex-direction: column; justify-content: space-between; }
+#spinView:has(> .ticket:not([hidden])) > .marquee { display: none; }
+.ticket { flex: 0 1 auto; min-height: 0; }
+.ticket.has-photos { flex: 1 1 auto; max-height: 560px; }
+.ticket-addr, .ticket .t-blurb { display: none !important; }
+.ticket-drive:not([hidden]) ~ .ticket-dist { display: none; }
+.ticket-badges { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-google, .t-hours, .ticket-drive, .ticket-dist { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-go { display: flex; gap: 8px; margin-top: 3px; }
+.t-go .go { flex: 1; padding: 12px 12px; }
+.t-more { appearance: none; flex: none; padding: 0 16px; border: 0; border-radius: 10px; background: none; box-shadow: inset 0 0 0 1.5px var(--stub-ink); color: var(--stub-ink); font: 700 0.95rem var(--body); cursor: pointer; }
+.t-more:focus-visible { outline: 3px solid var(--stub-ink); outline-offset: 2px; }
+.actions { flex: none; gap: 8px; }
+.act-row { display: flex; gap: 8px; }
+.act-slot { display: flex; flex: 1 1 0; min-width: 0; }
+.act-slot:empty { display: none; }
+.act-row .spin { flex: 1 1 0; min-width: 0; }
+.act-slot .btn { flex: 1; appearance: none; padding: 14px 12px 12px; border: 0; border-radius: 14px; background: var(--ivory); color: var(--on-bulb); font: 900 1.2rem/1.05 var(--display); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
+.act-slot .btn:disabled { opacity: 0.5; cursor: wait; }
+.act-slot .tlink { appearance: none; flex: 1; padding: 0 8px; border: 0; border-radius: 14px; background: none; box-shadow: inset 0 0 0 1px var(--rule); color: var(--ivory); font: 600 0.9rem var(--body); cursor: pointer; }
+#spinView:has(> .ticket:not([hidden])) .spin { padding: 14px 12px 12px; font-size: 1.2rem; line-height: 1.05; }
+.actions .ticket-live { margin-top: 0; text-align: center; }
+.actions .ticket-live .say { color: var(--ivory); }
+.actions .ticket-live .date { display: none; }   /* the line above the ticket already says it */
+.actions .ticket-live .tlink { color: var(--ivory); }
+.actions .ticket-live .row { justify-content: center; }
+.subactions { min-height: 22px; }
+.vetoes { min-width: 0; overflow: hidden; white-space: nowrap; }
+.swipe-msg { flex: none; }
+.swipe-box .find, .swipe-box .linkish { flex: none; }
+
+/* A pick's details, and the places that match */
+.pick-more { margin: 0; display: grid; gap: 10px; }
+.pick-more div { display: grid; gap: 2px; }
+.pick-more dt { font: 600 0.7rem/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dusk); }
+.pick-more dd { margin: 0; font-size: 0.95rem; }
+.pm-live .row { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.pm-live .tlink { color: var(--ivory); }
+.roster ol { margin: 0; max-height: 60vh; overflow-y: auto; }
+.about .foot { margin: 0; }
+
+/* Shorter phones (an iPhone SE with Safari's bars) */
+@media (max-height: 640px) {
+  .q-kicker { display: none; }
+  .q-title { font-size: clamp(1.5rem, 7.4vw, 2rem); }
+  .tiles .chip > span { padding: 12px 14px; }
+  .tiles.compact .chip > span { padding: 8px 12px; }
+  .meet { margin-top: 0; padding: 10px 12px; gap: 8px; }
+  .sum-chip { min-height: 50px; padding: 7px 11px; }
+  .sum-tip { display: none; }
+  .go-btn { padding: 17px 10px 15px; font-size: 1.4rem; }
+  .q-next { padding: 13px 24px 11px; }
+  .trail .pip { width: 26px; height: 26px; }
+  .trail .pip.go { width: 42px; }
+  /* Play: the pick and its buttons get the room. */
+  html.on-play .status-row { display: none; }
+  .play-line { min-height: 0; }
+  .play-sum { display: none; }
+  .ticket-top { display: none; }
+  .t-photos { min-height: 52px; }
+  .ticket-main { gap: 4px; padding: 10px 12px 10px 13px; }
+  .t-go .go { padding: 10px 12px; }
+  .ticket-badges { display: none; }
+  #spinView:has(.ticket-live:not([hidden])) .subactions { display: none; }
+  .act-slot .btn, #spinView:has(> .ticket:not([hidden])) .spin { padding: 10px 10px 9px; font-size: 1.05rem; }
+  .home #gcLine { -webkit-line-clamp: 1; }
+  .sum-chip { min-height: 46px; }
+}
 </style>
 </head>
 <body>
 <main class="wrap">
-  <header>
-    <h1 class="title">Date Night <span>Roulette</span></h1>
-    <p class="status" id="status" role="status"><span class="dot"></span><span id="statusText">Pulling your list from Google Maps…</span></p>
-    <div class="toolbar">
+  <header class="top">
+    <div class="top-row">
+      <h1 class="title">Date Night <span>Roulette</span></h1>
+      <div class="tools">
+        <button type="button" class="tool icon" id="groupBtn" title="Group date"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5"/><circle cx="16.6" cy="9.2" r="2.5"/><path d="M15.6 14.3c2.5-.2 4.3 1.3 4.9 4.2"/></svg><span class="sr" id="groupBtnText">Group Date</span></button>
+        <button type="button" class="tool icon" id="placesBtn" title="Our places"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19.5s-7-4.3-7-9.4A3.9 3.9 0 0 1 12 7.8a3.9 3.9 0 0 1 7 2.3c0 5.1-7 9.4-7 9.4z"/></svg><span class="sr">Our Places</span></button>
+        <button type="button" class="tool icon" id="settingsBtn" title="Settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h9M17 7.5h3M4 16.5h3M11 16.5h9"/><circle cx="15" cy="7.5" r="2.2"/><circle cx="9" cy="16.5" r="2.2"/></svg><span class="sr">Settings</span></button>
+      </div>
+    </div>
+    <div class="status-row">
+      <p class="status" id="status" role="status"><span class="dot"></span><span id="statusText">Pulling your list from Google Maps…</span></p>
       <span class="presence" id="presence" role="status" hidden></span>
-      <span class="tool-gap"></span>
-      <button type="button" class="tool" id="groupBtn">Group Date</button>
-      <button type="button" class="tool" id="placesBtn">Our Places</button>
-      <button type="button" class="tool" id="settingsBtn">Settings</button>
     </div>
   </header>
 
   <div class="screen" id="planScreen">
-  <section class="live-card" id="liveCard" hidden>
-    <h2 class="card-title">Play together, live</h2>
-    <p class="hint">Connect both phones with the same passcode. Then you see the same spins, swipe together, and keep your ratings and date history. The first phone to connect picks the passcode.</p>
-    <p class="hint who" id="liveWho"></p>
-    <form id="liveForm" novalidate>
-      <input id="liveCode" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Passcode" aria-label="Passcode">
-      <button type="submit" id="liveBtn">Connect</button>
-    </form>
-    <p class="hint" id="liveMsg" hidden></p>
-    <button type="button" class="linkish" id="liveLater">Not now</button>
-  </section>
+  <nav class="trail" id="stepNav" aria-label="Questions">
+    <button type="button" class="pip" data-go="start" aria-label="Question 1: where you’re starting">1</button>
+    <button type="button" class="pip" data-go="far" aria-label="Question 2: how far">2</button>
+    <button type="button" class="pip" data-go="mood" aria-label="Question 3: what you’re in the mood for">3</button>
+    <button type="button" class="pip" data-go="more" aria-label="Question 4: anything else">4</button>
+    <button type="button" class="pip go" data-go="home" aria-label="Spin or swipe">Go</button>
+  </nav>
 
-  <section class="group-card" id="groupCard" hidden>
-    <div class="gc-row"><h2 class="card-title" id="gcTitle">Group Date</h2><span class="gc-code" id="gcCode"></span></div>
-    <p class="hint" id="gcLine"></p>
-    <div class="gc-row">
-      <button type="button" class="mini" id="gcMain">Invite Friends</button>
-      <button type="button" class="linkish" id="gcSecond">Leave</button>
-    </div>
-  </section>
-
+  <section class="q" id="qWelcome" data-step="welcome" hidden>
   <section class="setup" id="setup" hidden>
     <form class="add" id="setupForm" novalidate>
       <label for="setupUrl">Connect this page to your app</label>
@@ -498,92 +654,154 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       <p class="hint is-warn" id="setupMsg" hidden></p>
     </form>
   </section>
+  <section class="live-card" id="liveCard" hidden>
+    <h2 class="card-title">Play together, live</h2>
+    <p class="hint">Connect both phones with the same passcode. Then you see the same spins, swipe together, and keep your ratings and date history. The first phone to connect picks the passcode.</p>
+    <p class="hint who" id="liveWho"></p>
+    <form id="liveForm" novalidate>
+      <input id="liveCode" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Passcode" aria-label="Passcode">
+      <button type="submit" id="liveBtn">Connect</button>
+    </form>
+    <p class="hint" id="liveMsg" hidden></p>
+    <button type="button" class="linkish" id="liveLater">Not now</button>
+  </section>
+  </section>
 
-  <fieldset class="step">
-    <legend><span class="step-n" aria-hidden="true">1</span>Starting from</legend>
-    <div class="chips" id="starts"></div>
-    <p class="hint" id="gpsHint" hidden></p>
-    <div class="meet" id="meet" hidden>
-      <div class="meet-row">
-        <label for="meet0" id="meetName0">Alec</label>
-        <input id="meet0" autocomplete="off" enterkeyhint="next" placeholder="Town, address or place">
-        <button type="button" class="mini" id="here0">Here</button>
+  <section class="q" id="qStart" data-step="start" hidden aria-labelledby="qStartTitle">
+    <p class="q-kicker">Question 1 of 4</p>
+    <h2 class="q-title" id="qStartTitle">Where are you starting?</h2>
+    <div class="q-body">
+      <div class="chips tiles" id="starts"></div>
+      <p class="hint" id="gpsHint" hidden></p>
+      <div class="meet" id="meet" hidden>
+        <div class="meet-row">
+          <label for="meet0" id="meetName0">Alec</label>
+          <input id="meet0" autocomplete="off" enterkeyhint="next" placeholder="Town, address or place">
+          <button type="button" class="mini" id="here0">Here</button>
+        </div>
+        <div class="meet-row">
+          <label for="meet1" id="meetName1">Morgan</label>
+          <input id="meet1" autocomplete="off" enterkeyhint="go" placeholder="Town, address or place">
+          <button type="button" class="mini" id="here1">Here</button>
+        </div>
+        <div class="meet-actions">
+          <button type="button" class="find" id="findBtn">Find Halfway</button>
+          <button type="button" class="linkish" id="textBtn" hidden>Text Morgan where I’m starting</button>
+        </div>
+        <p class="hint" id="textHelp" hidden></p>
+        <p class="hint" id="meetMsg" hidden></p>
+        <p class="hint who" id="whoLine" hidden></p>
       </div>
-      <div class="meet-row">
-        <label for="meet1" id="meetName1">Morgan</label>
-        <input id="meet1" autocomplete="off" enterkeyhint="go" placeholder="Town, address or place">
-        <button type="button" class="mini" id="here1">Here</button>
+      <div class="meet" id="custom" hidden>
+        <div class="custom-row">
+          <input id="customInput" autocomplete="off" enterkeyhint="go" placeholder="Town, neighborhood or address" aria-label="Where you’re headed">
+        </div>
+        <p class="hint" id="customMsg" hidden></p>
       </div>
-      <div class="meet-actions">
-        <button type="button" class="find" id="findBtn">Find Halfway</button>
-        <button type="button" class="linkish" id="textBtn" hidden>Text Morgan where I’m starting</button>
+      <div class="meet" id="groupMeet" hidden>
+        <ul class="gm-people" id="gmPeople"></ul>
+        <div class="meet-row">
+          <label for="gmInput">You</label>
+          <input id="gmInput" autocomplete="off" enterkeyhint="go" placeholder="Where you’re starting">
+          <button type="button" class="mini" id="gmHere">Here</button>
+        </div>
+        <p class="hint" id="gmMsg"></p>
       </div>
-      <p class="hint" id="textHelp" hidden></p>
-      <p class="hint" id="meetMsg" hidden></p>
-      <p class="hint who" id="whoLine" hidden></p>
     </div>
-    <div class="meet" id="custom" hidden>
-      <div class="custom-row">
-        <input id="customInput" autocomplete="off" enterkeyhint="go" placeholder="Town, neighborhood or address" aria-label="Where you’re headed">
+    <div class="q-nav"><button type="button" class="q-back">‹ Back</button><button type="button" class="q-next">Next ›</button></div>
+  </section>
+
+  <section class="q" id="qFar" data-step="far" hidden aria-labelledby="qFarTitle">
+    <p class="q-kicker">Question 2 of 4</p>
+    <h2 class="q-title" id="qFarTitle">How far will you go?</h2>
+    <div class="q-body">
+      <div class="chips units" id="units"></div>
+      <div class="chips tiles two-up" id="radii"></div>
+    </div>
+    <div class="q-nav"><button type="button" class="q-back">‹ Back</button><button type="button" class="q-next">Next ›</button></div>
+  </section>
+
+  <section class="q" id="qMood" data-step="mood" hidden aria-labelledby="qMoodTitle">
+    <p class="q-kicker">Question 3 of 4</p>
+    <h2 class="q-title" id="qMoodTitle">What are you in the mood for?</h2>
+    <div class="q-body">
+      <div class="mood-grid" id="moodGrid"></div>
+      <p class="hint" id="filterHint" hidden></p>
+    </div>
+    <div class="q-nav"><button type="button" class="q-back">‹ Back</button><button type="button" class="q-next">Next ›</button></div>
+  </section>
+
+  <section class="q" id="qMore" data-step="more" hidden aria-labelledby="qMoreTitle">
+    <p class="q-kicker">Question 4 of 4</p>
+    <h2 class="q-title" id="qMoreTitle">Anything else?</h2>
+    <div class="q-body">
+      <div class="q-group" id="srcGroup">
+        <h3>Pick from</h3>
+        <div class="chips" id="sources" hidden></div>
+        <p class="hint" id="srcHint" hidden></p>
       </div>
-      <p class="hint" id="customMsg" hidden></p>
-    </div>
-    <div class="meet" id="groupMeet" hidden>
-      <ul class="gm-people" id="gmPeople"></ul>
-      <div class="meet-row">
-        <label for="gmInput">You</label>
-        <input id="gmInput" autocomplete="off" enterkeyhint="go" placeholder="Where you’re starting">
-        <button type="button" class="mini" id="gmHere">Here</button>
+      <div class="q-group" id="hoursGroup">
+        <h3>Make sure it’s open</h3>
+        <div class="chips" id="hoursChips"></div>
+        <div class="hours-at" id="hoursAt" hidden>
+          <select id="hoursDay" aria-label="Day"></select>
+          <input id="hoursTime" type="time" value="19:00" aria-label="Time">
+        </div>
       </div>
-      <p class="hint" id="gmMsg"></p>
+      <div class="q-group" id="tagGroup">
+        <h3>Tags <button type="button" class="linkish" id="tagNameBtn">Name tags</button></h3>
+        <div class="chips" id="tagChips"></div>
+      </div>
+      <div class="q-group" id="optGroup">
+        <h3>Just you two</h3>
+        <div class="chips options" id="options"></div>
+      </div>
     </div>
-  </fieldset>
+    <div class="q-nav"><button type="button" class="q-back">‹ Back</button><button type="button" class="q-next">Done ›</button></div>
+  </section>
 
-  <fieldset class="step">
-    <legend><span class="step-n" aria-hidden="true">2</span>How far</legend>
-    <div class="chips units" id="units"></div>
-    <div class="chips" id="radii"></div>
-    <div class="chips options" id="options"></div>
-  </fieldset>
-
-  <fieldset class="step">
-    <legend><span class="step-n" aria-hidden="true">3</span>What sounds good</legend>
-    <div class="chips" id="sources" hidden></div>
-    <div class="pills">
-      <button type="button" class="pill" id="moodBtn" aria-haspopup="dialog"></button>
-      <button type="button" class="pill" id="tagBtn" aria-haspopup="dialog" hidden></button>
-      <button type="button" class="pill" id="hoursBtn" aria-haspopup="dialog" hidden></button>
+  <section class="q home" id="qHome" data-step="home" hidden aria-labelledby="qHomeTitle">
+    <h2 class="q-title" id="qHomeTitle">Spin or swipe?</h2>
+    <section class="group-card" id="groupCard" hidden>
+      <div class="gc-row"><h2 class="card-title" id="gcTitle">Group Date</h2><span class="gc-code" id="gcCode"></span></div>
+      <p class="hint" id="gcLine"></p>
+      <div class="gc-row">
+        <button type="button" class="mini" id="gcMain">Invite Friends</button>
+        <button type="button" class="linkish" id="gcSecond">Leave</button>
+      </div>
+    </section>
+    <div class="sum" id="sumGrid">
+      <button type="button" class="sum-chip" id="sumStart" data-go="start"></button>
+      <button type="button" class="sum-chip" id="sumFar" data-go="far"></button>
+      <button type="button" class="sum-chip" id="moodBtn" data-go="mood"></button>
+      <button type="button" class="sum-chip" id="srcBtn" data-go="more" hidden></button>
+      <button type="button" class="sum-chip" id="hoursBtn" data-go="more" hidden></button>
+      <button type="button" class="sum-chip" id="tagBtn" data-go="more" hidden></button>
     </div>
-    <p class="hint" id="filterHint" hidden></p>
-  </fieldset>
-
-  <details class="roster" id="roster">
-    <summary id="rosterSummary">Places in range</summary>
-    <ol id="rosterList"></ol>
-  </details>
-
-  <div class="go-bar" id="goBar">
-    <p class="go-note" id="goNote" role="status"></p>
-    <div class="go-buttons">
-      <button type="button" class="go-btn primary" id="goSpin" disabled>Spin</button>
-      <button type="button" class="go-btn" id="goSwipe" disabled>Swipe</button>
+    <p class="sum-tip">Tap one to change it.</p>
+    <div class="go-bar" id="goBar">
+      <p class="go-count"><span id="rosterSummary">Places in range</span> <button type="button" class="linkish" id="rosterBtn" hidden>See them</button></p>
+      <p class="go-note" id="goNote" role="status"></p>
+      <div class="go-buttons">
+        <button type="button" class="go-btn primary" id="goSpin" disabled>Spin</button>
+        <button type="button" class="go-btn" id="goSwipe" disabled>Swipe</button>
+      </div>
+      <button type="button" class="linkish" id="goFresh" hidden>Start a new spin instead</button>
     </div>
-    <button type="button" class="linkish" id="goFresh" hidden>Start a new spin instead</button>
-  </div>
-
-  <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
-  <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
+  </section>
   </div>
 
   <div class="screen" id="playScreen" hidden>
   <div class="play-bar">
     <button type="button" class="back" id="backBtn">‹ Change</button>
-    <p class="play-sum" id="playSum"></p>
+    <div class="modes" role="tablist" aria-label="How to pick">
+      <button type="button" role="tab" id="modeSpin" aria-selected="true" aria-controls="spinView">Spin</button>
+      <button type="button" role="tab" id="modeSwipe" aria-selected="false" aria-controls="swipeView">Swipe</button>
+    </div>
   </div>
-
-  <div class="modes" role="tablist" aria-label="How to pick">
-    <button type="button" role="tab" id="modeSpin" aria-selected="true" aria-controls="spinView">Spin</button>
-    <button type="button" role="tab" id="modeSwipe" aria-selected="false" aria-controls="swipeView">Swipe</button>
+  <div class="play-line">
+    <p class="live-line" id="liveLine" role="status" hidden></p>
+    <p class="play-sum" id="playSum"></p>
   </div>
 
   <section class="view" id="spinView" role="tabpanel" aria-labelledby="modeSpin">
@@ -598,53 +816,54 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     <div class="bulbs" aria-hidden="true"></div>
   </section>
 
+  <article class="ticket" id="ticket" hidden>
+    <div class="stub"><span id="tAdmit">Admit two</span></div>
+    <div class="ticket-main">
+      <div class="ticket-top"><span id="tDate"></span><span id="tTown"></span></div>
+      <div class="t-photos" id="tPhotos" hidden></div>
+      <p class="t-credit" id="tCredit" hidden></p>
+      <h2 class="ticket-name" id="tName"></h2>
+      <p class="t-google" id="tGoogle" hidden></p>
+      <p class="t-hours" id="tHours" hidden></p>
+      <p class="ticket-drive" id="tDrive" hidden></p>
+      <p class="ticket-dist" id="tDist"></p>
+      <p class="ticket-badges" id="tBadges"></p>
+      <p class="ticket-addr" id="tAddr"></p>
+      <p class="t-blurb" id="tBlurb" hidden></p>
+      <div class="t-go">
+        <a class="go" id="tGo" href="https://www.google.com/maps" target="_blank" rel="noopener">Open in Google Maps</a>
+        <button type="button" class="t-more" id="tMore">More</button>
+      </div>
+    </div>
+  </article>
+
   <div class="actions">
-    <button class="spin" id="spin" type="button" disabled>Spin</button>
+    <div class="ticket-live" id="tLive" hidden></div>
+    <div class="act-row">
+      <span class="act-slot" id="tLiveBtns"></span>
+      <button class="spin" id="spin" type="button" disabled>Spin</button>
+    </div>
     <div class="subactions">
       <span class="vetoes" id="vetoes"></span>
       <button class="linkish" id="reset" type="button" hidden>Start over</button>
     </div>
-    <p class="live-line" id="liveLine" role="status" hidden></p>
   </div>
-
-  <article class="ticket" id="ticket" hidden>
-    <div class="stub"><span>Admit two</span></div>
-    <div class="ticket-main">
-      <div class="ticket-top"><span id="tDate"></span><span id="tTown"></span></div>
-      <div class="t-photos" id="tPhotos" hidden></div>
-      <h2 class="ticket-name" id="tName"></h2>
-      <p class="ticket-addr" id="tAddr"></p>
-      <p class="t-google" id="tGoogle" hidden></p>
-      <p class="t-hours" id="tHours" hidden></p>
-      <p class="t-blurb" id="tBlurb" hidden></p>
-      <p class="ticket-dist" id="tDist"></p>
-      <p class="ticket-drive" id="tDrive" hidden></p>
-      <p class="ticket-badges" id="tBadges"></p>
-      <div class="ticket-live" id="tLive" hidden></div>
-      <a class="go" id="tGo" href="https://www.google.com/maps" target="_blank" rel="noopener">Open in Google Maps</a>
-      <p class="t-credit" id="tCredit" hidden></p>
-    </div>
-  </article>
   </section>
 
   <section class="view" id="swipeView" role="tabpanel" aria-labelledby="modeSwipe" hidden>
     <div class="swipe-box">
+      <p class="swipe-msg" id="swipeMsg" role="status"></p>
       <p class="swipe-empty" id="swipeEmpty"></p>
       <div class="deck" id="deck" hidden></div>
       <div class="swipe-buttons" id="swipeButtons" hidden>
         <button type="button" class="sw no" id="swNo" aria-label="Nope">✕</button>
         <button type="button" class="sw yes" id="swYes" aria-label="Yes, let’s go">♥</button>
       </div>
-      <p class="swipe-msg" id="swipeMsg" role="status"></p>
       <button type="button" class="find" id="dealBtn">Deal Cards</button>
       <button type="button" class="linkish" id="dealMore" hidden>Deal more cards instead</button>
     </div>
   </section>
   </div>
-
-
-
-
 </main>
 
 <div class="party" id="party" role="dialog" aria-modal="true" aria-labelledby="partyName" hidden>
@@ -687,6 +906,11 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     <div class="set-group"><h3>Skip places we went to in the last</h3><div class="chips" id="setSkip"></div><p class="hint" id="setSkipNote" hidden></p></div>
     <div class="set-group"><h3>Live mode</h3><p class="hint" id="setLive"></p><div><button type="button" class="linkish" id="setLiveBtn"></button></div></div>
     <div class="set-group"><h3>Google info</h3><p class="hint" id="setGoogle"></p></div>
+    <div class="set-group about">
+      <h3>About</h3>
+      <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
+      <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
+    </div>
     <div class="set-group set-lists">
   <section class="lists" aria-labelledby="listsHead">
     <h3 id="listsHead">Your Google Maps lists</h3>
@@ -705,19 +929,11 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   </div>
 </dialog>
 
-<dialog class="sheet" id="moodSheet" aria-labelledby="moodHead">
-  <div class="sheet-in">
-    <div class="sheet-head"><h2 id="moodHead">In the mood for?</h2><button type="button" class="linkish" data-close>Done</button></div>
-    <p class="hint">Pick one or more, or Anything.</p>
-    <div class="mood-grid" id="moodGrid"></div>
-  </div>
-</dialog>
 
 <dialog class="sheet" id="tagSheet" aria-labelledby="tagHead">
   <div class="sheet-in">
-    <div class="sheet-head"><h2 id="tagHead">Tags</h2><button type="button" class="linkish" data-close>Done</button></div>
-    <p class="hint">The tags on your Google Maps list. Spins and decks use places with any of the ones you pick. Pick none to use every place.</p>
-    <div class="chips" id="tagChips"></div>
+    <div class="sheet-head"><h2 id="tagHead">Tag names</h2><button type="button" class="linkish" data-close>Done</button></div>
+    <p class="hint">Google Maps sends which places share a tag, not its name, so each one gets named once here, for both phones.</p>
     <div class="set-group tag-names" id="tagNames" hidden>
       <h3>Name your tags</h3>
       <p class="hint" id="tagNamesHint"></p>
@@ -728,15 +944,20 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   </div>
 </dialog>
 
-<dialog class="sheet" id="hoursSheet" aria-labelledby="hoursHead">
+
+<dialog class="sheet" id="rosterSheet" aria-labelledby="rosterHead">
+  <div class="sheet-in roster">
+    <div class="sheet-head"><h2 id="rosterHead">Places that match</h2><button type="button" class="linkish" data-close>Close</button></div>
+    <ol id="rosterList"></ol>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="pickSheet" aria-labelledby="pickHead">
   <div class="sheet-in">
-    <div class="sheet-head"><h2 id="hoursHead">Make sure it’s open</h2><button type="button" class="linkish" data-close>Done</button></div>
-    <div class="chips" id="hoursChips"></div>
-    <div class="hours-at" id="hoursAt" hidden>
-      <select id="hoursDay" aria-label="Day"></select>
-      <input id="hoursTime" type="time" value="19:00" aria-label="Time">
-    </div>
-    <p class="hint">Checks Google’s hours, with 45 minutes to spare before closing. Planning ahead for tomorrow? Pick a time, or don’t check.</p>
+    <div class="sheet-head"><h2 id="pickHead">More</h2><button type="button" class="linkish" data-close>Close</button></div>
+    <dl class="pick-more" id="pmBody"></dl>
+    <div class="ticket-live pm-live" id="tLiveMore" hidden></div>
+    <div><button type="button" class="linkish" id="pmReset" hidden>Start over</button></div>
   </div>
 </dialog>
 
@@ -777,8 +998,8 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   var els = {
     status: $('status'), statusText: $('statusText'), starts: $('starts'), radii: $('radii'), gpsHint: $('gpsHint'),
     marquee: $('marquee'), reelName: $('reelName'), spin: $('spin'), vetoes: $('vetoes'), reset: $('reset'),
-    ticket: $('ticket'), tDate: $('tDate'), tTown: $('tTown'), tName: $('tName'), tAddr: $('tAddr'),
-    tDist: $('tDist'), tGo: $('tGo'), roster: $('roster'), rosterSummary: $('rosterSummary'), rosterList: $('rosterList'),
+    ticket: $('ticket'), tAdmit: $('tAdmit'), tDate: $('tDate'), tTown: $('tTown'), tName: $('tName'), tAddr: $('tAddr'),
+    tDist: $('tDist'), tGo: $('tGo'), roster: $('rosterSheet'), rosterSummary: $('rosterSummary'), rosterList: $('rosterList'),
     listRows: $('listRows'), capNote: $('capNote'), addForm: $('addForm'), addUrl: $('addUrl'), addBtn: $('addBtn'), addMsg: $('addMsg'),
     setup: $('setup'), setupForm: $('setupForm'), setupUrl: $('setupUrl'), setupMsg: $('setupMsg'),
     meet: $('meet'), meet0: $('meet0'), meet1: $('meet1'), meetName0: $('meetName0'), meetName1: $('meetName1'),
@@ -800,9 +1021,9 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     settingsSheet: $('settingsSheet'), setWho: $('setWho'), setTheme: $('setTheme'), setSkip: $('setSkip'),
     setSkipNote: $('setSkipNote'), setLive: $('setLive'), setLiveBtn: $('setLiveBtn'), setGoogle: $('setGoogle'),
     sources: $('sources'), moodBtn: $('moodBtn'), tagBtn: $('tagBtn'), hoursBtn: $('hoursBtn'), filterHint: $('filterHint'),
-    moodSheet: $('moodSheet'), moodGrid: $('moodGrid'), tagSheet: $('tagSheet'), tagChips: $('tagChips'),
+    moodGrid: $('moodGrid'), tagSheet: $('tagSheet'), tagChips: $('tagChips'),
     tagNames: $('tagNames'), tagNamesHint: $('tagNamesHint'), tagMsg: $('tagMsg'), tagNameRows: $('tagNameRows'), tagRename: $('tagRename'),
-    hoursSheet: $('hoursSheet'), hoursChips: $('hoursChips'), hoursAt: $('hoursAt'), hoursDay: $('hoursDay'), hoursTime: $('hoursTime'),
+    hoursChips: $('hoursChips'), hoursAt: $('hoursAt'), hoursDay: $('hoursDay'), hoursTime: $('hoursTime'),
     tPhotos: $('tPhotos'), tGoogle: $('tGoogle'), tHours: $('tHours'), tBlurb: $('tBlurb'), tCredit: $('tCredit'), googleFoot: $('googleFoot'),
     groupBtn: $('groupBtn'), groupCard: $('groupCard'), gcTitle: $('gcTitle'), gcCode: $('gcCode'), gcLine: $('gcLine'),
     gcMain: $('gcMain'), gcSecond: $('gcSecond'), groupMeet: $('groupMeet'), gmPeople: $('gmPeople'), gmInput: $('gmInput'),
@@ -811,7 +1032,12 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     groupCodeShow: $('groupCodeShow'), groupShare: $('groupShare'), groupShareMsg: $('groupShareMsg'), groupPeople: $('groupPeople'),
     groupLeave: $('groupLeave'),
     planScreen: $('planScreen'), playScreen: $('playScreen'), goNote: $('goNote'), goSpin: $('goSpin'), goSwipe: $('goSwipe'),
-    goFresh: $('goFresh'), backBtn: $('backBtn'), playSum: $('playSum')
+    goFresh: $('goFresh'), backBtn: $('backBtn'), playSum: $('playSum'),
+    stepNav: $('stepNav'), qWelcome: $('qWelcome'), qStart: $('qStart'), qFar: $('qFar'), qMood: $('qMood'), qMore: $('qMore'), qHome: $('qHome'),
+    sumStart: $('sumStart'), sumFar: $('sumFar'), srcBtn: $('srcBtn'), srcHint: $('srcHint'), srcGroup: $('srcGroup'),
+    hoursGroup: $('hoursGroup'), tagGroup: $('tagGroup'), optGroup: $('optGroup'), tagNameBtn: $('tagNameBtn'), rosterBtn: $('rosterBtn'),
+    tMore: $('tMore'), pickSheet: $('pickSheet'), pickHead: $('pickHead'), pmBody: $('pmBody'), pmReset: $('pmReset'),
+    tLiveBtns: $('tLiveBtns'), tLiveMore: $('tLiveMore'), groupBtnText: $('groupBtnText')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
   var MEET_DEFAULTS = CFG.MEET_DEFAULTS || [];
@@ -1001,26 +1227,63 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   }
   function renderChips() {
     els.starts.innerHTML = '';
-    if (group.on) els.starts.appendChild(chip('start', 'middle', 'The Middle', state.start === 'middle', onStart));
-    els.starts.appendChild(chip('start', 'gps', 'My Location', state.start === 'gps', onStart));
-    if (!group.on) els.starts.appendChild(chip('start', 'halfway', 'Halfway', state.start === 'halfway', onStart));
-    els.starts.appendChild(chip('start', 'custom', 'Somewhere Else', state.start === 'custom', onStart));
+    var other = state.me === null ? PEOPLE[1] : PEOPLE[1 - state.me];
+    if (group.on) els.starts.appendChild(tile('start', 'middle', '👥', 'The Middle', 'Fair for everyone', state.start === 'middle', pickStart));
+    els.starts.appendChild(tile('start', 'gps', '📍', 'My Location', 'Wherever this phone is', state.start === 'gps', pickStart));
+    if (!group.on) els.starts.appendChild(tile('start', 'halfway', '🤝', 'Halfway', 'Between you and ' + other, state.start === 'halfway', pickStart));
+    els.starts.appendChild(tile('start', 'custom', '🗺️', 'Somewhere Else', 'A town or an address', state.start === 'custom', pickStart));
+    renderStartLayout();
     els.units.innerHTML = '';
     els.units.appendChild(chip('unit', 'min', 'Minutes', state.unit === 'min', onUnit));
     els.units.appendChild(chip('unit', 'mi', 'Miles', state.unit === 'mi', onUnit));
     els.radii.innerHTML = '';
     (state.unit === 'min' ? RADII_MIN : RADII).forEach(function (r) {
       var label = r === 0 ? 'Any Distance' : r + (state.unit === 'min' ? ' min' : ' mi');
-      els.radii.appendChild(chip('radius', String(r), label, currentLimit() === r, onRadius));
+      els.radii.appendChild(retap(chip('radius', String(r), label, currentLimit() === r, pickRadius), pickRadius));
     });
     renderOptions();
     renderFilters();
+  }
+  /** A big answer tile: emoji, name and a line saying what it means. */
+  function tile(group, value, emoji, label, sub, checked, onPick) {
+    var lab = chip(group, value, label, checked, onPick);
+    var span = lab.lastChild;
+    span.textContent = '';
+    var e = document.createElement('i'); e.className = 't-e'; e.setAttribute('aria-hidden', 'true'); e.textContent = emoji;
+    var t = document.createElement('span'); t.className = 't-l'; t.textContent = label;
+    var small = document.createElement('small'); small.className = 't-s'; small.textContent = sub;
+    t.appendChild(small);
+    span.appendChild(e);
+    span.appendChild(t);
+    return retap(lab, onPick);
+  }
+  /** Tapping the answer that's already picked counts too (it moves on, same as picking it). */
+  function retap(lab, onPick) {
+    var inp = lab.querySelector('input');
+    var was = false;
+    lab.addEventListener('pointerdown', function () { was = inp.checked; });
+    inp.addEventListener('click', function () { if (was && inp.checked) { was = false; onPick(inp.value, true); } });
+    return lab;
+  }
+  // Ones that need typing (halfway, somewhere else, the group's middle) shrink to a row of chips.
+  function renderStartLayout() {
+    els.starts.classList.toggle('compact', state.start === 'halfway' || state.start === 'custom' || state.start === 'middle');
+  }
+  function pickStart(value, again) {
+    if (!again) onStart(value);
+    if (value === 'gps') advanceSoon();
+    else renderStepNav();
+  }
+  function pickRadius(value, again) {
+    if (!again) onRadius(value);
+    advanceSoon();
   }
   // "Include places we've been" and "Favorites only" use what you've both marked, so they
   // show once the phones are connected.
   function renderOptions() {
     els.options.innerHTML = '';
     els.options.hidden = !live.on || group.on || state.src === 'google';
+    els.optGroup.hidden = els.options.hidden;
     if (els.options.hidden) return;
     els.options.appendChild(checkChip('optBeen', 'Include places we’ve been', state.includeBeen, function (on) {
       state.includeBeen = on;
@@ -1042,6 +1305,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   function onStart(value) {
     state.start = value;
     store.set('start', value);
+    renderStartLayout();
     if (value === 'gps') requestGps(!within(state.gpsAt || 0, FRESH_FIX)); else setHint('');
     renderMeet();
     renderCustom();
@@ -1202,12 +1466,13 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   }
   function renderRoster() {
     var n = state.range.length;
-    els.roster.hidden = state.src === 'google';
+    var waiting = waitingForGps();
     els.rosterSummary.textContent = !state.loaded ? 'Places in range'
-      : waitingForGps() ? (state.start === 'halfway' ? 'Waiting for the halfway point'
+      : waiting ? (state.start === 'halfway' ? 'Waiting for the halfway point'
         : state.start === 'middle' ? 'Waiting on everyone’s starting point'
         : state.start === 'custom' ? 'Waiting for a place' : 'Waiting for your location')
       : rangeText();
+    els.rosterBtn.hidden = state.src === 'google' || !state.loaded || waiting || !n;
     if (!els.roster.open) { els.rosterList.setAttribute('data-stale', '1'); return; }
     var frag = document.createDocumentFragment();
     state.range.forEach(function (e) {
@@ -1227,8 +1492,9 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     els.rosterList.appendChild(frag);
     els.rosterList.removeAttribute('data-stale');
   }
-  els.roster.addEventListener('toggle', function () {
-    if (els.roster.open && els.rosterList.hasAttribute('data-stale')) renderRoster();
+  els.rosterBtn.addEventListener('click', function () {
+    els.roster.showModal();
+    renderRoster();
   });
 
   function fmtWhen(iso) {
@@ -1338,6 +1604,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   function showSetup() {
     state.needsSetup = true;
     els.setup.hidden = false;
+    if (state.step && state.step !== 'welcome') showStep('welcome');
     els.status.classList.remove('is-live', 'is-stale');
     els.statusText.textContent = 'One more step: connect this page to your app.';
     refresh();
@@ -1355,6 +1622,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     state.needsSetup = false;
     els.setup.hidden = true;
     els.setupMsg.hidden = true;
+    renderLiveCard();
     load();
   });
 
@@ -1646,6 +1914,17 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   }
 
   var driveToken = 0;
+  var lastDrives = { key: '', list: '' };
+  /** Everyone's drive; for a big group, yours and then the range for the rest and who's farthest. */
+  function groupDriveText(list, drives) {
+    var me = meName();
+    if (list.length <= 5) return list.map(function (n) { return (n === me ? 'You' : n) + ' ' + drives[n] + ' min'; }).join(' · ');
+    var rest = list.filter(function (n) { return n !== me; });
+    var mins = rest.map(function (n) { return drives[n]; });
+    var hi = Math.max.apply(null, mins);
+    var far = rest.filter(function (n) { return drives[n] === hi; })[0];
+    return (drives[me] != null ? 'You ' + drives[me] + ' min · ' : '') + 'everyone else ' + Math.min.apply(null, mins) + '–' + hi + ' min (longest: ' + far + ')';
+  }
   function showDriveTimes(w) {
     var token = ++driveToken;
     var hw = state.halfway;
@@ -1657,7 +1936,8 @@ fieldset.step .chips + .chips { margin-top: 10px; }
         if (token !== driveToken) return;
         var list = r && r.ok ? people().filter(function (n) { return r.drives[n] != null; }) : [];
         if (!list.length) { els.tDrive.hidden = true; return; }
-        els.tDrive.textContent = 'Drive: ' + list.map(function (n) { return (n === meName() ? 'You' : n) + ' ' + r.drives[n] + ' min'; }).join(' · ');
+        els.tDrive.textContent = 'Drive: ' + groupDriveText(list, r.drives);
+        lastDrives = { key: w.key, list: list.map(function (n) { return (n === meName() ? 'You' : n) + ' ' + r.drives[n] + ' min'; }).join(' · ') };
       }, function () {
         if (token === driveToken) els.tDrive.hidden = true;
       });
@@ -2242,11 +2522,16 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     }, names ? 140 : 70);
     return function () { clearInterval(t); };
   }
+  var landToken = 0;
   function land(w) {
+    var token = ++landToken;
+    var wasSpinning = state.spinning;
     state.pick = w;
     state.spinning = false;
     showName(w.p.n, true);
     els.tName.textContent = w.p.n;
+    var party = group.on ? people().length : 2;
+    els.tAdmit.textContent = 'Admit ' + (['two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'][party - 2] || 'two');
     els.tAddr.textContent = w.p.a || '';
     els.tTown.textContent = townOf(w.p.a);
     els.tDate.textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -2257,11 +2542,17 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     showDriveTimes(w);
     showInfo(w);
     renderTicketExtras();
-    els.ticket.hidden = false;
-    els.ticket.classList.remove('printing');
-    void els.ticket.offsetWidth;
-    els.ticket.classList.add('printing');
     renderSpin();
+    function print() {
+      if (token !== landToken || state.pick !== w) return;
+      els.ticket.hidden = false;
+      els.ticket.classList.remove('printing');
+      void els.ticket.offsetWidth;
+      els.ticket.classList.add('printing');
+      renderSpin();
+    }
+    // Right after a spin, hold the name on the reel for a beat before the ticket replaces it.
+    if (wasSpinning && !reduceMotion && els.ticket.hidden) setTimeout(print, 650); else print();
   }
 
   els.spin.addEventListener('click', function () {
@@ -2313,6 +2604,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   function meName() { return group.on ? group.name : coupleName(); }
   function others() { var me = meName(); return people().filter(function (n) { return n !== me; }); }
   function namesText(list) {
+    if (list.length > 4) return list.slice(0, 2).join(', ') + ' and ' + (list.length - 2) + ' others';
     return list.length <= 2 ? list.join(' and ') : list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
   }
   function otherName() {
@@ -2368,7 +2660,10 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     els.liveMsg.classList.toggle('is-warn', !!warn);
   }
   function renderLiveCard() {
-    els.liveCard.hidden = live.on || group.on || (store.get('liveLater') === '1' && !live.forceCard);
+    // Just connected on the welcome screen: say so for a moment before moving on.
+    var keep = state.step === 'welcome' && live.justConnected && Date.now() - live.justConnected < 3000;
+    els.liveCard.hidden = !keep && (live.on || group.on || (store.get('liveLater') === '1' && !live.forceCard));
+    if (state.step === 'welcome' && els.liveCard.hidden && els.setup.hidden) setTimeout(leaveWelcome, 0);
     var line = els.liveWho;
     line.innerHTML = '';
     function b(label, i) {
@@ -2405,9 +2700,14 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       live.code = code;
       store.set('liveCode', code);
       live.forceCard = false;
+      // On the welcome screen, say so there for a moment before moving on.
+      var onWelcome = state.step === 'welcome';
+      if (onWelcome) live.justConnected = Date.now();
       applyLive(res);
-      liveMsg('');
-      flash(res.created ? 'Connected! Have ' + otherName() + ' enter the same passcode.' : 'Connected! You’re live with ' + otherName() + '.');
+      var said = res.created ? 'Connected! Have ' + otherName() + ' enter the same passcode.' : 'Connected! You’re live with ' + otherName() + '.';
+      liveMsg(onWelcome ? said : '');
+      flash(said);
+      if (onWelcome) setTimeout(function () { live.justConnected = 0; renderLiveCard(); }, 1600);
       sendMyStart(true);
       schedulePoll(1500);
     }, function (err) {
@@ -2610,6 +2910,9 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     els.tBadges.textContent = '';
     els.tLive.innerHTML = '';
     els.tLive.hidden = true;
+    els.tLiveBtns.innerHTML = '';
+    els.tLiveMore.innerHTML = '';
+    els.tLiveMore.hidden = true;
     if (!w) return;
     var info = bookInfo(w.p);
     var bits = [];
@@ -2636,13 +2939,13 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       if (!live.on) return;   // stars and "we went" are kept for the two of you
       var wentTonight = info && info.went && info.went.indexOf(r.night) >= 0;
       var mine = info && info.stars && info.stars[coupleName()];
-      row.appendChild(tButton(mine ? 'Change My Rating' : 'We Went! Rate It', 'btn', function () { openRate(w.p); }));
+      els.tLiveBtns.appendChild(tButton(mine ? 'Change My Rating' : 'We Went! Rate It', 'btn', function () { openRate(w.p); }));
       if (!wentTonight && !mine) {
         row.appendChild(tButton('Just mark we went', 'tlink', function () {
           liveCall('went', Object.assign(placeParams(w.p), { day: r.night })).then(function () { renderTicketExtras(); });
         }));
+        box.appendChild(row);
       }
-      box.appendChild(row);
       return;
     }
     if (r.mode !== 'spin') return;
@@ -2656,9 +2959,8 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       : othersIn.length ? namesText(othersIn) + (othersIn.length === 1 ? ' is in!' : ' are in!')
       : (many ? 'Everyone taps' : 'Both tap') + ' I’m In to make it a date.';
     box.appendChild(say);
-    if (!meIn) row.appendChild(tButton('I’m In 👍', 'btn', function (e) { e.target.disabled = true; liveCall('in'); }));
-    else row.appendChild(tButton(many ? 'Lock it in for everyone' : 'Lock it in for both of us', 'tlink', function () { liveCall('lock'); }));
-    box.appendChild(row);
+    if (!meIn) els.tLiveBtns.appendChild(tButton('I’m In 👍', 'btn', function (e) { e.target.disabled = true; liveCall('in'); }));
+    else els.tLiveBtns.appendChild(tButton(many ? 'Lock It In for Everyone' : 'Lock It In for Both', 'tlink', function () { liveCall('lock'); }));
     var row2 = document.createElement('div');
     row2.className = 'row';
     row2.appendChild(tButton('Closed tonight', 'tlink', function () { liveCall('closed').then(afterSkip); }));
@@ -2671,8 +2973,44 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       liveCall('closed', { good: '1' }).then(afterSkip);
     });
     row2.appendChild(gone);
-    box.appendChild(row2);
+    els.tLiveMore.appendChild(row2);
+    els.tLiveMore.hidden = false;
   }
+  function openPickMore() {
+    var w = state.pick;
+    if (!w) return;
+    els.pickHead.textContent = w.p.n;
+    els.pmBody.innerHTML = '';
+    function row(k, v) {
+      if (!v) return;
+      var d = document.createElement('div');
+      var dt = document.createElement('dt'); dt.textContent = k;
+      var dd = document.createElement('dd'); dd.textContent = v;
+      d.appendChild(dt); d.appendChild(dd);
+      els.pmBody.appendChild(d);
+    }
+    row('Address', w.p.a);
+    row('About it', els.tBlurb.hidden ? '' : els.tBlurb.textContent);
+    row('Google', els.tGoogle.hidden ? '' : els.tGoogle.textContent);
+    row('Hours', els.tHours.hidden ? '' : els.tHours.textContent);
+    row('Distance', els.tDist.textContent);
+    if (!els.tDrive.hidden && els.tDrive.textContent.indexOf('Checking') < 0) {
+      var drives = group.on && lastDrives.key === w.key ? lastDrives.list : null;
+      row('Drive', drives || els.tDrive.textContent.replace(/^Drive: /, ''));
+    }
+    row('Notes', els.tBadges.textContent);
+    els.pmReset.hidden = els.reset.hidden;
+    els.pickSheet.showModal();
+  }
+  els.tMore.addEventListener('click', openPickMore);
+  els.pmReset.addEventListener('click', function () { els.pickSheet.close(); els.reset.click(); });
+  // "Closed tonight", or the second tap on "Closed for good", spins again: close the sheet for it.
+  els.tLiveMore.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b && (/Closed tonight/.test(b.textContent) || b.getAttribute('data-sure') === '1')) {
+      setTimeout(function () { if (els.pickSheet.open) els.pickSheet.close(); }, 0);
+    }
+  }, true);
   function afterSkip(res) {
     if (res && !res.ok && res.error !== 'OFF') flash(res.error, true);
     if (res && !res.ok) pollNow();
@@ -2951,25 +3289,39 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     el.addEventListener('pointercancel', end);
   }
   function topCardKey() { return els.deck.getAttribute('data-top'); }
-  function commitSwipe(c, like, el, tries) {
-    if (!tries) {
-      if (live.swiped[c.key] !== undefined) return;
-      live.swiped[c.key] = like ? 1 : 0;
-      el = el || els.deck.querySelector('.card:not(.is-under)');
-      if (el) {
-        el.style.transform = 'translateX(' + (like ? 520 : -520) + 'px) rotate(' + (like ? 24 : -24) + 'deg)';
-        el.style.opacity = '0';
-      }
-      setTimeout(function () { els.deck.removeAttribute('data-top'); renderSwipe(); }, 200);
+  function commitSwipe(c, like, el) {
+    if (live.swiped[c.key] !== undefined) return;
+    live.swiped[c.key] = like ? 1 : 0;
+    el = el || els.deck.querySelector('.card:not(.is-under)');
+    if (el) {
+      el.style.transform = 'translateX(' + (like ? 520 : -520) + 'px) rotate(' + (like ? 24 : -24) + 'deg)';
+      el.style.opacity = '0';
     }
-    liveCall('swipe', { key: c.key, like: like ? '1' : '0' }).then(function (res) {
-      if (res && res.offline && (tries || 0) < 4) {
-        setTimeout(function () { commitSwipe(c, like, null, (tries || 0) + 1); }, 2500);
+    setTimeout(function () { els.deck.removeAttribute('data-top'); renderSwipe(); }, 200);
+    swipeQ.push([c.key, like ? 1 : 0]);
+    sendSwipes(0);
+  }
+  // Swipes go out one request at a time; any made while one is on its way go together in the
+  // next, so a big group swiping fast never piles up at the script. A busy script means wait a
+  // moment and send them again.
+  var swipeQ = [];
+  var swipeSending = false;
+  function sendSwipes(tries) {
+    if (swipeSending || !swipeQ.length) return;
+    var batch = swipeQ.splice(0, 12);
+    swipeSending = true;
+    // key/like too, so a script that hasn't been updated yet still takes the first one
+    liveCall('swipe', { sw: JSON.stringify(batch), key: batch[0][0], like: String(batch[0][1]) }).then(function (res) {
+      swipeSending = false;
+      if (res && (res.offline || res.busy) && tries < 6) {
+        swipeQ = batch.concat(swipeQ);
+        setTimeout(function () { sendSwipes(tries + 1); }, res.busy ? 700 : 2500);
         return;
       }
-      delete live.swiped[c.key];
+      batch.forEach(function (x) { delete live.swiped[x[0]]; });
       if (res && !res.ok && res.error !== 'OFF') swipeMsg(res.error);
       renderSwipe();
+      sendSwipes(0);
     });
   }
   function swipeTop(like) {
@@ -3243,6 +3595,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     store.set('liveLater', '1');
     live.forceCard = false;
     renderLiveCard();
+    leaveWelcome();
   });
 
   // ---------- What sounds good: source, moods, tags, hours ----------
@@ -3325,21 +3678,38 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     els.sources.innerHTML = '';
     var showGoogle = GOOGLE_ON || state.src === 'google';
     els.sources.hidden = !showGoogle;
+    els.srcGroup.hidden = !showGoogle;
     if (showGoogle) {
       els.sources.appendChild(chip('src', 'list', 'Our List', state.src === 'list', onSource));
       els.sources.appendChild(chip('src', 'google', 'Anywhere on Google', state.src === 'google', onSource));
     }
+    els.srcHint.hidden = state.src !== 'google';
+    els.srcHint.textContent = 'Popular places Google knows in range that aren’t on your list.';
+    els.hoursGroup.hidden = !GOOGLE_ON;
+    if (GOOGLE_ON) renderHoursSheet();
+    var hasTags = state.src === 'list' && state.tagsAll.length > 0;
+    els.tagGroup.hidden = !hasTags;
+    var unnamed = state.tagsAll.some(function (t) { return !t.label; });
+    if (hasTags) {
+      renderTagSheet();
+      var nameable = state.tagsAll.some(function (t) { return isTagId(t.id); });
+      els.tagNameBtn.hidden = !nameable;
+      els.tagNameBtn.textContent = unnamed ? 'Name your tags' : 'Rename';
+    }
+    els.optGroup.hidden = els.options.hidden;
+    renderMoodSheet();
     var moods = state.moods.map(moodById).filter(Boolean);
-    pillText(els.moodBtn, 'In the mood for', !moods.length ? '🎲 Anything'
+    pillText(els.moodBtn, 'Mood', !moods.length ? '🎲 Anything'
       : moods.length <= 2 ? moods.map(function (m) { return m.emoji + ' ' + m.label; }).join(', ')
       : moods.map(function (m) { return m.emoji; }).join(' ') + ' (' + moods.length + ')', moods.length);
-    els.tagBtn.hidden = state.src !== 'list' || !state.tagsAll.length;
-    var unnamed = state.tagsAll.some(function (t) { return !t.label; });
+    els.srcBtn.hidden = !showGoogle;
+    pillText(els.srcBtn, 'Pick from', state.src === 'google' ? '🔎 Anywhere on Google'
+      : '📋 Our list' + (state.favOnly && !els.options.hidden ? ', favorites' : ''), state.src === 'google' || (state.favOnly && !els.options.hidden));
+    els.tagBtn.hidden = !hasTags;
     pillText(els.tagBtn, 'Tags', state.tags.length ? state.tags.map(tagText).filter(Boolean).join(', ') : unnamed ? 'Any (name yours)' : 'Any', state.tags.length);
     els.hoursBtn.hidden = !GOOGLE_ON;
-    pillText(els.hoursBtn, 'Hours', state.open == null ? 'Don’t check' : state.open === 'now' ? 'Open now' : 'Open ' + fmtOpenAt(state.open), state.open != null);
-    var note = !GOOGLE_ON && moods.length ? 'Moods go by place names until Google info is set up (see Settings).'
-      : state.src === 'google' ? 'Popular places Google knows in range that aren’t on your list.' : '';
+    pillText(els.hoursBtn, 'Hours', state.open == null ? '🕐 Don’t check' : state.open === 'now' ? '🕐 Open now' : '🕐 Open ' + fmtOpenAt(state.open), state.open != null);
+    var note = !GOOGLE_ON && moods.length ? 'Moods go by place names until Google info is set up (see Settings).' : '';
     els.filterHint.hidden = !note;
     els.filterHint.textContent = note;
     els.googleFoot.hidden = !GOOGLE_ON;
@@ -3356,7 +3726,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   function moodTile(emoji, label, on, onClick) {
     var b = document.createElement('button');
     b.type = 'button';
-    b.className = 'mood' + (on ? ' on' : '');
+    b.className = 'mood' + (on ? ' on' : '') + (/^\S{12,}$/.test(label) ? ' long' : '');
     b.setAttribute('aria-pressed', String(on));
     var e = document.createElement('span'); e.className = 'e'; e.textContent = emoji; e.setAttribute('aria-hidden', 'true');
     var l = document.createElement('span'); l.className = 'l'; l.textContent = label;
@@ -3539,9 +3909,11 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   }
   els.hoursDay.addEventListener('change', function () { if (hoursMode() === 'at') setOpen(atFromInputs()); });
   els.hoursTime.addEventListener('change', function () { if (hoursMode() === 'at') setOpen(atFromInputs()); });
-  els.moodBtn.addEventListener('click', function () { renderMoodSheet(); els.moodSheet.showModal(); });
-  els.tagBtn.addEventListener('click', function () { renderTagSheet(); els.tagSheet.showModal(); });
-  els.hoursBtn.addEventListener('click', function () { renderHoursSheet(); els.hoursSheet.showModal(); });
+  els.tagNameBtn.addEventListener('click', function () {
+    tagRenaming = !state.tagsAll.some(function (t) { return isTagId(t.id) && !t.label; });
+    renderTagSheet();
+    els.tagSheet.showModal();
+  });
 
   // A spin on this phone only, when a mood, the hours or Google is in play: the script picks.
   function soloServerSpin() {
@@ -3629,6 +4001,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
   function showInfo(w) {
     var token = ++infoToken;
     [els.tPhotos, els.tGoogle, els.tHours, els.tBlurb, els.tCredit].forEach(function (x) { x.hidden = true; });
+    els.ticket.classList.remove('has-photos');
     els.tPhotos.innerHTML = '';
     if (!GOOGLE_ON || !w || !w.p) return;
     els.tGoogle.hidden = false;
@@ -3648,12 +4021,13 @@ fieldset.step .chips + .chips { margin-top: 10px; }
         img.addEventListener('error', function () {
           img.remove();
           els.tPhotos.classList.toggle('two', els.tPhotos.children.length > 1);
-          if (!els.tPhotos.children.length) els.tPhotos.hidden = true;
+          if (!els.tPhotos.children.length) { els.tPhotos.hidden = true; els.ticket.classList.remove('has-photos'); }
         });
         els.tPhotos.appendChild(img);
       });
       els.tPhotos.classList.toggle('two', els.tPhotos.children.length > 1);
       els.tPhotos.hidden = !els.tPhotos.children.length;
+      els.ticket.classList.toggle('has-photos', !els.tPhotos.hidden);
       var rt = ratingText(i);
       els.tGoogle.hidden = !rt;
       els.tGoogle.textContent = rt;
@@ -3788,6 +4162,7 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     var mine = live.on && live.state && live.state.group && live.state.group.code === group.code && live.state.group.by === coupleName();
     if (tellServer && mine) liveCall('settings', { group: '' });
     clearTimeout(group.timer);
+    group.allStarts = false;
     var was = group.on;
     group.on = false;
     group.code = group.mid = '';
@@ -3849,7 +4224,9 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       var n = (st.members || []).length;
       els.gcTitle.textContent = 'Group Date';
       els.gcCode.textContent = group.code;
-      var line = namesText((st.members || []).map(function (m) { return m.name === meName() ? 'you' : m.name; }));
+      var names = (st.members || []).map(function (m) { return m.name === meName() ? 'you' : m.name; });
+      if (names.indexOf('you') > 0) names = ['you'].concat(names.filter(function (x) { return x !== 'you'; }));
+      var line = namesText(names);
       els.gcLine.textContent = n <= 1 ? 'Just you so far. Invite everyone who’s coming.'
         : line.charAt(0).toUpperCase() + line.slice(1) + ' are in. Spins and swipes are shared with everyone here.';
       els.gcMain.textContent = 'Invite Friends';
@@ -3859,8 +4236,12 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     els.groupMeet.hidden = !(group.on && state.start === 'middle');
     if (!group.on) return;
     els.gmPeople.innerHTML = '';
-    (st.members || []).forEach(function (m) {
-      if (m.name === meName()) return;
+    // A big group shows four, then a button for the rest, so the Plan screen stays short.
+    var crowd = (st.members || []).filter(function (m) { return m.name !== meName(); });
+    var short = window.innerHeight < 640;
+    var shown = !group.allStarts && crowd.length > (short ? 3 : 5) ? (short ? 2 : 4) : crowd.length;
+    crowd.forEach(function (m, i) {
+      if (i >= shown) return;
       var s = (st.starts || {})[m.name];
       var li = document.createElement('li');
       if (!s) li.className = 'waiting';
@@ -3871,6 +4252,19 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       li.appendChild(at);
       els.gmPeople.appendChild(li);
     });
+    if (shown < crowd.length) {
+      var rest = crowd.slice(shown);
+      var quiet = rest.filter(function (m) { return !(st.starts || {})[m.name]; }).length;
+      var moreLi = document.createElement('li');
+      var moreBtn = document.createElement('button');
+      moreBtn.type = 'button';
+      moreBtn.className = 'linkish';
+      moreBtn.id = 'gmMore';
+      moreBtn.textContent = 'Show ' + rest.length + ' more' + (quiet ? ' (' + quiet + ' haven’t said where yet)' : '');
+      moreBtn.addEventListener('click', function () { group.allStarts = true; renderGroupBits(); });
+      moreLi.appendChild(moreBtn);
+      els.gmPeople.appendChild(moreLi);
+    }
     var mineNow = state.gstart || (state.gps ? { text: 'My location', gps: true } : null);
     if (document.activeElement !== els.gmInput) {
       els.gmInput.value = mineNow ? mineNow.text : '';
@@ -3911,10 +4305,11 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     store.set('grpStart', 'null');
     requestGps(true);
   });
-
   function renderToolbar() {
     els.placesBtn.hidden = group.on && !live.on;
-    els.groupBtn.textContent = group.on ? 'Group' : 'Group Date';
+    els.groupBtnText.textContent = group.on ? 'Group' : 'Group Date';
+    els.groupBtn.classList.toggle('on', group.on);
+    els.groupBtn.title = group.on ? 'Your group date' : 'Group date';
   }
   function renderGroupSheet() {
     els.groupForm.hidden = group.on;
@@ -4003,9 +4398,132 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     return true;
   }
 
-  // ---------- Two screens: Plan (where, how far, what sounds good), then Play ----------
+  // ---------- One question per screen, then Play ----------
+  // Where from, how far, the mood, anything else, then Spin or Swipe. The first time walks
+  // through every question; after that the app opens on Spin or Swipe, and tapping one of
+  // your answers there (or its bulb) changes just that one and comes back.
   state.screen = 'plan';
-  state.pushedPlay = false;
+  var STEPS = ['start', 'far', 'mood', 'more', 'home'];
+  var QS = { welcome: els.qWelcome, start: els.qStart, far: els.qFar, mood: els.qMood, more: els.qMore, home: els.qHome };
+  var nav = { idx: 0, homeIdx: null, timer: null, guard: null };
+  state.step = '';
+  state.walk = store.get('walked') !== '1';
+  function showStep(step, opts) {
+    opts = opts || {};
+    if (!QS[step]) step = 'home';
+    clearTimeout(nav.timer);
+    var from = state.step;
+    if (opts.push && from && from !== step) {
+      nav.idx++;
+      try { history.pushState({ dnr: 'step', step: step, idx: nav.idx }, ''); } catch (e) {}
+    }
+    state.step = step;
+    if (step === 'home') {
+      nav.homeIdx = nav.idx;
+      if (state.walk) { state.walk = false; store.set('walked', '1'); }
+    }
+    Object.keys(QS).forEach(function (k) { QS[k].hidden = k !== step; });
+    var el = QS[step];
+    if (from && from !== step) {
+      el.classList.remove('enter', 'from-left');
+      void el.offsetWidth;   // restart the slide-in
+      el.classList.add('enter');
+      if (opts.back || STEPS.indexOf(step) < STEPS.indexOf(from)) el.classList.add('from-left');
+    }
+    document.documentElement.classList.toggle('on-q', state.screen === 'plan' && step !== 'home');
+    document.documentElement.classList.toggle('on-welcome', step === 'welcome');
+    if (step === 'more') renderFilters();
+    renderTrail();
+    renderStepNav();
+  }
+  /** After an answer: the next question the first time through, otherwise back to Spin or Swipe. */
+  function advance() {
+    var i = STEPS.indexOf(state.step);
+    if (state.walk && i >= 0 && i < STEPS.length - 1) showStep(STEPS[i + 1], { push: true });
+    else backHome();
+  }
+  function advanceSoon() {
+    clearTimeout(nav.timer);
+    var at = state.step;
+    nav.timer = setTimeout(function () { if (state.step === at && state.screen === 'plan') advance(); }, 280);
+  }
+  // Back to Spin or Swipe the way you came, so the phone's back gesture stays sensible.
+  function backHome() {
+    if (state.screen !== 'plan') showScreen('plan', { push: false });
+    if (nav.homeIdx !== null && nav.homeIdx < nav.idx && history.state && history.state.dnr) {
+      try {
+        history.go(nav.homeIdx - nav.idx);
+        clearTimeout(nav.guard);
+        nav.guard = setTimeout(function () { if (state.step !== 'home') showStep('home', { push: true }); }, 450);
+        return;
+      } catch (e) {}
+    }
+    showStep('home', { push: true });
+  }
+  function leaveWelcome() {
+    if (state.step !== 'welcome') return;
+    if (state.walk) showStep('start', { push: true }); else backHome();
+  }
+  function renderTrail() {
+    if (!STEPS || !els.stepNav) return;
+    var cur = STEPS.indexOf(state.step);
+    Array.prototype.forEach.call(els.stepNav.querySelectorAll('.pip'), function (b) {
+      var i = STEPS.indexOf(b.getAttribute('data-go'));
+      b.classList.toggle('lit', !state.walk || i < cur);
+      b.classList.toggle('cur', i === cur);
+      if (i === cur) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+  }
+  function stepReady(step) {
+    if (step !== 'start') return true;
+    if (state.start === 'custom') return !!(state.custom && state.custom.point);
+    if (state.start === 'halfway') return !!state.halfway;
+    return true;
+  }
+  function renderStepNav() {
+    var el = QS && QS[state.step];
+    if (!el) return;
+    var back = el.querySelector('.q-back');
+    var next = el.querySelector('.q-next');
+    if (back) back.hidden = nav.idx === 0;
+    if (next) {
+      next.textContent = state.walk && state.step !== 'more' ? 'Next ›' : 'Done ›';
+      next.disabled = !stepReady(state.step);
+    }
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.q-next'), function (b) {
+    b.addEventListener('click', function () { if (stepReady(state.step)) advance(); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.q-back'), function (b) {
+    b.addEventListener('click', function () { if (nav.idx > 0) history.back(); });
+  });
+  els.stepNav.addEventListener('click', function (e) {
+    var b = e.target.closest('.pip');
+    if (!b) return;
+    var to = b.getAttribute('data-go');
+    if (to === state.step) return;
+    if (to === 'home') backHome(); else showStep(to, { push: true });
+  });
+  // Your answers on Spin or Swipe: tap one to change it.
+  els.qHome.addEventListener('click', function (e) {
+    var b = e.target.closest('.sum-chip');
+    if (b) showStep(b.getAttribute('data-go'), { push: true });
+  });
+  function startSummary() {
+    var o = origin();
+    if (state.start === 'gps') return state.gps ? '📍 My location' : els.gpsHint.classList.contains('is-warn') ? '📍 Location is off' : '📍 Finding you…';
+    if (state.start === 'halfway') return state.halfway ? '🤝 Halfway' + (state.halfway.label ? ', near ' + state.halfway.label : '') : '🤝 Halfway (not set)';
+    if (state.start === 'custom') return state.custom && state.custom.point ? '🗺️ ' + (state.custom.label || state.custom.text || 'There') : '🗺️ Not set yet';
+    if (state.start === 'middle') return '👥 The middle' + (o && o.label ? ', near ' + o.label : '');
+    return '📍 ' + originLabel();
+  }
+  function renderSummary() {
+    if (!els.sumStart) return;
+    pillText(els.sumStart, 'Starting from', startSummary(), false);
+    els.sumStart.classList.toggle('is-warn', !stepReady('start') || (state.start === 'gps' && els.gpsHint.classList.contains('is-warn') && !state.gps));
+    var lim = currentLimit();
+    pillText(els.sumFar, 'How far', lim === 0 ? '🌎 Any distance' : (state.unit === 'min' ? '⏱ ' : '🛣️ ') + limitText(), false);
+  }
   function showScreen(name, opts) {
     opts = opts || {};
     if (state.screen === name) return;
@@ -4014,26 +4532,36 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     els.planScreen.hidden = toPlay;
     els.playScreen.hidden = !toPlay;
     document.documentElement.classList.toggle('on-play', toPlay);
+    document.documentElement.classList.toggle('on-q', !toPlay && state.step !== 'home');
     var el = toPlay ? els.playScreen : els.planScreen;
     el.classList.remove('enter', 'from-left');
     void el.offsetWidth;   // restart the slide-in
     el.classList.add('enter');
     if (!toPlay) el.classList.add('from-left');
     if (toPlay && opts.push !== false) {
-      try { history.pushState({ dnr: 'play' }, ''); state.pushedPlay = true; } catch (e) {}
+      nav.idx++;
+      try { history.pushState({ dnr: 'play', idx: nav.idx }, ''); } catch (e) {}
     }
-    if (!toPlay) state.pushedPlay = false;
-    window.scrollTo(0, 0);
     renderPlaySum();
     renderGo();
   }
-  // The phone's back gesture goes from Play back to Plan instead of leaving the app.
-  window.addEventListener('popstate', function () {
-    if (history.state && history.state.dnr === 'play') showScreen('play', { push: false });
-    else if (state.screen === 'play') showScreen('plan', { push: false });
+  // The phone's back gesture steps back through the questions and from Play to Spin or Swipe.
+  window.addEventListener('popstate', function (e) {
+    clearTimeout(nav.guard);
+    var st = e.state;
+    if (!st || !st.dnr) {
+      if (state.screen === 'play') showScreen('plan', { push: false });
+      return;
+    }
+    var back = typeof st.idx === 'number' && st.idx < nav.idx;
+    if (typeof st.idx === 'number') nav.idx = st.idx;
+    if (st.dnr === 'play') { showScreen('play', { push: false }); return; }
+    showScreen('plan', { push: false });
+    showStep(st.step, { back: back });
   });
   els.backBtn.addEventListener('click', function () {
-    if (state.pushedPlay) history.back(); else showScreen('plan');
+    if (history.state && history.state.dnr === 'play' && nav.idx > 0) history.back();
+    else { showScreen('plan', { push: false }); showStep('home'); }
   });
   function currentPick() {
     if (!roomOn()) return state.pick ? { locked: false } : null;
@@ -4062,15 +4590,10 @@ fieldset.step .chips + .chips { margin-top: 10px; }
       : state.src === 'google' ? 'Google picks from popular places nearby.'
       : n === 0 ? 'Nothing that close. Try a bigger distance.'
       : rangeText();
-    // The same line shows above the buttons; no need to say it twice.
-    els.goNote.hidden = rosterInView && state.loaded && !state.loadError && !waitingForGps() && state.src !== 'google' && n > 0;
-  }
-  var rosterInView = false;
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function (entries) {
-      rosterInView = entries[entries.length - 1].isIntersecting;
-      renderGo();
-    }, { rootMargin: '0px 0px -150px 0px' }).observe(els.rosterSummary);
+    // In the usual case the count says it; the note is for anything else.
+    var usual = state.loaded && !state.loadError && !waitingForGps() && state.src !== 'google' && n > 0;
+    els.goNote.hidden = usual;
+    els.rosterSummary.parentNode.hidden = !usual;
   }
   function renderPlaySum() {
     if (!els.playSum) return;
@@ -4083,6 +4606,8 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     if (state.src === 'list' && state.tags.length) bits.push(state.tags.map(tagText).filter(Boolean).join(', '));
     if (state.open != null) bits.push(state.open === 'now' ? 'open now' : 'open ' + fmtOpenAt(state.open));
     els.playSum.textContent = bits.join(' · ');
+    renderSummary();
+    renderStepNav();
   }
   els.goSpin.addEventListener('click', function () {
     if (state.loadError) { load(); return; }
@@ -4122,11 +4647,11 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     if (roomOn() && !had && !els.dealBtn.hidden && !els.dealBtn.disabled && !els.dealBtn.getAttribute('data-setup')) els.dealBtn.click();
   });
   function showLiveCard(msg) {
-    showScreen('plan');
     live.forceCard = true;
     renderLiveCard();
+    if (state.screen !== 'plan') showScreen('plan', { push: false });
+    showStep('welcome', { push: true });
     if (msg) liveMsg(msg);
-    els.liveCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setTimeout(function () { els.liveCode.focus(); }, 350);
   }
   // When someone else spins, vetoes or deals, this phone goes to the Play screen to watch.
@@ -4227,6 +4752,10 @@ fieldset.step .chips + .chips { margin-top: 10px; }
     else if (rowValue(0) && rowValue(1)) findHalfway();
     else if (staleNote) meetMsg(staleNote, true);
   }
+  var firstStep = state.walk ? 'start' : 'home';
+  if (state.needsSetup || (!els.liveCard.hidden && !live.code && !group.code && !joining)) firstStep = 'welcome';
+  try { history.replaceState({ dnr: 'step', step: firstStep, idx: 0 }, '', location.pathname + location.search); } catch (e) {}
+  showStep(firstStep);
   load();
 })();
 </script>
