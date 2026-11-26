@@ -8,6 +8,23 @@
   // scrolls, and this page never scrolls, so the bottom buttons could end up underneath it. Going
   // edge to edge removes the strip; the page keeps clear of the system bars with the safe-area insets.
   if (/Android/i.test(navigator.userAgent)) document.querySelector('meta[name="viewport"]').content += ', viewport-fit=cover';
+  // Some phones report the screen as taller than what's actually showing (a Pixel's home-screen app
+  // came out 56px too tall), which pushes the Spin and Swipe buttons off the bottom. So the page
+  // measures what's really on screen and never gets taller than that.
+  (function () {
+    function fit() {
+      var a = document.activeElement, v = window.visualViewport;
+      if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;   // the keyboard is up: leave it be
+      var h = Math.round(v ? v.height * v.scale : window.innerHeight);
+      if (h > 200) document.documentElement.style.setProperty('--app-h', h + 'px');
+    }
+    fit();
+    window.addEventListener('resize', fit);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fit);
+    window.addEventListener('pageshow', fit);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) fit(); });
+    document.addEventListener('focusout', function () { setTimeout(fit, 350); });
+  })();
 </script>
 <title>Date Night Roulette</title>
 <script>
@@ -54,7 +71,7 @@ body {
   -webkit-font-smoothing: antialiased;
   background: radial-gradient(120% 55% at 50% -12%, rgba(var(--bulb-rgb), 0.11), transparent 62%), var(--night);
 }
-.wrap { max-width: 480px; height: 100vh; height: 100dvh; margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+.wrap { max-width: 480px; height: 100vh; height: 100dvh; height: min(100dvh, var(--app-h, 100dvh)); margin: 0 auto; padding: max(12px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
 
 /* Header */
 .title { margin: 0; flex: 1; min-width: 0; font: 900 clamp(1.2rem, 5.6vw, 1.45rem)/0.9 var(--display); letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap; }
@@ -938,6 +955,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     <div class="set-group about">
       <h3>About</h3>
       <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
+      <p class="foot">Version: Nov 26, 2:12 AM</p>
       <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
     </div>
     <div class="set-group set-lists">
