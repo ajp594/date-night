@@ -458,12 +458,16 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 html.on-q .status-row { display: none; }
 
 /* The bulb trail: 1 2 3 4 GO. Lit ones are answered; tap one to change that answer. */
-.trail { flex: none; position: relative; display: flex; align-items: center; justify-content: space-between; padding: 2px 4px; }
-.trail::before { content: ""; position: absolute; left: 16px; right: 24px; top: 50%; height: 2px; background: var(--rule); }
-.pip { position: relative; z-index: 1; appearance: none; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; background: var(--velvet-2); color: var(--dusk); font: 800 0.76rem/1 var(--body); cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); transition: background-color .2s, color .2s, box-shadow .2s, transform .2s; }
-.pip.go { width: 46px; border-radius: 14px; font: 900 0.95rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; }
+.trail { --pip: 28px; flex: none; position: relative; display: flex; align-items: flex-start; justify-content: space-between; padding: 2px 4px 15px; }
+.trail::before { content: ""; position: absolute; left: 16px; right: 24px; top: calc(2px + var(--pip) / 2 - 1px); height: 2px; background: var(--rule); }
+.pip { position: relative; z-index: 1; appearance: none; width: var(--pip); height: var(--pip); padding: 0; border: 0; border-radius: 50%; background: var(--velvet-2); color: var(--dusk); font: 800 0.76rem/1 var(--body); cursor: pointer; box-shadow: inset 0 0 0 1px var(--rule); transition: background-color .2s, color .2s, box-shadow .2s, transform .2s; }
+.pip.go { width: 46px; border-radius: calc(var(--pip) / 2); font: 900 0.95rem/1 var(--display); letter-spacing: 0.08em; text-transform: uppercase; }
 .pip.lit { background: var(--bulb); color: var(--on-bulb); box-shadow: 0 0 9px rgba(var(--bulb-rgb), 0.65); }
-.pip.cur { transform: scale(1.16); box-shadow: 0 0 0 3px rgba(var(--bulb-rgb), 0.35), 0 0 16px rgba(var(--bulb-rgb), 0.8); }
+.pip.cur { box-shadow: 0 0 0 3px rgba(var(--bulb-rgb), 0.45), 0 0 16px rgba(var(--bulb-rgb), 0.85); }
+/* Each bulb's name under it, so you know which screen is which. */
+.pip-l { position: absolute; top: calc(100% + 4px); left: 50%; transform: translateX(-50%); font: 700 0.58rem/1 var(--body); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; color: var(--dusk); pointer-events: none; }
+.pip.lit .pip-l { color: rgba(var(--ivory-rgb), 0.78); }
+.pip.cur .pip-l { color: var(--bulb); }
 .pip.cur:not(.lit) { background: var(--ivory); color: var(--on-bulb); }
 .pip:focus-visible { outline: 2px solid var(--ivory); outline-offset: 3px; }
 html.on-welcome .trail { display: none; }
@@ -598,7 +602,7 @@ html.on-welcome .trail { display: none; }
   .sum-tip { display: none; }
   .go-btn { padding: 17px 10px 15px; font-size: 1.4rem; }
   .q-next { padding: 13px 24px 11px; }
-  .trail .pip { width: 26px; height: 26px; }
+  .trail { --pip: 26px; }
   .trail .pip.go { width: 42px; }
   /* Play: the pick and its buttons get the room. */
   html.on-play .status-row { display: none; }
@@ -636,10 +640,10 @@ html.on-welcome .trail { display: none; }
 
   <div class="screen" id="planScreen">
   <nav class="trail" id="stepNav" aria-label="Questions">
-    <button type="button" class="pip" data-go="start" aria-label="Question 1: where you’re starting">1</button>
-    <button type="button" class="pip" data-go="far" aria-label="Question 2: how far">2</button>
-    <button type="button" class="pip" data-go="mood" aria-label="Question 3: what you’re in the mood for">3</button>
-    <button type="button" class="pip" data-go="more" aria-label="Question 4: anything else">4</button>
+    <button type="button" class="pip" data-go="start" aria-label="Question 1: where you’re starting">1<span class="pip-l" aria-hidden="true">Start</span></button>
+    <button type="button" class="pip" data-go="far" aria-label="Question 2: how far">2<span class="pip-l" aria-hidden="true">How far</span></button>
+    <button type="button" class="pip" data-go="mood" aria-label="Question 3: what you’re in the mood for">3<span class="pip-l" aria-hidden="true">Mood</span></button>
+    <button type="button" class="pip" data-go="more" aria-label="Question 4: filters">4<span class="pip-l" aria-hidden="true">Filters</span></button>
     <button type="button" class="pip go" data-go="home" aria-label="Spin or swipe">Go</button>
   </nav>
 
@@ -1115,7 +1119,9 @@ html.on-welcome .trail { display: none; }
   // What sounds good: from your list or anywhere on Google, moods, your list's tags, and hours.
   var MOODS = CFG.MOODS || [];
   var TAG_CHOICES = CFG.TAG_CHOICES || [];
-  var GOOGLE_ON = !!(CFG.GOOGLE && CFG.GOOGLE.on);
+  // Whether the script has Google info set up. The page remembers the last answer, so after a
+  // refresh the ticket gets its photos and stars without waiting for the whole list to reload.
+  var GOOGLE_ON = !!(CFG.GOOGLE && CFG.GOOGLE.on) || store.get('googleOn') === '1';
   state.src = store.get('src') === 'google' ? 'google' : 'list';
   state.moods = (store.get('moods') || '').split(',').filter(Boolean);
   state.tags = [];
@@ -1648,13 +1654,22 @@ html.on-welcome .trail { display: none; }
       MOODS = c.MOODS;
       state.moods = state.moods.filter(function (id) { return !!moodById(id); });
     }
+    var googleFlip = false;
     if (c.GOOGLE && !!c.GOOGLE.on !== GOOGLE_ON) {
       GOOGLE_ON = !!c.GOOGLE.on;
       changed = true;
+      googleFlip = true;
       if (!GOOGLE_ON && state.src === 'google') { state.src = 'list'; store.set('src', 'list'); }
     }
+    if (c.GOOGLE) store.set('googleOn', GOOGLE_ON ? '1' : '0');
     CFG.GOOGLE = c.GOOGLE || CFG.GOOGLE;
     renderFilters();
+    // A pick or cards already on screen (say, right after a refresh) get their Google info now.
+    if (googleFlip) {
+      if (state.pick) showInfo(state.pick);
+      els.deck.removeAttribute('data-top');
+      renderSwipe();
+    }
     if (changed) {
       if (RADII.indexOf(state.radius) < 0) {
         state.radius = RADII.indexOf(c.DEFAULT_RADIUS) >= 0 ? c.DEFAULT_RADIUS : RADII[0];
