@@ -366,7 +366,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .hours-at[hidden] { display: none; }
 .hours-at select, .hours-at input { padding: 10px 11px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 0.95rem var(--body); }
 /* Google info on the ticket and cards */
-.t-photos { flex: 1 1 0; min-height: 64px; max-height: 240px; display: grid; grid-template-columns: 1fr; gap: 6px; }
+.t-photos { flex: 1 1 0; min-height: 44px; max-height: 240px; display: grid; grid-template-columns: 1fr; gap: 6px; }
 .t-photos.two { grid-template-columns: 1fr 1fr; }
 .t-photos[hidden] { display: none; }
 .t-photos img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; border-radius: 8px; background: rgba(112, 26, 50, 0.12); }
@@ -550,6 +550,16 @@ html.on-welcome .trail { display: none; }
 /* Play: the reel until something lands, then the ticket with its buttons under it. */
 .play-line { flex: none; min-height: 19px; display: grid; }
 .live-line:not([hidden]) + .play-sum { display: none; }
+/* Opening the app onto a round already going: what happened, and what to tap. */
+.catch-up { position: relative; padding: 9px 40px 10px 14px; border-radius: 14px; background: rgba(var(--bulb-rgb), 0.14); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.45); display: grid; gap: 3px; }
+.catch-up[hidden] { display: none; }
+.catch-up:not([hidden]) ~ .live-line, .catch-up:not([hidden]) ~ .play-sum { display: none; }
+.cu-title { margin: 0; font: 900 1.15rem/1.05 var(--display); letter-spacing: 0.03em; text-transform: uppercase; color: var(--bulb); }
+.cu-text { margin: 0; font-size: 0.9rem; line-height: 1.35; color: var(--ivory); }
+.cu-ok { position: absolute; top: 6px; right: 6px; appearance: none; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--dusk); font: 700 0.95rem/1 var(--body); cursor: pointer; }
+.cu-ok:focus-visible { outline: 2px solid var(--bulb); }
+html.catching-up .actions .ticket-live .say { display: none; }   /* the card above says it */
+#qStart.unpicked #gpsHint { display: none; }
 #spinView .marquee { flex: 1 1 auto; min-height: 150px; max-height: 340px; display: flex; flex-direction: column; justify-content: space-between; }
 #spinView:has(> .ticket:not([hidden])) > .marquee { display: none; }
 .ticket { flex: 0 1 auto; min-height: 0; }
@@ -609,7 +619,10 @@ html.on-welcome .trail { display: none; }
   .play-line { min-height: 0; }
   .play-sum { display: none; }
   .ticket-top { display: none; }
-  .t-photos { min-height: 52px; }
+  .t-photos { min-height: 36px; }
+  /* The card that says what happened takes the swipe counts' place for a moment. */
+  html.catching-up .swipe-msg { display: none; }
+  html.catching-up .card-photo { min-height: 32px; }
   .ticket-main { gap: 4px; padding: 10px 12px 10px 13px; }
   .t-go .go { padding: 10px 12px; }
   .ticket-badges { display: none; }
@@ -805,6 +818,11 @@ html.on-welcome .trail { display: none; }
     </div>
   </div>
   <div class="play-line">
+    <div class="catch-up" id="catchUp" role="status" hidden>
+      <p class="cu-title" id="cuTitle"></p>
+      <p class="cu-text" id="cuText"></p>
+      <button type="button" class="cu-ok" id="cuOk" aria-label="Got it">✕</button>
+    </div>
     <p class="live-line" id="liveLine" role="status" hidden></p>
     <p class="play-sum" id="playSum"></p>
   </div>
@@ -1042,7 +1060,8 @@ html.on-welcome .trail { display: none; }
     sumStart: $('sumStart'), sumFar: $('sumFar'), srcBtn: $('srcBtn'), srcHint: $('srcHint'), srcGroup: $('srcGroup'),
     hoursGroup: $('hoursGroup'), tagGroup: $('tagGroup'), optGroup: $('optGroup'), tagNameBtn: $('tagNameBtn'), rosterBtn: $('rosterBtn'),
     tMore: $('tMore'), pickSheet: $('pickSheet'), pickHead: $('pickHead'), pmBody: $('pmBody'), pmReset: $('pmReset'),
-    tLiveBtns: $('tLiveBtns'), tLiveMore: $('tLiveMore'), groupBtnText: $('groupBtnText')
+    tLiveBtns: $('tLiveBtns'), tLiveMore: $('tLiveMore'), groupBtnText: $('groupBtnText'),
+    catchUp: $('catchUp'), cuTitle: $('cuTitle'), cuText: $('cuText'), cuOk: $('cuOk')
   };
   var PEOPLE = (CFG.PEOPLE && CFG.PEOPLE.length === 2) ? CFG.PEOPLE : ['Alec', 'Morgan'];
   var MEET_DEFAULTS = CFG.MEET_DEFAULTS || [];
@@ -1134,6 +1153,40 @@ html.on-welcome .trail { display: none; }
   })();
   state.tagsAll = [];
   state.out = [];   // this phone's picks since Start Over, kept out of the next spin
+
+  // ---------- A fresh start for each date night ----------
+  // Opening the app after a break (half an hour or more) starts over at question 1 with
+  // nothing picked, so each date is a new game. A refresh, or coming back sooner, picks up
+  // where you were. Typed places and the two halfway addresses stay filled in for next time.
+  var SESSION_GAP = 30 * 60000;
+  var lastUsed = Number(store.get('lastUsed') || 0);
+  var freshStart = !lastUsed || Date.now() - lastUsed > SESSION_GAP;
+  state.unpicked = { start: false, far: false };
+  if (freshStart) {
+    state.unpicked = { start: true, far: true };
+    state.start = store.get('grpCode') && store.get('grpMid') ? 'middle' : 'gps';
+    state.minutes = 20;
+    state.radius = typeof CFG.DEFAULT_RADIUS === 'number' && RADII.indexOf(CFG.DEFAULT_RADIUS) >= 0 ? CFG.DEFAULT_RADIUS : RADII[0];
+    state.moods = [];
+    state.src = 'list';
+    state.open = null;
+    state.tags = [];
+    state.favOnly = false;
+    [['start', state.start], ['minutes', '20'], ['radius', String(state.radius)], ['moods', ''], ['src', 'list'], ['open', ''], ['tags', '[]'], ['favOnly', '0']]
+      .forEach(function (kv) { store.set(kv[0], kv[1]); });
+  } else {
+    try { var up = JSON.parse(store.get('unpicked') || 'null'); if (up) state.unpicked = { start: !!up.start, far: !!up.far }; } catch (e) {}
+  }
+  function picked(step) {
+    if (!state.unpicked[step]) return;
+    state.unpicked[step] = false;
+    store.set('unpicked', JSON.stringify(state.unpicked));
+  }
+  store.set('unpicked', JSON.stringify(state.unpicked));
+  function touchSession() { store.set('lastUsed', String(Date.now())); }
+  touchSession();
+  setInterval(function () { if (document.visibilityState !== 'hidden') touchSession(); }, 60000);
+  document.addEventListener('visibilitychange', touchSession);
 
   // ---------- Geometry ----------
   function miles(a, b) {
@@ -1235,10 +1288,11 @@ html.on-welcome .trail { display: none; }
   function renderChips() {
     els.starts.innerHTML = '';
     var other = state.me === null ? PEOPLE[1] : PEOPLE[1 - state.me];
-    if (group.on) els.starts.appendChild(tile('start', 'middle', '👥', 'The Middle', 'Fair for everyone', state.start === 'middle', pickStart));
-    els.starts.appendChild(tile('start', 'gps', '📍', 'My Location', 'Wherever this phone is', state.start === 'gps', pickStart));
-    if (!group.on) els.starts.appendChild(tile('start', 'halfway', '🤝', 'Halfway', 'Between you and ' + other, state.start === 'halfway', pickStart));
-    els.starts.appendChild(tile('start', 'custom', '🗺️', 'Somewhere Else', 'A town or an address', state.start === 'custom', pickStart));
+    var on = function (v) { return !state.unpicked.start && state.start === v; };
+    if (group.on) els.starts.appendChild(tile('start', 'middle', '👥', 'The Middle', 'Fair for everyone', on('middle'), pickStart));
+    els.starts.appendChild(tile('start', 'gps', '📍', 'My Location', 'Wherever this phone is', on('gps'), pickStart));
+    if (!group.on) els.starts.appendChild(tile('start', 'halfway', '🤝', 'Halfway', 'Between you and ' + other, on('halfway'), pickStart));
+    els.starts.appendChild(tile('start', 'custom', '🗺️', 'Somewhere Else', 'A town or an address', on('custom'), pickStart));
     renderStartLayout();
     els.units.innerHTML = '';
     els.units.appendChild(chip('unit', 'min', 'Minutes', state.unit === 'min', onUnit));
@@ -1246,7 +1300,7 @@ html.on-welcome .trail { display: none; }
     els.radii.innerHTML = '';
     (state.unit === 'min' ? RADII_MIN : RADII).forEach(function (r) {
       var label = r === 0 ? 'Any Distance' : r + (state.unit === 'min' ? ' min' : ' mi');
-      els.radii.appendChild(retap(chip('radius', String(r), label, currentLimit() === r, pickRadius), pickRadius));
+      els.radii.appendChild(retap(chip('radius', String(r), label, !state.unpicked.far && currentLimit() === r, pickRadius), pickRadius));
     });
     renderOptions();
     renderFilters();
@@ -1274,14 +1328,18 @@ html.on-welcome .trail { display: none; }
   }
   // Ones that need typing (halfway, somewhere else, the group's middle) shrink to a row of chips.
   function renderStartLayout() {
-    els.starts.classList.toggle('compact', state.start === 'halfway' || state.start === 'custom' || state.start === 'middle');
+    var form = !state.unpicked.start && (state.start === 'halfway' || state.start === 'custom' || state.start === 'middle');
+    els.starts.classList.toggle('compact', form);
+    els.qStart.classList.toggle('unpicked', !!state.unpicked.start);
   }
   function pickStart(value, again) {
+    if (state.unpicked.start) { picked('start'); again = false; }
     if (!again) onStart(value);
     if (value === 'gps') advanceSoon();
     else renderStepNav();
   }
   function pickRadius(value, again) {
+    if (state.unpicked.far) { picked('far'); again = false; }
     if (!again) onRadius(value);
     advanceSoon();
   }
@@ -1369,6 +1427,7 @@ html.on-welcome .trail { display: none; }
     if (state.start === 'gps') {
       state.start = 'custom';
       if (remember) store.set('start', state.start);
+      picked('start');
       renderChips();
       renderMeet();
       renderCustom();
@@ -2050,7 +2109,8 @@ html.on-welcome .trail { display: none; }
     return { i: i, row: c ? { text: PEOPLE[i] + '’s location', coords: c, sentAt: Date.now() } : { text: value, coords: null } };
   }
   function showHalfwayPanel() {
-    if (state.start === 'halfway') return;
+    if (state.start === 'halfway' && !state.unpicked.start) return;
+    picked('start');
     state.start = 'halfway';
     store.set('start', 'halfway');
     renderChips();
@@ -2754,6 +2814,7 @@ html.on-welcome .trail { display: none; }
   // Round requests go to the group while this phone is in one; ratings and history stay yours.
   var ROOM_OPS = { spin: 1, closed: 1, 'in': 1, lock: 1, reset: 1, deal: 1, swipe: 1, best: 1 };
   function liveCall(op, params) {
+    if (op !== 'poll' && op !== 'start' && op !== 'settings') hideCatchUp();
     if (group.on && ROOM_OPS[op]) return groupCall(op, params);
     if (!live.code || state.me === null) return Promise.resolve({ ok: false, error: 'OFF' });
     var p = { op: op, who: meName(), code: live.code };
@@ -2890,6 +2951,7 @@ html.on-welcome .trail { display: none; }
     els.liveLine.hidden = !line;
     els.liveLine.textContent = line;
     els.liveLine.classList.toggle('is-warn', !!(f && f.warn));
+    renderCatchUp();
     if (!roomOn() || state.spinning) return;
     if (r && r.pick && (r.mode === 'spin' || r.match)) {
       var sig = r.id + ':' + r.seq + ':' + (r.match ? 'm' : '');
@@ -2976,9 +3038,9 @@ html.on-welcome .trail { display: none; }
     var waiting = others().filter(function (n) { return inList.indexOf(n) < 0; });
     var say = document.createElement('p');
     say.className = 'say';
-    say.textContent = meIn ? 'You’re in. Waiting on ' + namesText(waiting) + '…'
-      : othersIn.length ? namesText(othersIn) + (othersIn.length === 1 ? ' is in!' : ' are in!')
-      : (many ? 'Everyone taps' : 'Both tap') + ' I’m In to make it a date.';
+    say.textContent = meIn ? 'You’re in! Waiting on ' + namesText(waiting) + ' to tap I’m In.'
+      : othersIn.length ? namesText(othersIn) + (othersIn.length === 1 ? ' is in!' : ' are in!') + ' Tap I’m In 👍 if you’d go.'
+      : 'When ' + (many ? 'everyone taps' : 'you both tap') + ' I’m In 👍, it’s a date.';
     box.appendChild(say);
     if (!meIn) els.tLiveBtns.appendChild(tButton('I’m In 👍', 'btn', function (e) { e.target.disabled = true; liveCall('in'); }));
     else els.tLiveBtns.appendChild(tButton(many ? 'Lock It In for Everyone' : 'Lock It In for Both', 'tlink', function () { liveCall('lock'); }));
@@ -4430,7 +4492,7 @@ html.on-welcome .trail { display: none; }
   var QS = { welcome: els.qWelcome, start: els.qStart, far: els.qFar, mood: els.qMood, more: els.qMore, home: els.qHome };
   var nav = { idx: 0, homeIdx: null, timer: null, guard: null };
   state.step = '';
-  state.walk = store.get('walked') !== '1';
+  state.walk = freshStart || store.get('walk') === '1';
   function showStep(step, opts) {
     opts = opts || {};
     if (!QS[step]) step = 'home';
@@ -4443,8 +4505,18 @@ html.on-welcome .trail { display: none; }
     state.step = step;
     if (step === 'home') {
       nav.homeIdx = nav.idx;
-      if (state.walk) { state.walk = false; store.set('walked', '1'); }
+      state.walk = false;
+      // Skipped a question with the bulbs? It keeps the usual answer (My location, 20 min), shown on the chip.
+      if (state.unpicked.start || state.unpicked.far) {
+        picked('start');
+        picked('far');
+        renderChips();
+        renderSummary();
+      }
     }
+    store.set('lastStep', step);
+    store.set('walk', state.walk ? '1' : '0');
+    touchSession();
     Object.keys(QS).forEach(function (k) { QS[k].hidden = k !== step; });
     var el = QS[step];
     if (from && from !== step) {
@@ -4498,7 +4570,9 @@ html.on-welcome .trail { display: none; }
     });
   }
   function stepReady(step) {
+    if (step === 'far') return !state.unpicked.far;
     if (step !== 'start') return true;
+    if (state.unpicked.start) return false;
     if (state.start === 'custom') return !!(state.custom && state.custom.point);
     if (state.start === 'halfway') return !!state.halfway;
     return true;
@@ -4720,9 +4794,17 @@ html.on-welcome .trail { display: none; }
     live.followed = mark;
     if (!r || state.screen === 'play') return;
     if (first) {
-      if ((r.mode === 'spin' && r.pick && !r.locked) || (r.mode === 'swipe' && !r.match)) {
-        setMode(r.mode);
+      // A pick waiting on I'm In, cards being swiped, or tonight's date: open right on it.
+      var tonight = !r.night || !live.night || r.night === live.night;
+      var waiting = (r.mode === 'spin' && r.pick && !r.locked) || (r.mode === 'swipe' && !r.match && !r.locked);
+      var date = r.locked && r.pick && tonight;
+      if (waiting || date) {
+        setMode(waiting ? r.mode : 'spin');
+        // Say what's going on, unless you just did it yourself a moment ago.
+        var mine = r.last && r.last.who === meName() && !freshStart;
+        if (!mine) { catchUp.round = r.id; catchUp.seq = r.seq; }
         showScreen('play');
+        renderCatchUp();
       }
       return;
     }
@@ -4732,6 +4814,53 @@ html.on-welcome .trail { display: none; }
       showScreen('play');
     }
   }
+  var catchUp = { round: '', seq: null };
+  function hideCatchUp() {
+    catchUp.round = '';
+    renderCatchUp();
+  }
+  function renderCatchUp() {
+    var r = liveRound();
+    var show = !!catchUp.round && !!r && r.id === catchUp.round && roomOn();
+    // Once anything changes in the round (someone taps I'm In, vetoes, swipes to a match),
+    // the usual line takes over.
+    if (show && r.seq !== catchUp.seq && !(r.mode === 'spin' && !r.locked)) show = false;
+    els.catchUp.hidden = !show;
+    document.documentElement.classList.toggle('catching-up', show);
+    if (!show) return;
+    var many = people().length > 2;
+    var last = r.last || {};
+    // Who put this pick or deck up. Tapping I'm In isn't it; then it's whoever started the round,
+    // if nobody has spun again since.
+    var by = /^(spin|veto|closed|gone|deal|more|best)$/.test(last.what || '') ? last.who : !(r.out && r.out.length) ? r.by : '';
+    var byMe = !!by && by === meName();
+    var title = '', text = '';
+    if (r.locked && r.pick) {
+      title = r.match || last.what === 'match' ? 'It’s a match! 🎉' : 'It’s a date tonight! 🎉';
+      text = 'Tap Open in Google Maps for directions.';
+    } else if (r.mode === 'swipe') {
+      var mineDone = r.deck && r.counts && r.counts[meName()] >= r.deck.length;
+      title = byMe ? 'Your cards are still out' : by ? who(by) + ' dealt cards' : 'The cards are out';
+      text = mineDone ? 'You’ve swiped them all. Waiting on ' + (many ? 'the others' : namesText(others())) + '.'
+        : 'Swipe ♥ if you’d go, ✕ if not.';
+    } else {
+      var inList = people().filter(function (n) { return r.inn && r.inn[n]; });
+      var meIn = inList.indexOf(meName()) >= 0;
+      var othersIn = inList.filter(function (n) { return n !== meName(); });
+      var waitingOn = others().filter(function (n) { return inList.indexOf(n) < 0; });
+      title = byMe ? 'You spun earlier' : !by ? 'There’s a pick waiting'
+        : who(by) + (last.what === 'veto' ? ' vetoed and spun again' : last.what === 'closed' || last.what === 'gone' ? ' spun again' : ' spun');
+      if (meIn) text = 'You’re in. Waiting on ' + namesText(waitingOn) + '.';
+      else {
+        var canVeto = vetoesLeft(r, meName()) > 0;
+        text = othersIn.length ? namesText(othersIn) + (othersIn.length === 1 ? ' is' : ' are') + ' in. Tap I’m In 👍 if you’d go.'
+          : 'Tap I’m In 👍 if you’d go' + (canVeto ? ', or Veto.' : '.');
+      }
+    }
+    els.cuTitle.textContent = title;
+    els.cuText.textContent = text;
+  }
+  els.cuOk.addEventListener('click', hideCatchUp);
 
   // ---------- Loading ----------
   function load() {
@@ -4809,7 +4938,8 @@ html.on-welcome .trail { display: none; }
     else if (rowValue(0) && rowValue(1)) findHalfway();
     else if (staleNote) meetMsg(staleNote, true);
   }
-  var firstStep = state.walk ? 'start' : 'home';
+  var lastStep = store.get('lastStep');
+  var firstStep = freshStart ? 'start' : STEPS.indexOf(lastStep) >= 0 ? lastStep : state.walk ? 'start' : 'home';
   if (state.needsSetup || (!els.liveCard.hidden && !live.code && !group.code && !joining)) firstStep = 'welcome';
   try { history.replaceState({ dnr: 'step', step: firstStep, idx: 0 }, '', location.pathname + location.search); } catch (e) {}
   showStep(firstStep);
