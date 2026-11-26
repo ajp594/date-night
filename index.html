@@ -613,6 +613,7 @@ html.on-welcome .trail { display: none; }
   .act-slot .btn, #spinView:has(> .ticket:not([hidden])) .spin { padding: 10px 10px 9px; font-size: 1.05rem; }
   .home #gcLine { -webkit-line-clamp: 1; }
   .sum-chip { min-height: 46px; }
+  .q.home, .go-bar { gap: 8px; }
 }
 </style>
 </head>
@@ -1404,6 +1405,9 @@ html.on-welcome .trail { display: none; }
       b.textContent = 'Try Again';
     } else if (!state.loaded || state.spinning) {
       b.disabled = true;
+    } else if (pickIsStale()) {
+      b.disabled = !canSpin();
+      b.textContent = 'New Spin';
     } else if (roomOn() && r && r.pick && !r.locked) {
       var left = vetoesLeft(r, meName());
       b.disabled = left <= 0;
@@ -2525,6 +2529,7 @@ html.on-welcome .trail { display: none; }
   var landToken = 0;
   function land(w) {
     var token = ++landToken;
+    if (w !== state.pickFor) { state.pickFor = w; state.pickAnswers = answersSig(); }
     var wasSpinning = state.spinning;
     state.pick = w;
     state.spinning = false;
@@ -2557,6 +2562,7 @@ html.on-welcome .trail { display: none; }
 
   els.spin.addEventListener('click', function () {
     if (state.loadError) { load(); return; }
+    if (pickIsStale()) { freshSpin(); return; }
     if (roomOn()) { liveSpin(); return; }
     if (needsServer()) { soloServerSpin(); return; }
     spin();
@@ -3347,7 +3353,9 @@ html.on-welcome .trail { display: none; }
       });
       return;
     }
-    var more = els.dealBtn.getAttribute('data-more') === '1';
+    dealCards(els.dealBtn.getAttribute('data-more') === '1');
+  });
+  function dealCards(more) {
     els.dealBtn.disabled = true;
     liveCall('deal', spinParams(more ? { more: '1' } : {})).then(function (res) {
       els.dealBtn.disabled = false;
@@ -3359,7 +3367,7 @@ html.on-welcome .trail { display: none; }
         if (rd && rd.note) flash(noteText(rd.note));
       }
     });
-  });
+  }
 
   // --- starting points: yours goes to the other phone, theirs comes back ---
   function sendMyStart(force) {
@@ -4563,6 +4571,24 @@ html.on-welcome .trail { display: none; }
     if (history.state && history.state.dnr === 'play' && nav.idx > 0) history.back();
     else { showScreen('plan', { push: false }); showStep('home'); }
   });
+  // The halfway point moves on its own when the other phone's location updates, so like GPS
+  // and the group's middle it doesn't count; a place you typed does.
+  function answersSig() {
+    var pt = state.start === 'custom' ? state.custom && state.custom.point : null;
+    var lim = currentLimit();
+    return JSON.stringify([
+      state.start, pt ? [Math.round(pt.lat * 1000), Math.round(pt.lng * 1000)] : null,
+      lim, lim ? state.unit : '', state.moods.slice().sort(), state.src, state.open,
+      state.src === 'list' ? state.tags.slice().sort() : [], !!state.favOnly, !!state.includeBeen
+    ]);
+  }
+  // Changed an answer since the pick (or the deck) was made? Then Spin starts fresh.
+  function pickIsStale() { return !!state.pickAnswers && state.pickAnswers !== answersSig() && !!currentPick(); }
+  function deckIsStale() {
+    var rw = liveRound('swipe');
+    if (rw && rw.id !== state.deckFor) { state.deckFor = rw.id; state.deckAnswers = answersSig(); }
+    return !!rw && !!state.deckAnswers && state.deckAnswers !== answersSig();
+  }
   function currentPick() {
     if (!roomOn()) return state.pick ? { locked: false } : null;
     var r = liveRound('spin');
@@ -4572,15 +4598,17 @@ html.on-welcome .trail { display: none; }
     if (!els.goSpin) return;
     var cp = currentPick();
     var rw = liveRound('swipe');
+    var stale = pickIsStale();
     if (state.loadError) {
       els.goSpin.textContent = 'Try Again';
       els.goSpin.disabled = false;
     } else {
-      els.goSpin.textContent = cp ? (cp.locked ? 'See the Date' : 'See the Pick') : 'Spin';
-      els.goSpin.disabled = !cp && (!state.loaded || state.spinning || !canSpin());
+      els.goSpin.textContent = cp && !stale ? (cp.locked ? 'See the Date' : 'See the Pick') : 'Spin';
+      els.goSpin.disabled = (!cp || stale) && (!state.loaded || state.spinning || !canSpin());
     }
     els.goFresh.hidden = !cp || state.spinning || !state.loaded;
-    els.goSwipe.textContent = rw ? (rw.match ? 'See the Match' : 'Keep Swiping') : 'Swipe';
+    els.goFresh.textContent = stale ? (cp.locked ? 'See the date instead' : 'See the last pick instead') : 'Start a new spin instead';
+    els.goSwipe.textContent = rw && !deckIsStale() ? (rw.match ? 'See the Match' : 'Keep Swiping') : 'Swipe';
     els.goSwipe.disabled = !state.loaded;
     var n = state.range.length;
     els.goNote.textContent = state.loadError ? 'Couldn’t load your list.'
@@ -4612,13 +4640,24 @@ html.on-welcome .trail { display: none; }
   els.goSpin.addEventListener('click', function () {
     if (state.loadError) { load(); return; }
     var cp = currentPick();
+    if (cp && pickIsStale()) { freshSpin(); return; }
     if (!cp) els.ticket.hidden = true;   // no flash of an old ticket before the new spin
     showScreen('play');
     setMode('spin');
     if (!cp) setTimeout(function () { if (!els.spin.disabled) els.spin.click(); }, 60);
   });
-  // A fresh spin with what's picked now, instead of the pick you already have.
+  // Under the buttons: start fresh instead of the pick you have, or (after changing an
+  // answer) look at the last pick instead of spinning again.
   els.goFresh.addEventListener('click', function () {
+    if (pickIsStale()) {
+      showScreen('play');
+      setMode('spin');
+      return;
+    }
+    freshSpin();
+  });
+  // A new spin with the answers as they are now. It's a fresh start, not a veto.
+  function freshSpin() {
     showScreen('play');
     setMode('spin');
     state.out = [];
@@ -4636,14 +4675,17 @@ html.on-welcome .trail { display: none; }
     state.vetoesLeft = VETOES;
     state.spun = false;
     state.pick = null;
+    state.pickAnswers = '';
     els.ticket.hidden = true;
     refresh();
     setTimeout(function () { if (!els.spin.disabled) els.spin.click(); }, 60);
-  });
+  }
   els.goSwipe.addEventListener('click', function () {
     var had = liveRound('swipe');
+    var fresh = had && deckIsStale();
     showScreen('play');
     setMode('swipe');
+    if (fresh) { dealCards(false); return; }   // answers changed since this deck: deal a new one
     if (roomOn() && !had && !els.dealBtn.hidden && !els.dealBtn.disabled && !els.dealBtn.getAttribute('data-setup')) els.dealBtn.click();
   });
   function showLiveCard(msg) {
