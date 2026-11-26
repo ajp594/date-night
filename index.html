@@ -39,6 +39,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Date Night">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
+<script>
+  // Morgan's link (…/?pink): her home-screen icon is the pink one.
+  if (/[?&]pink(?:[=&]|$)/.test(location.search)) {
+    document.querySelector('link[rel="manifest"]').href = 'manifest-pink.webmanifest';
+    document.querySelector('link[rel="apple-touch-icon"]').href = 'apple-touch-icon-pink.png';
+    document.querySelector('link[rel="icon"]').href = 'icon-192-pink.png';
+    document.querySelector('meta[name="theme-color"]').content = '#1e0a0e';
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;600;700&display=swap">
@@ -226,12 +235,12 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .add button:disabled { opacity: 0.5; cursor: wait; }
 .add button:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 
-/* Pink version (Morgan's phone, or anyone's from Settings) */
+/* Pink version (Morgan's phone, or anyone's from Settings): a warm rose pink on dark wine */
 :root.theme-pink {
-  --night: #1c0715; --velvet: #320f27; --velvet-2: #47163a;
-  --ivory: #fff0f6; --ivory-rgb: 255, 240, 246; --dusk: #dca4c4;
-  --bulb: #ff70b0; --bulb-rgb: 255, 112, 176; --on-bulb: #2c0619;
-  --stub: #ffe3ef; --stub-ink: #8e1352; --rule: rgba(255, 240, 246, 0.15);
+  --night: #1e0a0e; --velvet: #37151d; --velvet-2: #4d1f2a;
+  --ivory: #fff1ef; --ivory-rgb: 255, 241, 239; --dusk: #e2a9ae;
+  --bulb: #ff879b; --bulb-rgb: 255, 135, 155; --on-bulb: #2e0a10;
+  --stub: #ffe7e5; --stub-ink: #a32a43; --rule: rgba(255, 241, 239, 0.15);
 }
 
 /* Header tools and presence */
@@ -951,11 +960,12 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     <div class="set-group"><h3>Look</h3><div class="chips" id="setTheme"></div></div>
     <div class="set-group"><h3>Skip places we went to in the last</h3><div class="chips" id="setSkip"></div><p class="hint" id="setSkipNote" hidden></p></div>
     <div class="set-group"><h3>Live mode</h3><p class="hint" id="setLive"></p><div><button type="button" class="linkish" id="setLiveBtn"></button></div></div>
+    <div class="set-group"><h3>Notifications</h3><p class="hint" id="setPush"></p><div><button type="button" class="linkish" id="setPushBtn" hidden></button></div></div>
     <div class="set-group"><h3>Google info</h3><p class="hint" id="setGoogle"></p></div>
     <div class="set-group about">
       <h3>About</h3>
       <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
-      <p class="foot">Version: Nov 26, 2:12 AM</p>
+      <p class="foot">Version: Nov 26, 2:55 AM</p>
       <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
     </div>
     <div class="set-group set-lists">
@@ -1066,6 +1076,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     rateSheet: $('rateSheet'), rateForm: $('rateForm'), rateName: $('rateName'), starPick: $('starPick'), rateNote: $('rateNote'),
     ratePartner: $('ratePartner'), rateSave: $('rateSave'), rateMsg: $('rateMsg'),
     settingsSheet: $('settingsSheet'), setWho: $('setWho'), setTheme: $('setTheme'), setSkip: $('setSkip'),
+    setPush: $('setPush'), setPushBtn: $('setPushBtn'),
     setSkipNote: $('setSkipNote'), setLive: $('setLive'), setLiveBtn: $('setLiveBtn'), setGoogle: $('setGoogle'),
     sources: $('sources'), moodBtn: $('moodBtn'), tagBtn: $('tagBtn'), hoursBtn: $('hoursBtn'), filterHint: $('filterHint'),
     moodGrid: $('moodGrid'), tagSheet: $('tagSheet'), tagChips: $('tagChips'),
@@ -1099,7 +1110,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   // Inside Apps Script the page uses google.script.run. Hosted anywhere else
   // (like GitHub Pages) it calls the web app's JSON feed at APP_URL instead.
   var API_NAMES = { getPlaces: 'places', addList: 'add', removeList: 'remove', findHalfway: 'halfway', driveTimes: 'drive', live: 'live',
-    group: 'group', info: 'info', pick: 'pick', tagName: 'tagname' };
+    group: 'group', info: 'info', pick: 'pick', tagName: 'tagname', pushKey: 'pushkey' };
   var ACCESS_HINT = 'your app link didn’t answer. Check that it ends in /exec and that Who has access is set to Anyone';
   var savedAppUrl = '';
   function appUrl() { return String(window.APP_URL || store.get('appUrl') || savedAppUrl || '').trim(); }
@@ -1819,6 +1830,9 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   // Whose phone this is (0 or 1), so texting can say "I" and name the other person.
   // Picked once, or worked out the first time someone taps Here or opens a texted link.
   state.me = store.get('me') === '0' ? 0 : store.get('me') === '1' ? 1 : null;
+  // Morgan's link (…/?pink) sets up her phone: pink, with her name already picked (she can switch).
+  var PINK_LINK = /[?&]pink(?:[=&]|$)/.test(location.search);
+  if (state.me === null && PINK_LINK) { state.me = 1; store.set('me', '1'); }
   function setMe(i) {
     var changed = state.me !== i;
     state.me = i;
@@ -2840,6 +2854,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       if (onWelcome) setTimeout(function () { live.justConnected = 0; renderLiveCard(); }, 1600);
       sendMyStart(true);
       schedulePoll(1500);
+      pushSync();
     }, function (err) {
       els.liveBtn.disabled = false;
       liveMsg('Couldn’t connect: ' + errText(err), true);
@@ -3679,12 +3694,13 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
 
   // --- settings ---
   function applyTheme() {
-    var t = store.get('theme') || (state.me === 1 ? 'pink' : 'marquee');
+    var t = store.get('theme') || (state.me === 1 || PINK_LINK ? 'pink' : 'marquee');
     document.documentElement.classList.toggle('theme-pink', t === 'pink');
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', t === 'pink' ? '#1c0715' : '#160a10');
+    if (meta) meta.setAttribute('content', t === 'pink' ? '#1e0a0e' : '#160a10');
   }
   function renderSettings() {
+    renderPushSetting();
     els.setWho.innerHTML = '';
     PEOPLE.forEach(function (n, i) {
       els.setWho.appendChild(chip('setwho', String(i), n + '’s', state.me === i, function () { setMe(i); renderSettings(); }));
@@ -3712,6 +3728,147 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     els.setGoogle.textContent = !g.on
       ? 'Off. With a Google Places key in the script (PLACES_KEY), tickets show photos, stars and hours, and moods, hours checks and Anywhere on Google turn on.'
       : 'On. Left this month before the free amount runs out: ' + (g.left ? g.left.photo + ' photos, ' + g.left.info + ' tickets, ' + g.left.details + ' cards or hours checks.' : 'plenty.');
+  }
+  // ---------- Notifications ----------
+  // The app's service worker (sw.js, next to this page) shows what the script sends. Turning them on
+  // here hands the script this phone's push address, for the two of you and for a group date.
+  var push = { reg: null, sub: null, busy: false, note: '', noWorker: false };
+  var PUSH_HOME = location.protocol === 'https:' && !/googleusercontent\.com$/.test(location.hostname) && 'serviceWorker' in navigator;
+  var PUSH_OK = PUSH_HOME && 'PushManager' in window && 'Notification' in window;
+  function standalone() {
+    return window.navigator.standalone === true || !!(window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  }
+  function pushState() {
+    if (!PUSH_OK) return /iPhone|iPad|iPod/.test(navigator.userAgent) && !standalone() ? 'ios' : 'none';
+    if (push.noWorker) return 'noworker';
+    if (!live.code && !group.code) return 'alone';
+    if (Notification.permission === 'denied') return 'blocked';
+    return push.sub && store.get('pushOn') === '1' ? 'on' : 'off';
+  }
+  function pushWho() {
+    var bits = [];
+    if (live.code && state.me !== null) bits.push(PEOPLE[1 - state.me]);
+    if (group.code) bits.push('someone in your group date');
+    return bits.join(' or ') || 'the other phone';
+  }
+  function renderPushSetting() {
+    if (!els.setPush) return;
+    var s = pushState();
+    var says = {
+      ios: 'On iPhone, open Date Night from its Home Screen icon, then turn them on there.',
+      none: 'This browser can’t show notifications from the app.',
+      noworker: 'Notifications need the sw.js file on the site, next to index.html.',
+      alone: 'Connect live mode or join a group date first.',
+      blocked: 'Notifications are blocked for Date Night. Allow them in your phone’s settings, then come back here.',
+      off: 'Get a buzz when ' + pushWho() + ' spins, deals cards, taps I’m In, or it’s a date.',
+      on: 'On: a buzz when ' + pushWho() + ' spins, deals cards, taps I’m In, or it’s a date (not while the app is open).'
+    }[s];
+    els.setPush.textContent = says + (push.note ? ' ' + push.note : '');
+    els.setPushBtn.hidden = s !== 'on' && s !== 'off';
+    els.setPushBtn.textContent = push.busy ? 'One moment…' : s === 'on' ? 'Turn off' : 'Turn on notifications';
+    els.setPushBtn.disabled = push.busy;
+  }
+  function pushKeyBytes(b64) {
+    var s = String(b64).replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    var raw = atob(s), out = new Uint8Array(raw.length);
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+  function workerReady() {
+    if (push.reg) return Promise.resolve(push.reg);
+    return Promise.race([navigator.serviceWorker.ready, new Promise(function (resolve, reject) {
+      setTimeout(function () { reject(new Error('the sw.js file isn’t on the site yet')); }, 8000);
+    })]);
+  }
+  function pushMark() { return (push.sub && push.sub.endpoint) + '|' + (live.code ? state.me : '') + '|' + (group.code || ''); }
+  /** Hands this phone's push address to the script: the two of you, and the group date if there is one. */
+  function pushSend(test) {
+    if (!push.sub) return Promise.resolve(null);
+    var p = { sub: JSON.stringify(push.sub.toJSON ? push.sub.toJSON() : push.sub), site: location.origin + location.pathname };
+    if (!test) p.quiet = '1';
+    var calls = [];
+    if (live.code && state.me !== null) calls.push(liveCall('push', p));
+    if (group.code && group.mid) calls.push(groupCall('push', p));
+    return Promise.all(calls).then(function (rs) {
+      var ok = rs.filter(function (r) { return r && r.ok; });
+      if (rs.length && ok.length === rs.length) store.set('pushSent', pushMark());
+      return ok[0] || rs[0] || null;
+    });
+  }
+  function pushOn() {
+    push.busy = true;
+    push.note = '';
+    renderPushSetting();
+    // Asked right away, while the tap still counts (iPhone only asks from a tap).
+    var asked = Notification.permission === 'granted' ? 'granted' : Notification.requestPermission();
+    Promise.resolve(asked).then(function (perm) {
+      if (perm !== 'granted') throw new Error(perm === 'denied' ? 'blocked' : 'skipped');
+      return Promise.all([workerReady(), callServer('pushKey')]);
+    }).then(function (r) {
+      if (!r[1] || !r[1].key) throw new Error((r[1] && r[1].error) || 'the script didn’t answer');
+      push.reg = r[0];
+      return r[0].pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: pushKeyBytes(r[1].key) });
+    }).then(function (sub) {
+      push.sub = sub;
+      store.set('pushOn', '1');
+      return pushSend(true);
+    }).then(function (res) {
+      var t = res && res.test;
+      push.note = !res || !res.ok ? 'Couldn’t save it: ' + ((res && res.error) || 'no answer') + '.'
+        : !t ? ''
+        : t.ok ? 'A test notification is on its way.'
+        : 'The test didn’t go through (' + (t.said || 'error ' + t.code) + ').';
+    }, function (err) {
+      var m = err && err.message;
+      push.note = m === 'blocked' ? '' : m === 'skipped' ? 'Tap Allow when your phone asks.' : 'Couldn’t turn them on: ' + errText(err) + '.';
+    }).then(function () {
+      push.busy = false;
+      renderPushSetting();
+    });
+  }
+  function pushOff() {
+    var sub = push.sub, ep = sub && sub.endpoint;
+    push.busy = true;
+    push.note = '';
+    renderPushSetting();
+    store.set('pushOn', '0');
+    var calls = [];
+    if (ep && live.code) calls.push(liveCall('unpush', { e: ep }));
+    if (ep && group.code) calls.push(groupCall('unpush', { e: ep }));
+    if (sub) calls.push(sub.unsubscribe().catch(function () {}));
+    Promise.all(calls).catch(function () {}).then(function () {
+      push.sub = null;
+      store.set('pushSent', '');
+      push.busy = false;
+      renderPushSetting();
+    });
+  }
+  els.setPushBtn.addEventListener('click', function () { if (pushState() === 'on') pushOff(); else pushOn(); });
+  /** On opening, connecting, or joining a group: make sure the script has this phone's current address. */
+  function pushSync() {
+    if (!PUSH_OK || store.get('pushOn') !== '1' || Notification.permission !== 'granted' || !push.reg) return;
+    var got = push.sub ? Promise.resolve(push.sub) : callServer('pushKey').then(function (r) {
+      // The phone dropped its address (that happens); it's allowed already, so make a new one.
+      return push.reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: pushKeyBytes(r.key) });
+    });
+    got.then(function (sub) {
+      push.sub = sub;
+      if (store.get('pushSent') !== pushMark()) return pushSend(false);
+    }).catch(function () {}).then(renderPushSetting);
+  }
+  if (PUSH_HOME) {
+    navigator.serviceWorker.register('sw.js').then(function (reg) {
+      push.reg = reg;
+      return reg.pushManager ? reg.pushManager.getSubscription() : null;
+    }).then(function (sub) {
+      push.sub = sub || null;
+      pushSync();
+      renderPushSetting();
+    }).catch(function () {
+      push.noWorker = true;   // sw.js missing from the site
+      renderPushSetting();
+    });
   }
   els.settingsBtn.addEventListener('click', function () { renderSettings(); els.settingsSheet.showModal(); });
   els.setLiveBtn.addEventListener('click', function () {
@@ -4206,6 +4363,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     if (res.night) live.night = res.night;
     if (res.state) { group.state = res.state; group.v = res.v; }
     if (!was) {
+      setTimeout(pushSync, 0);    // notifications on? the group gets this phone's address too
       clearTimeout(live.timer);   // the two of you pick up again after the group date
       live.shownSeq = '';
       live.roundSeen = '';
