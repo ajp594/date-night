@@ -3,6 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+  // Android Chrome (135+) covers the gesture bar with a strip that only slides away when the page
+  // scrolls, and this page never scrolls, so the bottom buttons could end up underneath it. Going
+  // edge to edge removes the strip; the page keeps clear of the system bars with the safe-area insets.
+  if (/Android/i.test(navigator.userAgent)) document.querySelector('meta[name="viewport"]').content += ', viewport-fit=cover';
+</script>
 <title>Date Night Roulette</title>
 <script>
   // Paste your Apps Script web app link (it ends in /exec) between the quotes:
@@ -1162,7 +1168,8 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   var lastUsed = Number(store.get('lastUsed') || 0);
   var freshStart = !lastUsed || Date.now() - lastUsed > SESSION_GAP;
   state.unpicked = { start: false, far: false };
-  if (freshStart) {
+  /** Every answer back to blank: questions 1 and 2 unpicked, the rest at their usual settings. */
+  function blankAnswers() {
     state.unpicked = { start: true, far: true };
     state.start = store.get('grpCode') && store.get('grpMid') ? 'middle' : 'gps';
     state.minutes = 20;
@@ -1174,6 +1181,10 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     state.favOnly = false;
     [['start', state.start], ['minutes', '20'], ['radius', String(state.radius)], ['moods', ''], ['src', 'list'], ['open', ''], ['tags', '[]'], ['favOnly', '0']]
       .forEach(function (kv) { store.set(kv[0], kv[1]); });
+    store.set('unpicked', JSON.stringify(state.unpicked));
+  }
+  if (freshStart) {
+    blankAnswers();
   } else {
     try { var up = JSON.parse(store.get('unpicked') || 'null'); if (up) state.unpicked = { start: !!up.start, far: !!up.far }; } catch (e) {}
   }
@@ -2642,11 +2653,16 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     if (needsServer()) { soloServerSpin(); return; }
     spin();
   });
+  // Start over: clears the pick and vetoes (on every phone in the round), then this phone goes
+  // back to a blank question 1, the same as opening the app on a new night.
   els.reset.addEventListener('click', function () {
     state.out = [];
     if (roomOn()) {
+      els.reset.disabled = true;
       liveCall('reset').then(function (res) {
-        if (res && res.ok) { state.pick = null; els.ticket.hidden = true; state.spun = false; refresh(); }
+        els.reset.disabled = false;
+        if (res && res.ok) { state.pick = null; els.ticket.hidden = true; state.spun = false; startFresh(); }
+        else flash((res && res.error) || 'Couldn’t start over. Try again.', true);
       });
       return;
     }
@@ -2654,8 +2670,23 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     state.spun = false;
     state.pick = null;
     els.ticket.hidden = true;
-    refresh();
+    startFresh();
   });
+  function startFresh() {
+    blankAnswers();
+    state.pickAnswers = '';
+    state.walk = true;
+    store.set('walk', '1');
+    setHint('');
+    renderChips();
+    renderMoodSheet();
+    renderMeet();
+    renderCustom();
+    renderGroupBits();
+    if (state.start === 'gps' || state.start === 'middle') requestGps();
+    refresh();
+    toFirstQuestion();
+  }
 
   // ---------- Live mode: both phones together ----------
   // With the same passcode, both phones check in with Apps Script every couple of seconds.
@@ -4490,7 +4521,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   state.screen = 'plan';
   var STEPS = ['start', 'far', 'mood', 'more', 'home'];
   var QS = { welcome: els.qWelcome, start: els.qStart, far: els.qFar, mood: els.qMood, more: els.qMore, home: els.qHome };
-  var nav = { idx: 0, homeIdx: null, timer: null, guard: null };
+  var nav = { idx: 0, homeIdx: null, timer: null, guard: null, rewind: null };
   state.step = '';
   state.walk = freshStart || store.get('walk') === '1';
   function showStep(step, opts) {
@@ -4554,6 +4585,30 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       } catch (e) {}
     }
     showStep('home', { push: true });
+  }
+  function toFirstQuestion() {
+    var land = function () {
+      nav.rewind = null;
+      clearTimeout(nav.guard);
+      nav.idx = 0;
+      nav.homeIdx = null;
+      try { history.replaceState({ dnr: 'step', step: 'start', idx: 0 }, ''); } catch (e) {}
+      showScreen('plan', { push: false });
+      showStep('start');
+    };
+    if (nav.idx > 0 && history.state && history.state.dnr) {
+      nav.rewind = land;   // the back-step's popstate lands it
+      clearTimeout(nav.guard);
+      nav.guard = setTimeout(function () {
+        if (!nav.rewind) return;
+        land();
+        nav.rewind = land;   // a late popstate lands it again
+        setTimeout(function () { if (nav.rewind === land) nav.rewind = null; }, 2000);
+      }, 450);
+      try { history.go(-nav.idx); } catch (e) { land(); }
+      return;
+    }
+    land();
   }
   function leaveWelcome() {
     if (state.step !== 'welcome') return;
@@ -4645,6 +4700,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   // The phone's back gesture steps back through the questions and from Play to Spin or Swipe.
   window.addEventListener('popstate', function (e) {
     clearTimeout(nav.guard);
+    if (nav.rewind) { var land = nav.rewind; nav.rewind = null; land(); return; }
     var st = e.state;
     if (!st || !st.dnr) {
       if (state.screen === 'play') showScreen('plan', { push: false });
