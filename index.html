@@ -572,6 +572,27 @@ html.on-welcome .trail { display: none; }
 .sum-chip .v::after { content: none; }
 .sum-chip.is-set .v { color: var(--bulb); }
 .sum-chip.is-warn .v { color: var(--warn); }
+/* A chosen-places group date: just where you're starting, then Go. */
+.trail.picks .pip[data-go="far"], .trail.picks .pip[data-go="mood"], .trail.picks .pip[data-go="more"] { display: none; }
+html.picks-mode #sumFar, html.picks-mode #moodBtn, html.picks-mode #srcBtn, html.picks-mode #hoursBtn, html.picks-mode #tagBtn { display: none; }
+.pool-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pool-choice[hidden] { display: none; }
+.pool-choice label { position: relative; display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 12px; color: var(--ivory); font-size: 0.92rem; font-weight: 700; cursor: pointer; }
+.pool-choice label small { font-size: 0.76rem; font-weight: 500; color: var(--dusk); }
+.pool-choice input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.pool-choice label:has(input:checked) { border-color: var(--bulb); box-shadow: inset 0 0 0 1px var(--bulb); }
+.pool-choice label:has(input:checked) small { color: rgba(var(--ivory-rgb), 0.8); }
+.pool-choice label:has(input:focus-visible) { outline: 2px solid var(--bulb); outline-offset: 2px; }
+.group-pool { display: grid; gap: 8px; justify-items: start; }
+.group-pool .hint { margin: 0; }
+.picks-admin { display: grid; gap: 10px; justify-items: start; }
+.picks-admin[hidden], .picks-find[hidden] { display: none; }
+.check { display: flex; gap: 10px; align-items: center; font-size: 0.9rem; cursor: pointer; }
+.check input { width: 20px; height: 20px; margin: 0; accent-color: var(--bulb); }
+.picks-find { display: grid; gap: 8px; }
+.picks-find input { padding: 11px 12px; border: 1px solid var(--rule); border-radius: 10px; background: rgba(var(--ivory-rgb), 0.06); color: var(--ivory); font: 400 1rem var(--body); }
+.picks-h { margin: 4px 0 0; font: 600 0.72rem/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dusk); }
+.mini.is-on { border-color: var(--bulb); color: var(--bulb); }
 .sum-chip:active { transform: scale(0.98); }
 .sum-chip:focus-visible { outline: 2px solid var(--bulb); outline-offset: 2px; }
 .sum-tip { margin: -4px 0 0; font-size: 0.78rem; color: var(--dusk); text-align: center; }
@@ -822,6 +843,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     </section>
     <div class="sum" id="sumGrid">
       <button type="button" class="sum-chip" id="sumStart" data-go="start"></button>
+      <button type="button" class="sum-chip" id="sumPicks" hidden></button>
       <button type="button" class="sum-chip" id="sumFar" data-go="far"></button>
       <button type="button" class="sum-chip" id="moodBtn" data-go="mood"></button>
       <button type="button" class="sum-chip" id="srcBtn" data-go="more" hidden></button>
@@ -965,7 +987,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     <div class="set-group about">
       <h3>About</h3>
       <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
-      <p class="foot">Version: Nov 26, 2:55 AM</p>
+      <p class="foot">Version: Nov 26, 11:07 PM</p>
       <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
     </div>
     <div class="set-group set-lists">
@@ -1027,6 +1049,10 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       <input id="groupName" autocomplete="given-name" maxlength="24" placeholder="Your name">
       <label for="groupCode">Joining someone’s group? Their code</label>
       <input id="groupCode" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="8" placeholder="Leave empty to start one">
+      <div class="pool-choice" id="groupPoolChoice" role="radiogroup" aria-label="Where the group picks from">
+        <label><input type="radio" name="groupPool" value="near" checked>The usual way<small>Places near the middle</small></label>
+        <label><input type="radio" name="groupPool" value="picks">Chosen places<small>You pick the restaurants</small></label>
+      </div>
       <div><button type="submit" class="find" id="groupGo">Start a Group Date</button></div>
       <p class="hint is-warn" id="groupMsg" hidden></p>
     </form>
@@ -1034,9 +1060,29 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       <p class="group-code">Code<strong id="groupCodeShow"></strong></p>
       <div><button type="button" class="find" id="groupShare">Share the Invite Link</button></div>
       <p class="hint" id="groupShareMsg" hidden></p>
+      <div class="group-pool"><p class="hint" id="groupPoolLine"></p><button type="button" class="mini" id="groupPicksBtn" hidden></button></div>
       <ul class="rows" id="groupPeople"></ul>
       <div><button type="button" class="linkish" id="groupLeave">Leave this group date</button></div>
     </div>
+  </div>
+</dialog>
+
+<dialog class="sheet" id="picksSheet" aria-labelledby="picksHead">
+  <div class="sheet-in">
+    <div class="sheet-head"><h2 id="picksHead">Chosen Places</h2><button type="button" class="linkish" data-close>Done</button></div>
+    <p class="hint" id="picksIntro"></p>
+    <div class="picks-admin" id="picksAdmin" hidden>
+      <label class="check"><input type="checkbox" id="picksAnyone"><span>Let everyone in the group add places</span></label>
+      <button type="button" class="linkish" id="picksPool"></button>
+    </div>
+    <div class="picks-find" id="picksFind" hidden>
+      <input id="picksQ" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Search your list by name">
+      <ul class="rows" id="picksResults"></ul>
+      <div><button type="button" class="mini" id="picksGoogle" hidden></button></div>
+    </div>
+    <p class="hint is-warn" id="picksMsg" hidden></p>
+    <h3 class="picks-h" id="picksCount"></h3>
+    <ul class="rows" id="picksList"></ul>
   </div>
 </dialog>
 
@@ -1088,7 +1134,10 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     gmHere: $('gmHere'), gmMsg: $('gmMsg'), groupSheet: $('groupSheet'), groupIntro: $('groupIntro'), groupForm: $('groupForm'),
     groupName: $('groupName'), groupCode: $('groupCode'), groupGo: $('groupGo'), groupMsg: $('groupMsg'), groupIn: $('groupIn'),
     groupCodeShow: $('groupCodeShow'), groupShare: $('groupShare'), groupShareMsg: $('groupShareMsg'), groupPeople: $('groupPeople'),
-    groupLeave: $('groupLeave'),
+    groupLeave: $('groupLeave'), groupPoolChoice: $('groupPoolChoice'), groupPoolLine: $('groupPoolLine'), groupPicksBtn: $('groupPicksBtn'),
+    sumPicks: $('sumPicks'), picksSheet: $('picksSheet'), picksIntro: $('picksIntro'), picksAdmin: $('picksAdmin'), picksAnyone: $('picksAnyone'),
+    picksPool: $('picksPool'), picksFind: $('picksFind'), picksQ: $('picksQ'), picksResults: $('picksResults'), picksGoogle: $('picksGoogle'),
+    picksMsg: $('picksMsg'), picksCount: $('picksCount'), picksList: $('picksList'),
     planScreen: $('planScreen'), playScreen: $('playScreen'), goNote: $('goNote'), goSpin: $('goSpin'), goSwipe: $('goSwipe'),
     goFresh: $('goFresh'), backBtn: $('backBtn'), playSum: $('playSum'),
     stepNav: $('stepNav'), qWelcome: $('qWelcome'), qStart: $('qStart'), qFar: $('qFar'), qMood: $('qMood'), qMore: $('qMore'), qHome: $('qHome'),
@@ -1531,6 +1580,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   function vetoesLeft(r, n) { return r && r.vetoes && typeof r.vetoes[n] === 'number' ? r.vetoes[n] : VETOES_EACH; }
   // Google picks need a place to search around; list picks need something in range.
   function canSpin() {
+    if (picksMode()) return groupPicks().length > 0;
     if (waitingForGps()) return false;
     return state.src === 'google' ? !!origin() : state.range.length > 0;
   }
@@ -3299,9 +3349,9 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     var outs = others();
     var all = group.on ? 'you all' : 'you both';
     if (!r) {
-      swipeEmpty('Swipe together', 'Deal a deck of places in range. Everyone swipes on their own phone, and the first place ' + all + ' like wins.');
+      swipeEmpty('Swipe together', 'Deal a deck of ' + (picksMode() ? 'the chosen places' : 'places in range') + '. Everyone swipes on their own phone, and the first place ' + all + ' like wins.');
       els.dealBtn.textContent = 'Deal Cards';
-      els.dealBtn.disabled = !state.loaded || waitingForGps() || (state.src === 'google' && !origin());
+      els.dealBtn.disabled = !state.loaded || (picksMode() ? !groupPicks().length : waitingForGps() || (state.src === 'google' && !origin()));
       swipeMsg(waitingForGps() ? 'Set where you’re starting first.' : '');
       return;
     }
@@ -3316,7 +3366,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     var mine = {};
     Object.keys(r.mine || {}).forEach(function (k) { mine[k] = r.mine[k]; });
     Object.keys(live.swiped).forEach(function (k) { mine[k] = live.swiped[k]; });
-    var left = r.deck.filter(function (c) { return !(c.key in mine); });
+    var left = myOrder(r, r.deck.filter(function (c) { return !(c.key in mine); }));
     var n = r.deck.length;
     var count = function (o) { return Math.min((r.counts && r.counts[o]) || 0, n); };
     var parts = ['You: ', { b: (n - left.length) + ' of ' + n }];
@@ -3356,6 +3406,19 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       els.deck.appendChild(makeCard(left[0], n - left.length + 1, n, false));
       els.deck.setAttribute('data-top', left[0].key);
     }
+  }
+  // Everyone gets the deck in their own random order, the same each time they look at this round.
+  // (More cards only come once everyone's through the deck, so nothing jumps ahead mid-swipe.)
+  function myOrder(r, cards) {
+    var seed = r.id + '|' + (meName() || '');
+    var hash = function (s) {
+      var h = 2166136261;
+      for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+      return h >>> 0;
+    };
+    return cards.map(function (c) { return { c: c, h: hash(seed + '|' + c.key) }; })
+      .sort(function (a, b) { return a.h - b.h; })
+      .map(function (x) { return x.c; });
   }
   function makeCard(c, at, n, under) {
     var el = document.createElement('div');
@@ -3945,6 +4008,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   }
   // While Google picks, the reel flips through the moods instead of your list's names.
   function tickNames(r) {
+    if (r ? r.src === 'picks' : picksMode()) return groupPicks().map(function (pl) { return pl.n; });
     var src = r ? r.src : state.src;
     if (src !== 'google') return null;
     var moods = ((r ? r.moods : state.moods) || []).map(moodById).filter(Boolean);
@@ -4413,16 +4477,20 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     schedGroupPoll(1500);
     renderGroupSheet();
   }
+  function coupleCreds() { return live.code && state.me !== null ? { lc: live.code, lw: coupleName() } : {}; }
   function startGroup(name) {
     els.groupGo.disabled = true;
     groupMsg('Starting…');
-    callServer('group', { op: 'create', name: name }).then(function (res) {
+    var chosen = els.groupForm.querySelector('input[name="groupPool"]:checked');
+    var pool = chosen && chosen.value === 'picks' ? 'picks' : 'near';
+    callServer('group', Object.assign({ op: 'create', name: name, pool: pool }, coupleCreds())).then(function (res) {
       els.groupGo.disabled = false;
       if (!res || !res.ok) { groupMsg((res && res.error) || 'Couldn’t start a group date.', true); return; }
       joined(res);
       if (live.on) liveCall('settings', { group: group.code });   // so the other phone can join with one tap
       els.groupShareMsg.hidden = false;
       els.groupShareMsg.textContent = 'Send the invite link to everyone coming. They’ll add their name and where they’re starting.';
+      if (pool === 'picks') { els.groupSheet.close(); openPicks(); }   // first, the places
     }, function (err) {
       els.groupGo.disabled = false;
       groupMsg('Couldn’t start a group date: ' + errText(err), true);
@@ -4433,7 +4501,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     els.groupGo.disabled = true;
     groupMsg('Joining…');
     var mid = code === store.get('grpCode') ? store.get('grpMid') || '' : '';
-    callServer('group', { op: 'join', code: code, name: name, mid: mid }).then(function (res) {
+    callServer('group', Object.assign({ op: 'join', code: code, name: name, mid: mid }, coupleCreds())).then(function (res) {
       els.groupGo.disabled = false;
       if (!res || !res.ok) {
         groupMsg(res && res.error === 'GONE' ? 'There’s no group date with that code. It may have ended (they last a day and a half).'
@@ -4519,13 +4587,16 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       var names = (st.members || []).map(function (m) { return m.name === meName() ? 'you' : m.name; });
       if (names.indexOf('you') > 0) names = ['you'].concat(names.filter(function (x) { return x !== 'you'; }));
       var line = namesText(names);
-      els.gcLine.textContent = n <= 1 ? 'Just you so far. Invite everyone who’s coming.'
-        : line.charAt(0).toUpperCase() + line.slice(1) + ' are in. Spins and swipes are shared with everyone here.';
+      var np = groupPicks().length;
+      els.gcLine.textContent = (n <= 1 ? 'Just you so far. Invite everyone who’s coming.'
+        : line.charAt(0).toUpperCase() + line.slice(1) + ' are in.') +
+        (picksMode() ? ' Spinning from ' + np + ' chosen place' + (np === 1 ? '' : 's') + '.' : n <= 1 ? '' : ' Spins and swipes are shared with everyone here.');
       els.gcMain.textContent = 'Invite Friends';
       els.gcSecond.textContent = 'Leave';
       els.gcMain.setAttribute('data-act', 'invite');
     }
     els.groupMeet.hidden = !(group.on && state.start === 'middle');
+    renderPicksBits();
     if (!group.on) return;
     els.gmPeople.innerHTML = '';
     // A big group shows four, then a button for the rest, so the Plan screen stays short.
@@ -4603,11 +4674,162 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     els.groupBtn.classList.toggle('on', group.on);
     els.groupBtn.title = group.on ? 'Your group date' : 'Group date';
   }
+  // ---------- Chosen places ----------
+  // A group date can spin and swipe from places picked on purpose instead of places near the middle.
+  // Alec's and Morgan's phones (and whoever started it) choose; everyone else can too when that's allowed.
+  function picksMode() { return group.on && !!group.state && group.state.pool === 'picks'; }
+  function groupPicks() { return (group.on && group.state && group.state.picks) || []; }
+  function groupAdmins() {
+    return ((group.state && group.state.members) || []).filter(function (m) { return m.admin; }).map(function (m) { return m.name; });
+  }
+  function amAdmin() { return group.on && groupAdmins().indexOf(meName()) >= 0; }
+  function canPick() { return amAdmin() || !!(group.on && group.state && group.state.anyone); }
+  var picks = { q: '', google: [], gq: '', busy: false };
+  function picksMsg(t) { els.picksMsg.hidden = !t; els.picksMsg.textContent = t || ''; }
+  function openPicks() {
+    picks.q = '';
+    picks.google = [];
+    picks.gq = '';
+    els.picksQ.value = '';
+    picksMsg('');
+    renderPicks();
+    els.picksSheet.showModal();
+  }
+  function renderPicksBits() {
+    var on = picksMode();
+    document.documentElement.classList.toggle('picks-mode', on);
+    els.stepNav.classList.toggle('picks', on);
+    els.sumPicks.hidden = !on;
+    if (on) {
+      var n = groupPicks().length;
+      pillText(els.sumPicks, 'Chosen places', n ? '⭐ ' + n + ' place' + (n === 1 ? '' : 's') : '⭐ None yet', false);
+      els.sumPicks.classList.toggle('is-warn', !n);
+    }
+    if (els.picksSheet.open) renderPicks();
+  }
+  function isPicked(key) { return groupPicks().some(function (x) { return x.key === key; }); }
+  function pickRow(pl, act) {
+    var li = document.createElement('li');
+    var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = pl.n;
+    var where = townOf(pl.a) || pl.a || '';
+    var sub = document.createElement('span'); sub.className = 'sub';
+    sub.textContent = where + (pl.g ? (where ? ' · ' : '') + 'not on your list' : pl.saved ? (where ? ' · ' : '') + 'on your list' : '');
+    li.appendChild(nm);
+    li.appendChild(sub);
+    if (act) {
+      var acts = document.createElement('span'); acts.className = 'acts';
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = act.cls;
+      b.textContent = act.text;
+      b.disabled = picks.busy;
+      b.addEventListener('click', act.fn);
+      acts.appendChild(b);
+      li.appendChild(acts);
+    }
+    return li;
+  }
+  function addOrRemove(pl) {
+    var inn = isPicked(pl.key);
+    return { text: inn ? 'Added ✓' : 'Add', cls: inn ? 'mini is-on' : 'mini', fn: function () { if (inn) pickDel(pl); else pickAdd(pl); } };
+  }
+  /** Places on your list whose name (or address) has every word you typed; names that start with it first. */
+  function searchList(q) {
+    var words = q.split(/\s+/).filter(Boolean);
+    var hits = [];
+    state.places.forEach(function (pl) {
+      var name = (pl.n || '').toLowerCase(), addr = (pl.a || '').toLowerCase();
+      if (!words.every(function (w) { return name.indexOf(w) >= 0 || addr.indexOf(w) >= 0; })) return;
+      hits.push({ pl: pl, s: name.indexOf(q) === 0 ? 0 : name.indexOf(q) > 0 ? 1 : 2 });
+    });
+    hits.sort(function (a, b) { return a.s - b.s || a.pl.n.localeCompare(b.pl.n); });
+    return hits.map(function (x) { return { key: keyOf(x.pl), n: x.pl.n, a: x.pl.a, lat: x.pl.lat, lng: x.pl.lng }; });
+  }
+  function renderPicks() {
+    var list = groupPicks(), can = canPick(), admin = amAdmin(), on = picksMode();
+    var who = namesText(groupAdmins()) || 'Whoever started it';
+    els.picksIntro.textContent = !on
+      ? 'This group date spins and swipes from places near the middle.' + (admin ? ' Switch to chosen places to pick exactly where.' : '')
+      : can ? 'Pick where this group date can go. Spins and swipes come only from these, near or far, whatever the mood.'
+      : who + ' chose these. Spins and swipes come only from them.';
+    els.picksAdmin.hidden = !admin;
+    if (!picks.busy) els.picksAnyone.checked = !!(group.state && group.state.anyone);   // (not while a tap is on its way)
+    els.picksAnyone.disabled = picks.busy;
+    els.picksAnyone.parentNode.hidden = !on;
+    els.picksPool.textContent = on ? 'Use the usual way instead (places near the middle)' : 'Use chosen places instead';
+    els.picksFind.hidden = !can || !on;
+    els.picksResults.innerHTML = '';
+    var q = picks.q.trim().toLowerCase();
+    var searching = can && on && q.length >= 2;
+    if (searching) {
+      var hits = searchList(q).slice(0, 8);
+      hits.forEach(function (pl) { els.picksResults.appendChild(pickRow(pl, addOrRemove(pl))); });
+      if (picks.gq === q) {
+        picks.google.forEach(function (pl) {
+          if (!hits.some(function (h) { return h.key === pl.key; })) els.picksResults.appendChild(pickRow(pl, addOrRemove(pl)));
+        });
+      }
+      if (!els.picksResults.children.length) {
+        var none = document.createElement('li');
+        none.className = 'sub';
+        none.textContent = picks.gq === q ? 'No places by that name.' : 'Nothing on your list by that name.';
+        els.picksResults.appendChild(none);
+      }
+    }
+    els.picksGoogle.hidden = !(searching && GOOGLE_ON && picks.gq !== q);
+    if (!picks.busy) els.picksGoogle.textContent = 'Search Google for “' + picks.q.trim() + '”';
+    els.picksGoogle.disabled = picks.busy;
+    els.picksCount.textContent = !on ? '' : list.length ? 'Chosen (' + list.length + ')' : 'Nothing chosen yet';
+    els.picksList.innerHTML = '';
+    if (on) list.forEach(function (pl) {
+      els.picksList.appendChild(pickRow(pl, can ? { text: 'Remove', cls: 'linkish', fn: function () { pickDel(pl); } } : null));
+    });
+  }
+  function picksCall(op, params) {
+    picks.busy = true;
+    picksMsg('');
+    renderPicks();
+    return groupCall(op, params).then(function (res) {
+      picks.busy = false;
+      if (!res.ok) picksMsg(res.error === 'OFF' ? 'You’re not in a group date anymore.' : res.offline ? 'Couldn’t reach the script: ' + res.error : res.error || 'That didn’t go through.');
+      renderPicks();
+      renderPicksBits();
+      renderGo();
+      return res;
+    });
+  }
+  function pickAdd(pl) { picksCall('pickadd', { pl: JSON.stringify(pl) }); }
+  function pickDel(pl) { picksCall('pickdel', { key: pl.key }); }
+  els.picksQ.addEventListener('input', function () { picks.q = els.picksQ.value; renderPicks(); });
+  els.picksQ.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); els.picksQ.blur(); } });
+  els.picksGoogle.addEventListener('click', function () {
+    var q = picks.q.trim();
+    if (q.length < 2) return;
+    var mid = group.state && group.state.middle, o = mid && mid.lat != null ? mid : origin();
+    els.picksGoogle.textContent = 'Searching Google…';
+    picksCall('gsearch', { q: q, lat: o ? o.lat : '', lng: o ? o.lng : '' }).then(function (res) {
+      picks.gq = q.toLowerCase();
+      picks.google = res.ok ? res.results || [] : [];
+      renderPicks();
+    });
+  });
+  els.picksAnyone.addEventListener('change', function () { picksCall('anyone', { on: els.picksAnyone.checked ? '1' : '0' }); });
+  els.picksPool.addEventListener('click', function () { picksCall('pool', { pool: picksMode() ? 'near' : 'picks' }); });
+  els.groupPicksBtn.addEventListener('click', function () {
+    els.groupSheet.close();
+    if (!picksMode() && amAdmin()) picksCall('pool', { pool: 'picks' });
+    openPicks();
+  });
   function renderGroupSheet() {
     els.groupForm.hidden = group.on;
     els.groupIn.hidden = !group.on;
     if (group.on) {
       els.groupCodeShow.textContent = group.code;
+      var np = groupPicks().length;
+      els.groupPoolLine.textContent = picksMode() ? 'Spins and swipes come from ' + np + ' chosen place' + (np === 1 ? '' : 's') + '.'
+        : 'Spins and swipes come from places near the middle.';
+      els.groupPicksBtn.hidden = !picksMode() && !amAdmin();
+      els.groupPicksBtn.textContent = picksMode() ? (canPick() ? 'Choose Places' : 'See the Places') : 'Use Chosen Places';
       els.groupPeople.innerHTML = '';
       var st = group.state || {};
       (st.members || []).forEach(function (m) {
@@ -4624,6 +4846,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     }
     if (!els.groupName.value) els.groupName.value = store.get('myName') || coupleName() || '';
     els.groupGo.textContent = cleanCode(els.groupCode.value) ? 'Join Group Date' : 'Start a Group Date';
+    els.groupPoolChoice.hidden = !!cleanCode(els.groupCode.value);   // joining: the group already decided
   }
   function shareInvite() {
     var url = inviteUrl();
@@ -4740,8 +4963,9 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   }
   /** After an answer: the next question the first time through, otherwise back to Spin or Swipe. */
   function advance() {
-    var i = STEPS.indexOf(state.step);
-    if (state.walk && i >= 0 && i < STEPS.length - 1) showStep(STEPS[i + 1], { push: true });
+    var steps = picksMode() ? ['start', 'home'] : STEPS;   // chosen places: just where you're starting
+    var i = steps.indexOf(state.step);
+    if (state.walk && i >= 0 && i < steps.length - 1) showStep(steps[i + 1], { push: true });
     else backHome();
   }
   function advanceSoon() {
@@ -4835,7 +5059,8 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   // Your answers on Spin or Swipe: tap one to change it.
   els.qHome.addEventListener('click', function (e) {
     var b = e.target.closest('.sum-chip');
-    if (b) showStep(b.getAttribute('data-go'), { push: true });
+    if (b === els.sumPicks) openPicks();
+    else if (b) showStep(b.getAttribute('data-go'), { push: true });
   });
   function startSummary() {
     var o = origin();
@@ -4900,7 +5125,8 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     return JSON.stringify([
       state.start, pt ? [Math.round(pt.lat * 1000), Math.round(pt.lng * 1000)] : null,
       lim, lim ? state.unit : '', state.moods.slice().sort(), state.src, state.open,
-      state.src === 'list' ? state.tags.slice().sort() : [], !!state.favOnly, !!state.includeBeen
+      state.src === 'list' ? state.tags.slice().sort() : [], !!state.favOnly, !!state.includeBeen,
+      picksMode() ? 'picks' : ''
     ]);
   }
   // Changed an answer since the pick (or the deck) was made? Then Spin starts fresh.
@@ -4930,17 +5156,19 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     els.goFresh.hidden = !cp || state.spinning || !state.loaded;
     els.goFresh.textContent = stale ? (cp.locked ? 'See the date instead' : 'See the last pick instead') : 'Start a new spin instead';
     els.goSwipe.textContent = rw && !deckIsStale() ? (rw.match ? 'See the Match' : 'Keep Swiping') : 'Swipe';
-    els.goSwipe.disabled = !state.loaded;
-    var n = state.range.length;
+    els.goSwipe.disabled = !state.loaded || (picksMode() && !groupPicks().length);
+    var n = state.range.length, np = groupPicks().length;
     els.goNote.textContent = state.loadError ? 'Couldn’t load your list.'
       : !state.loaded ? 'Loading your list…'
+      : picksMode() ? (np ? 'Spinning and swiping from ' + np + ' chosen place' + (np === 1 ? '' : 's') + '.'
+        : canPick() ? 'Choose some places first: tap Chosen places.' : 'Waiting on ' + (namesText(groupAdmins()) || 'the group') + ' to choose places.')
       : waitingForGps() ? (state.start === 'halfway' ? 'Find halfway first.' : state.start === 'middle' ? 'Waiting on everyone’s starting point.'
         : state.start === 'custom' ? 'Type where you’re headed first.' : 'Finding your location…')
       : state.src === 'google' ? 'Google picks from popular places nearby.'
       : n === 0 ? 'Nothing that close. Try a bigger distance.'
       : rangeText();
     // In the usual case the count says it; the note is for anything else.
-    var usual = state.loaded && !state.loadError && !waitingForGps() && state.src !== 'google' && n > 0;
+    var usual = state.loaded && !state.loadError && !picksMode() && !waitingForGps() && state.src !== 'google' && n > 0;
     els.goNote.hidden = usual;
     els.rosterSummary.parentNode.hidden = !usual;
   }
@@ -4948,6 +5176,13 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     if (!els.playSum) return;
     var bits = [];
     var o = originLabel();
+    if (picksMode()) {
+      var np = groupPicks().length;
+      els.playSum.textContent = 'From ' + np + ' chosen place' + (np === 1 ? '' : 's');
+      renderSummary();
+      renderStepNav();
+      return;
+    }
     bits.push(currentLimit() === 0 ? (state.src === 'google' ? 'Near ' + o : 'Any distance') : 'Within ' + limitText() + ' of ' + o);
     if (state.src === 'google') bits.push('anywhere on Google');
     var moods = state.moods.map(moodById).filter(Boolean);
