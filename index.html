@@ -130,8 +130,10 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .spin:active { transform: translateY(1px) scale(0.99); }
 .spin:focus-visible { outline: 3px solid var(--ivory); outline-offset: 3px; }
 .spin:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
-.subactions { display: flex; justify-content: space-between; align-items: center; min-height: 28px; font-size: 0.88rem; color: var(--dusk); }
-.vetoes { display: inline-flex; align-items: center; gap: 7px; }
+.subactions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 4px 12px; min-height: 28px; font-size: 0.88rem; color: var(--dusk); }
+.vetoes { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 7px; min-width: 0; }
+.vetoes:has(.vp) { column-gap: 13px; }
+.vp { display: inline-flex; align-items: center; gap: 7px; }
 .veto-bulb { width: 11px; height: 11px; border-radius: 50%; background: rgba(var(--ivory-rgb), 0.16); }
 .veto-bulb.on { background: var(--bulb); box-shadow: 0 0 7px rgba(var(--bulb-rgb), 0.85); }
 .linkish { appearance: none; padding: 4px 0; border: 0; background: none; color: var(--ivory); font: 600 0.88rem var(--body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
@@ -284,8 +286,7 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 /* Live line, vetoes per person */
 .live-line { margin: 0; padding: 7px 12px; border-radius: 12px; background: rgba(var(--bulb-rgb), 0.12); color: var(--ivory); font-weight: 600; font-size: 0.92rem; text-align: center; }
 .live-line[hidden] { display: none; }
-.vetoes .who { margin-left: 6px; font-weight: 600; color: var(--ivory); }
-.vetoes .who:first-child { margin-left: 0; }
+.vetoes .who { font-weight: 600; color: var(--ivory); }
 
 /* Ticket extras */
 .ticket-badges { margin: 0; font-size: 0.84rem; font-weight: 700; color: var(--stub-ink); }
@@ -420,6 +421,16 @@ legend { margin-bottom: 9px; padding: 0; font: 600 0.72rem/1 var(--body); letter
 .group-card { padding: 14px 16px; display: grid; gap: 8px; border-radius: 16px; background: linear-gradient(160deg, rgba(var(--bulb-rgb), 0.12), transparent 60%), var(--velvet); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.35); }
 .group-card[hidden] { display: none; }
 .group-card .hint { margin: 0; }
+/* Who's in: everyone who's joined, like a party's guest list. A green dot is here right now. */
+.guests { display: flex; gap: 8px; margin: 0; padding: 2px 0 0; list-style: none; overflow-x: auto; scrollbar-width: none; }
+.guests::-webkit-scrollbar { display: none; }
+.guests[hidden] { display: none; }
+.guest { flex: none; width: 46px; display: grid; justify-items: center; gap: 2px; }
+.guest .av { position: relative; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--av, var(--bulb)); color: #1b0d12; font: 800 0.98rem/1 var(--body); }
+.guest.is-here .av::after { content: ""; position: absolute; right: -2px; bottom: -2px; width: 10px; height: 10px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 2px var(--velvet); }
+.guest.add .av { appearance: none; padding: 0; border: 1.5px dashed var(--dusk); background: none; color: var(--ivory); font: 400 1.3rem/1 var(--body); cursor: pointer; }
+.guest.add .gn { color: var(--dusk); }
+.guest .gn { max-width: 100%; font-size: 0.7rem; font-weight: 600; line-height: 1.15; color: var(--ivory); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .gc-code { font: 900 1.25rem/1 var(--display); letter-spacing: 0.18em; color: var(--bulb); }
 .gm-people { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
@@ -556,7 +567,8 @@ html.on-welcome .trail { display: none; }
 /* Spin or swipe? */
 .q.home { gap: 12px; }
 /* On Spin or Swipe the group card is two lines: the code with its buttons, then who's in. */
-.home .group-card { grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "code . main second" "line line line line"; align-items: center; gap: 6px 10px; padding: 9px 12px 10px; }
+.home .group-card { grid-template-columns: auto minmax(0, 1fr) auto auto; grid-template-areas: "code . main second" "guests guests guests guests" "line line line line"; align-items: center; gap: 6px 10px; padding: 9px 12px 10px; }
+.home .guests { grid-area: guests; }
 .home .group-card .gc-row { display: contents; }
 .home .group-card .card-title { display: none; }
 .home .gc-code { grid-area: code; font-size: 1.15rem; }
@@ -574,7 +586,9 @@ html.on-welcome .trail { display: none; }
 .sum-chip.is-warn .v { color: var(--warn); }
 /* A chosen-places group date: just where you're starting, then Go. */
 .trail.picks .pip[data-go="far"], .trail.picks .pip[data-go="mood"], .trail.picks .pip[data-go="more"] { display: none; }
-html.picks-mode #sumFar, html.picks-mode #moodBtn, html.picks-mode #srcBtn, html.picks-mode #hoursBtn, html.picks-mode #tagBtn { display: none; }
+html.picks-mode #sumStart, html.picks-mode #sumFar, html.picks-mode #moodBtn, html.picks-mode #srcBtn, html.picks-mode #hoursBtn, html.picks-mode #tagBtn { display: none; }
+html.picks-mode .trail { display: none; }
+html.picks-mode #sumPicks { grid-column: 1 / -1; }
 .pool-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .pool-choice[hidden] { display: none; }
 .pool-choice label { position: relative; display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 12px; color: var(--ivory); font-size: 0.92rem; font-weight: 700; cursor: pointer; }
@@ -602,7 +616,14 @@ html.picks-mode #sumFar, html.picks-mode #moodBtn, html.picks-mode #srcBtn, html
 
 /* Play: the reel until something lands, then the ticket with its buttons under it. */
 .play-line { flex: none; min-height: 19px; display: grid; }
-.live-line:not([hidden]) + .play-sum { display: none; }
+.live-line:not([hidden]) ~ .play-sum, .live-line:not([hidden]) ~ .hold, .hold:not([hidden]) ~ .play-sum { display: none; }
+.catch-up:not([hidden]) ~ .hold { display: none; }
+/* Matches waiting on Everyone's Here (a group date). */
+.hold { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 5px 5px 5px 12px; border-radius: 12px; background: rgba(var(--bulb-rgb), 0.1); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.3); }
+.hold[hidden] { display: none; }
+.hold p { margin: 0; padding: 3px 0; font-size: 0.84rem; font-weight: 600; line-height: 1.3; color: var(--ivory); }
+.hold .mini { flex: none; padding: 7px 10px; border-color: var(--bulb); color: var(--bulb); }
+.hold .mini[hidden] { display: none; }
 /* Opening the app onto a round already going: what happened, and what to tap. */
 .catch-up { position: relative; padding: 9px 40px 10px 14px; border-radius: 14px; background: rgba(var(--bulb-rgb), 0.14); box-shadow: inset 0 0 0 1px rgba(var(--bulb-rgb), 0.45); display: grid; gap: 3px; }
 .catch-up[hidden] { display: none; }
@@ -625,7 +646,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
 .t-go .go { flex: 1; padding: 12px 12px; }
 .t-more { appearance: none; flex: none; padding: 0 16px; border: 0; border-radius: 10px; background: none; box-shadow: inset 0 0 0 1.5px var(--stub-ink); color: var(--stub-ink); font: 700 0.95rem var(--body); cursor: pointer; }
 .t-more:focus-visible { outline: 3px solid var(--stub-ink); outline-offset: 2px; }
-.actions { flex: none; gap: 8px; }
+.actions { flex: none; gap: 8px; grid-template-columns: minmax(0, 1fr); }
 .act-row { display: flex; gap: 8px; }
 .act-slot { display: flex; flex: 1 1 0; min-width: 0; }
 .act-slot:empty { display: none; }
@@ -653,6 +674,12 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
 .pm-live .tlink { color: var(--ivory); }
 .roster ol { margin: 0; max-height: 60vh; overflow-y: auto; }
 .about .foot { margin: 0; }
+
+/* In a group date the group card, with its guest list, heads Spin or Swipe on shorter phones. */
+@media (max-height: 700px) {
+  html.in-group #qHomeTitle { display: none; }
+  html.in-group #spinView:has(.ticket-live:not([hidden])) .subactions { display: none; }   /* the pick and its buttons get the room */
+}
 
 /* Shorter phones (an iPhone SE with Safari's bars) */
 @media (max-height: 640px) {
@@ -683,6 +710,16 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   .act-slot .btn, #spinView:has(> .ticket:not([hidden])) .spin { padding: 10px 10px 9px; font-size: 1.05rem; }
   .home #gcLine { -webkit-line-clamp: 1; }
   .sum-chip { min-height: 46px; }
+  /* The group card, a little tighter. */
+  .home .group-card { gap: 4px 10px; padding: 7px 12px 8px; }
+  .guest { gap: 1px; }
+  .guest .av { width: 26px; height: 26px; font-size: 0.86rem; }
+  .guest .gn { font-size: 0.64rem; }
+  html.in-group .sum-chip { min-height: 44px; padding-top: 6px; padding-bottom: 6px; }
+  html.in-group .q.home { gap: 6px; }
+  /* Waiting on Everyone's Here: the swipe card gets the counts' room. */
+  .play-line:has(> .hold:not([hidden])) ~ #swipeView .swipe-msg { display: none; }
+  .play-line:has(> .hold:not([hidden])) ~ #swipeView .card-photo { min-height: 32px; }
   .q.home, .go-bar { gap: 8px; }
 }
 </style>
@@ -835,6 +872,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     <h2 class="q-title" id="qHomeTitle">Spin or swipe?</h2>
     <section class="group-card" id="groupCard" hidden>
       <div class="gc-row"><h2 class="card-title" id="gcTitle">Group Date</h2><span class="gc-code" id="gcCode"></span></div>
+      <ul class="guests" id="gcGuests" aria-label="Who’s in" hidden></ul>
       <p class="hint" id="gcLine"></p>
       <div class="gc-row">
         <button type="button" class="mini" id="gcMain">Invite Friends</button>
@@ -850,7 +888,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       <button type="button" class="sum-chip" id="hoursBtn" data-go="more" hidden></button>
       <button type="button" class="sum-chip" id="tagBtn" data-go="more" hidden></button>
     </div>
-    <p class="sum-tip">Tap one to change it.</p>
+    <p class="sum-tip" id="sumTip">Tap one to change it.</p>
     <div class="go-bar" id="goBar">
       <p class="go-count"><span id="rosterSummary">Places in range</span> <button type="button" class="linkish" id="rosterBtn" hidden>See them</button></p>
       <p class="go-note" id="goNote" role="status"></p>
@@ -878,6 +916,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       <button type="button" class="cu-ok" id="cuOk" aria-label="Got it">✕</button>
     </div>
     <p class="live-line" id="liveLine" role="status" hidden></p>
+    <div class="hold" id="hold" hidden><p id="holdText" role="status"></p><button type="button" class="mini" id="holdBtn" hidden>Everyone’s Here</button></div>
     <p class="play-sum" id="playSum"></p>
   </div>
 
@@ -987,7 +1026,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     <div class="set-group about">
       <h3>About</h3>
       <p class="foot">Minutes are drive-time estimates from the distance; a picked place shows its real drive time. Every list reloads from Google Maps each time you open this page.</p>
-      <p class="foot">Version: Nov 26, 11:07 PM</p>
+      <p class="foot">Version: Nov 27, 8:24 AM</p>
       <p class="foot" id="googleFoot" hidden>Stars, hours, photos and blurbs come from Google Maps and aren’t saved. <a href="https://maps.google.com/help/terms_maps/" target="_blank" rel="noopener">Google Maps Terms</a> · <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></p>
     </div>
     <div class="set-group set-lists">
@@ -1130,6 +1169,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     hoursChips: $('hoursChips'), hoursAt: $('hoursAt'), hoursDay: $('hoursDay'), hoursTime: $('hoursTime'),
     tPhotos: $('tPhotos'), tGoogle: $('tGoogle'), tHours: $('tHours'), tBlurb: $('tBlurb'), tCredit: $('tCredit'), googleFoot: $('googleFoot'),
     groupBtn: $('groupBtn'), groupCard: $('groupCard'), gcTitle: $('gcTitle'), gcCode: $('gcCode'), gcLine: $('gcLine'),
+    gcGuests: $('gcGuests'), hold: $('hold'), holdText: $('holdText'), holdBtn: $('holdBtn'), sumTip: $('sumTip'),
     gcMain: $('gcMain'), gcSecond: $('gcSecond'), groupMeet: $('groupMeet'), gmPeople: $('gmPeople'), gmInput: $('gmInput'),
     gmHere: $('gmHere'), gmMsg: $('gmMsg'), groupSheet: $('groupSheet'), groupIntro: $('groupIntro'), groupForm: $('groupForm'),
     groupName: $('groupName'), groupCode: $('groupCode'), groupGo: $('groupGo'), groupMsg: $('groupMsg'), groupIn: $('groupIn'),
@@ -1534,6 +1574,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     renderPlaySum();
   }
   function waitingForGps() {
+    if (picksMode()) return false;   // chosen places: any distance, so nothing waits on a location
     if (currentLimit() === 0 && state.src !== 'google') return false;
     return (state.start === 'gps' && !state.gps) || (state.start === 'halfway' && !state.halfway) ||
       (state.start === 'middle' && !origin()) || (state.start === 'custom' && !(state.custom && state.custom.point));
@@ -1544,6 +1585,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     if (state.loadError) el.textContent = 'Couldn’t load';
     else if (state.needsSetup) el.textContent = 'Almost ready';
     else if (!state.loaded) el.textContent = 'Loading…';
+    else if (picksMode()) el.textContent = groupPicks().length ? 'Spin to find out' : 'Choose places first';
     else if (waitingForGps()) el.textContent = state.start === 'halfway' ? 'Find halfway first'
       : state.start === 'middle' ? 'Waiting on everyone’s start'
       : state.start === 'custom' ? 'Type where you’re headed' : 'Finding you…';
@@ -1599,11 +1641,14 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       var said = [];
       people().forEach(function (n) {
         var left = vetoesLeft(r, n);
+        var one = document.createElement('span');   // a name stays with its bulbs when a big group wraps
+        one.className = 'vp';
         var w = document.createElement('span');
         w.className = 'who';
         w.textContent = n === meName() ? 'You' : n;
-        box.appendChild(w);
-        bulbs(box, VETOES_EACH, left);
+        one.appendChild(w);
+        bulbs(one, VETOES_EACH, left);
+        box.appendChild(one);
         said.push((n === meName() ? 'You have ' : n + ' has ') + left + (left === 1 ? ' veto' : ' vetoes') + ' left');
       });
       box.setAttribute('aria-label', said.join(', '));
@@ -3021,6 +3066,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     el.classList.toggle('is-here', here.length > 0 && !fails);
     if (fails > 1) { el.textContent = 'Reconnecting…'; return; }
     if (group.on) {
+      renderGuests();
       el.textContent = !outs.length ? 'Waiting for friends to join'
         : here.length === outs.length ? (outs.length === 1 ? outs[0] + ' is here' : 'Everyone’s here')
         : here.length ? namesText(here) + (here.length === 1 ? ' is here' : ' are here')
@@ -3042,7 +3088,8 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       case 'gone': return l.prev + ' is closed for good' + (group.on ? ', so ' + who(w, true) + ' spun again.' : ', so it’s hidden for both of you.');
       case 'in':
         if (w !== meName()) return w + ' is in! Tap I’m In to make it a date.';
-        return 'You’re in! Waiting on ' + namesText(people().filter(function (n) { return !(r.inn && r.inn[n]); })) + '.';
+        var rest = people().filter(function (n) { return !(r.inn && r.inn[n]); });
+        return rest.length ? 'You’re in! Waiting on ' + namesText(rest) + '.' : 'You’re in!';
       case 'date': return 'It’s a date! 🎉';
       case 'lock': return who(w) + ' locked it in! 🎉';
       case 'deal': return who(w) + ' dealt a deck. Start swiping!';
@@ -3059,6 +3106,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     var f = live.flash && live.flash.until > Date.now() ? live.flash : null;
     if (f && r && r.last && r.last.at + sk > f.at) f = null;   // something newer happened
     var line = f ? f.text : r && r.mode === 'spin' ? lineFor(r) : '';
+    if (!f && group.on && r && r.mode === 'spin' && r.pick && !r.locked && r.last && r.last.what === 'in') line = '';   // the ticket says it
     if (!r && !f && st && st.lastReset && Date.now() - sk - st.lastReset.at < 60000) {
       line = who(st.lastReset.who) + ' started over.';
     }
@@ -3152,12 +3200,18 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     var waiting = others().filter(function (n) { return inList.indexOf(n) < 0; });
     var say = document.createElement('p');
     say.className = 'say';
-    say.textContent = meIn ? 'You’re in! Waiting on ' + namesText(waiting) + ' to tap I’m In.'
+    var hold = group.on && !groupReady();
+    say.textContent = meIn && waiting.length ? 'You’re in! Waiting on ' + namesText(waiting) + ' to tap I’m In.'
+      : meIn && hold ? (people().length < 2 ? 'You’re in! It’s a date once friends join.'
+        : canSayReady() ? 'You’re all in! Tap Everyone’s Here to make it a date.'
+        : 'You’re all in! It’s a date once ' + adminsText() + ' taps Everyone’s Here.')
+      : meIn ? 'You’re in!'
       : othersIn.length ? namesText(othersIn) + (othersIn.length === 1 ? ' is in!' : ' are in!') + ' Tap I’m In 👍 if you’d go.'
       : 'When ' + (many ? 'everyone taps' : 'you both tap') + ' I’m In 👍, it’s a date.';
     box.appendChild(say);
     if (!meIn) els.tLiveBtns.appendChild(tButton('I’m In 👍', 'btn', function (e) { e.target.disabled = true; liveCall('in'); }));
-    else els.tLiveBtns.appendChild(tButton(many ? 'Lock It In for Everyone' : 'Lock It In for Both', 'tlink', function () { liveCall('lock'); }));
+    else if (hold && canSayReady()) els.tLiveBtns.appendChild(tButton('Everyone’s Here', 'tlink', function (e) { sayEveryonesHere(e.target, false); }));
+    else if (!hold) els.tLiveBtns.appendChild(tButton(many ? 'Lock It In for Everyone' : 'Lock It In for Both', 'tlink', function () { liveCall('lock'); }));
     var row2 = document.createElement('div');
     row2.className = 'row';
     row2.appendChild(tButton('Closed tonight', 'tlink', function () { liveCall('closed').then(afterSkip); }));
@@ -3328,6 +3382,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   }
   function renderSwipe() {
     renderGo();
+    renderHold();
     if (state.mode !== 'swipe') return;
     var r = liveRound('swipe');
     els.deck.hidden = true;
@@ -3376,7 +3431,11 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       els.deck.innerHTML = '';
       els.deck.removeAttribute('data-top');
       var behind = outs.filter(function (o) { return count(o) < n; });
-      if (!behind.length) {
+      if (!behind.length && r.held && !groupReady()) {
+        swipeEmpty('A match is waiting!', canSayReady() ? 'You all like the same place. Tap Everyone’s Here to see it.'
+          : 'It shows once ' + adminsText() + ' taps Everyone’s Here.');
+        els.dealBtn.hidden = true;
+      } else if (!behind.length) {
         var b = r.best && people().length > 2 ? r.deck.filter(function (c) { return c.key === r.best.key; })[0] : null;
         if (b) {
           swipeEmpty('No match this time', 'Most liked: ' + b.n + ' (' + r.best.likes + ' of ' + r.best.of + ' liked it). Go with it, or deal more?');
@@ -4425,7 +4484,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     if (res.seen) group.seen = res.seen;
     if (typeof res.now === 'number') group.skew = Date.now() - res.now;
     if (res.night) live.night = res.night;
-    if (res.state) { group.state = res.state; group.v = res.v; }
+    if (res.state) { group.state = res.state; group.v = res.v; store.set('grpPool', res.state.pool || 'near'); }
     if (!was) {
       setTimeout(pushSync, 0);    // notifications on? the group gets this phone's address too
       clearTimeout(live.timer);   // the two of you pick up again after the group date
@@ -4530,6 +4589,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     group.v = null;
     group.seen = {};
     group.startSent = '';
+    store.set('grpPool', '');
     saveGroup();
     if (quiet) return;
     if (state.start === 'middle') { state.start = 'gps'; store.set('start', 'gps'); requestGps(); }
@@ -4582,19 +4642,20 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
       els.gcMain.setAttribute('data-act', 'join');
     } else if (group.on) {
       var n = (st.members || []).length;
+      var can = canSayReady();
       els.gcTitle.textContent = 'Group Date';
       els.gcCode.textContent = group.code;
-      var names = (st.members || []).map(function (m) { return m.name === meName() ? 'you' : m.name; });
-      if (names.indexOf('you') > 0) names = ['you'].concat(names.filter(function (x) { return x !== 'you'; }));
-      var line = namesText(names);
-      var np = groupPicks().length;
-      els.gcLine.textContent = (n <= 1 ? 'Just you so far. Invite everyone who’s coming.'
-        : line.charAt(0).toUpperCase() + line.slice(1) + ' are in.') +
-        (picksMode() ? ' Spinning from ' + np + ' chosen place' + (np === 1 ? '' : 's') + '.' : n <= 1 ? '' : ' Spins and swipes are shared with everyone here.');
-      els.gcMain.textContent = 'Invite Friends';
+      els.gcLine.textContent = n <= 1 ? 'Just you so far. Invite everyone who’s coming.'
+        : !groupReady() ? (can ? 'No matches till you tap Everyone’s Here.' : 'No matches till ' + adminsText() + ' taps Everyone’s Here.')
+        : 'Everyone’s here! Matches need ' + (n === 2 ? 'both of you.' : 'all ' + n + ' of you.');
+      els.gcMain.textContent = can ? 'Everyone’s Here' : 'Invite Friends';
       els.gcSecond.textContent = 'Leave';
-      els.gcMain.setAttribute('data-act', 'invite');
+      els.gcMain.setAttribute('data-act', can ? 'ready' : 'invite');
     }
+    els.gcMain.classList.toggle('is-on', els.gcMain.getAttribute('data-act') === 'ready');
+    document.documentElement.classList.toggle('in-group', group.on);
+    renderGuests();
+    renderHold();
     els.groupMeet.hidden = !(group.on && state.start === 'middle');
     renderPicksBits();
     if (!group.on) return;
@@ -4684,7 +4745,105 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   }
   function amAdmin() { return group.on && groupAdmins().indexOf(meName()) >= 0; }
   function canPick() { return amAdmin() || !!(group.on && group.state && group.state.anyone); }
-  var picks = { q: '', google: [], gq: '', busy: false };
+
+  // ---------- Everyone's here ----------
+  // A group date makes no match or date until an admin (whoever started it, or the two of you)
+  // says everyone's in, and never with one person. Swipes and I'm Ins count while you wait.
+  function groupReady() {
+    var st = group.state;
+    return !group.on || !st || (st.ready !== false && (st.members || []).length >= 2);
+  }
+  function orText(list) { return list.length <= 2 ? list.join(' or ') : list.slice(0, -1).join(', ') + ' or ' + list[list.length - 1]; }
+  function adminsText() { return orText(groupAdmins()) || 'whoever started it'; }
+  function canSayReady() { return group.on && !groupReady() && people().length >= 2 && (amAdmin() || !groupAdmins().length); }
+  function sayEveryonesHere(btn, onHome) {
+    btn.disabled = true;
+    groupCall('ready', {}).then(function (res) {
+      btn.disabled = false;
+      if (!res || res.ok || res.error === 'OFF') return;
+      if (onHome) els.gcLine.textContent = res.error; else flash(res.error, true);
+    });
+  }
+  var AV_COLORS = ['#f6c35b', '#ff8fa3', '#8fd6a8', '#8ec5ff', '#c9a7ff', '#ffb38a', '#7fe0d6', '#f2a0d8'];
+  function avColor(name) {
+    var h = 2166136261;
+    for (var i = 0; i < name.length; i++) { h ^= name.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return AV_COLORS[(h >>> 0) % AV_COLORS.length];
+  }
+  /** Who's in, like a party's guest list: a bubble each, a green dot for whoever's here right now. */
+  function renderGuests() {
+    var ul = els.gcGuests;
+    var st = group.state;
+    ul.hidden = !group.on || !st;
+    if (ul.hidden) return;
+    var me = meName();
+    var mem = st.members || [];
+    var invite = canSayReady();   // the card's button is Everyone's Here, so inviting moves here
+    var sig = mem.map(function (m) { return m.name; }).join('|') + '#' + me + (invite ? '+' : '');
+    if (ul.getAttribute('data-sig') !== sig) {
+      ul.setAttribute('data-sig', sig);
+      ul.innerHTML = '';
+      var used = {};
+      mem.forEach(function (m) {
+        var li = document.createElement('li');
+        li.className = 'guest';
+        li.setAttribute('data-name', m.name);
+        var av = document.createElement('span');
+        av.className = 'av';
+        av.setAttribute('aria-hidden', 'true');
+        av.textContent = (m.name.charAt(0) || '?').toUpperCase();
+        var i = AV_COLORS.indexOf(avColor(m.name)), k = 0;
+        while (k < AV_COLORS.length && used[AV_COLORS[(i + k) % AV_COLORS.length]]) k++;
+        var color = AV_COLORS[(i + k) % AV_COLORS.length];
+        used[color] = true;
+        av.style.setProperty('--av', color);
+        var nm = document.createElement('span');
+        nm.className = 'gn';
+        nm.textContent = m.name === me ? 'You' : m.name;
+        li.appendChild(av);
+        li.appendChild(nm);
+        ul.appendChild(li);
+      });
+      if (invite) {
+        var li2 = document.createElement('li');
+        li2.className = 'guest add';
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'av';
+        b.textContent = '+';
+        b.setAttribute('aria-label', 'Invite friends');
+        b.addEventListener('click', shareInvite);
+        var nm2 = document.createElement('span');
+        nm2.className = 'gn';
+        nm2.textContent = 'Invite';
+        li2.appendChild(b);
+        li2.appendChild(nm2);
+        ul.insertBefore(li2, ul.firstChild);
+      }
+    }
+    var now = Date.now() - roomSkew();
+    Array.prototype.forEach.call(ul.querySelectorAll('.guest[data-name]'), function (li) {
+      var n = li.getAttribute('data-name');
+      var here = n === me || (group.seen[n] && now - group.seen[n] < 12000);
+      li.classList.toggle('is-here', !!here);
+      li.title = n + (n === me ? ' (you)' : '') + (here ? ' · here now' : '');
+    });
+  }
+  /** On the swipe tab: what matches are waiting on, and the button for whoever can say it. */
+  function renderHold() {
+    var show = group.on && !!group.state && state.mode === 'swipe' && !groupReady();
+    els.hold.hidden = !show;
+    if (!show) return;
+    var r = liveRound('swipe');
+    var held = !!(r && r.held && !r.locked);
+    var can = canSayReady();
+    els.holdText.textContent = people().length < 2 ? 'No matches till friends join.'
+      : held ? (can ? 'A match is waiting!' : 'A match is waiting till everyone’s in.')
+      : can ? 'Matches on hold.' : 'Matches on hold till everyone’s in.';
+    els.holdBtn.hidden = !can;
+  }
+  els.holdBtn.addEventListener('click', function () { sayEveryonesHere(els.holdBtn, false); });
+  var picks = { q: '', google: [], gq: '', busy: false, on: false };
   function picksMsg(t) { els.picksMsg.hidden = !t; els.picksMsg.textContent = t || ''; }
   function openPicks() {
     picks.q = '';
@@ -4700,6 +4859,10 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
     document.documentElement.classList.toggle('picks-mode', on);
     els.stepNav.classList.toggle('picks', on);
     els.sumPicks.hidden = !on;
+    if (on && typeof QUESTIONS !== 'undefined' && QUESTIONS.test(state.step)) showStep('home');
+    if (on && !picks.on && !state.gps) requestGps();   // once: drive times come from where each phone is
+    picks.on = on;
+    els.sumTip.textContent = !on ? 'Tap one to change it.' : canPick() ? 'Tap it to change the places.' : 'Tap it to see the places.';
     if (on) {
       var n = groupPicks().length;
       pillText(els.sumPicks, 'Chosen places', n ? '⭐ ' + n + ' place' + (n === 1 ? '' : 's') : '⭐ None yet', false);
@@ -4875,6 +5038,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   els.groupShare.addEventListener('click', shareInvite);
   els.groupLeave.addEventListener('click', function () { els.groupSheet.close(); leaveGroup('You left the group date.', true); });
   els.gcMain.addEventListener('click', function () {
+    if (els.gcMain.getAttribute('data-act') === 'ready') { sayEveryonesHere(els.gcMain, true); return; }
     if (els.gcMain.getAttribute('data-act') === 'join') {
       var dc = live.state && live.state.group;
       if (dc) joinGroup(dc.code, coupleName() || store.get('myName') || 'Me');
@@ -4919,6 +5083,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   // your answers there (or its bulb) changes just that one and comes back.
   state.screen = 'plan';
   var STEPS = ['start', 'far', 'mood', 'more', 'home'];
+  var QUESTIONS = /^(start|far|mood|more)$/;
   var QS = { welcome: els.qWelcome, start: els.qStart, far: els.qFar, mood: els.qMood, more: els.qMore, home: els.qHome };
   var nav = { idx: 0, homeIdx: null, timer: null, guard: null, rewind: null };
   state.step = '';
@@ -4926,6 +5091,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   function showStep(step, opts) {
     opts = opts || {};
     if (!QS[step]) step = 'home';
+    if (picksMode() && QUESTIONS.test(step)) step = 'home';   // chosen places: no questions to answer
     clearTimeout(nav.timer);
     var from = state.step;
     if (opts.push && from && from !== step) {
@@ -4963,7 +5129,7 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   }
   /** After an answer: the next question the first time through, otherwise back to Spin or Swipe. */
   function advance() {
-    var steps = picksMode() ? ['start', 'home'] : STEPS;   // chosen places: just where you're starting
+    var steps = picksMode() ? ['home'] : STEPS;   // chosen places: no questions
     var i = steps.indexOf(state.step);
     if (state.walk && i >= 0 && i < steps.length - 1) showStep(steps[i + 1], { push: true });
     else backHome();
@@ -5407,6 +5573,10 @@ html.catching-up .actions .ticket-live .say { display: none; }   /* the card abo
   }
   var lastStep = store.get('lastStep');
   var firstStep = freshStart ? 'start' : STEPS.indexOf(lastStep) >= 0 ? lastStep : state.walk ? 'start' : 'home';
+  if (group.code && group.mid && store.get('grpPool') === 'picks') {   // chosen places: no questions
+    document.documentElement.classList.add('picks-mode');
+    if (QUESTIONS.test(firstStep)) firstStep = 'home';
+  }
   if (state.needsSetup || (!els.liveCard.hidden && !live.code && !group.code && !joining)) firstStep = 'welcome';
   try { history.replaceState({ dnr: 'step', step: firstStep, idx: 0 }, '', location.pathname + location.search); } catch (e) {}
   showStep(firstStep);
